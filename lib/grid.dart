@@ -1,5 +1,6 @@
 // create a stateless widget
 import 'package:flutter/material.dart';
+import 'package:flutter_puzzle/puzzle.dart';
 
 const tileSize = 60.0;
 
@@ -35,8 +36,26 @@ class Tile extends StatelessWidget {
 }
 
 class Grid extends StatelessWidget {
+  final Puzzle _puzzle;
+
+  const Grid(this._puzzle, {Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
+    List<Positioned> tiles = [];
+    for (int i = 0; i < _puzzle.tiles.length; i++) {
+      final tile = _puzzle.tiles[i];
+      final row = i ~/ _puzzle.size;
+      final col = i % _puzzle.size;
+      if (tile != 0) {
+        tiles.add(Positioned(
+          left: col * tileSize,
+          top: row * tileSize,
+          child: Tile(tile, key: ValueKey(tile)),
+        ));
+      }
+    }
+
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -47,47 +66,8 @@ class Grid extends StatelessWidget {
       ),
       child: Stack(
         children: [
-          Container(color: Colors.blue, width: tileSize * 3, height: tileSize * 3),
-          const Positioned(
-            left: 0,
-            top: 0,
-            child: Tile(1),
-          ),
-          const Positioned(
-            left: tileSize,
-            top: 0,
-            child: Tile(2),
-          ),
-          const Positioned(
-            left: 2 * tileSize,
-            top: 0,
-            child: Tile(3),
-          ),
-          const Positioned(
-            left: 0,
-            top: tileSize,
-            child: Tile(4),
-          ),
-          const Positioned(
-            left: tileSize,
-            top: tileSize,
-            child: Tile(5),
-          ),
-          const Positioned(
-            left: 2 * tileSize,
-            top: tileSize,
-            child: Tile(6),
-          ),
-          const Positioned(
-            left: 0,
-            top: 2 * tileSize,
-            child: Tile(7),
-          ),
-          const Positioned(
-            left: tileSize,
-            top: 2 * tileSize,
-            child: Tile(8),
-          ),
+          Container(color: Colors.blue, width: tileSize * _puzzle.size, height: tileSize * _puzzle.size),
+          ...tiles,
         ],
       ),
     );

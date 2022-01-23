@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/countdown.dart';
+import 'package:flutter_puzzle/puzzle.dart';
 
 import 'grid.dart';
 
@@ -34,6 +35,8 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
+  final Puzzle _puzzle = Puzzle(4);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,7 +51,7 @@ class _MainPageState extends State<MainPage> {
           // to see the wireframe for each widget.
           //
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[const Countdown(seconds: 10), Grid()],
+          children: <Widget>[const Countdown(seconds: 10), Grid(_puzzle)],
         ),
       ),
     );
