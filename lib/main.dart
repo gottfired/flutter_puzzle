@@ -51,7 +51,14 @@ class _MainPageState extends State<MainPage> {
           // to see the wireframe for each widget.
           //
           mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[const Countdown(seconds: 10), Grid(_puzzle)],
+          children: <Widget>[
+            const Countdown(seconds: 10),
+            Grid(_puzzle, (int number) {
+              setState(() {
+                _puzzle.move(number);
+              });
+            })
+          ],
         ),
       ),
     );

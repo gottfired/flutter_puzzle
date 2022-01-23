@@ -6,28 +6,46 @@ const tileSize = 60.0;
 
 class Tile extends StatelessWidget {
   final int number;
+  final Function(int number) onTap;
+  final bool canMoveHorizontal;
+  final bool canMoveVertical;
 
-  const Tile(this.number, {Key? key}) : super(key: key);
+  const Tile(this.number, this.onTap, this.canMoveHorizontal, this.canMoveVertical, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: tileSize,
-      height: tileSize,
-      decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color: Colors.blue,
-            width: 1,
-          ),
-          borderRadius: BorderRadius.circular(tileSize / 5)),
-      child: Center(
-        child: Text(
-          '$number',
-          style: TextStyle(
-            fontSize: tileSize / 2,
-            fontWeight: FontWeight.bold,
-            color: Colors.blue.shade900,
+    return GestureDetector(
+      onTap: () {
+        onTap(number);
+      },
+      onVerticalDragStart: (details) {
+        if (canMoveVertical) {
+          onTap(number);
+        }
+      },
+      onHorizontalDragStart: (details) {
+        if (canMoveHorizontal) {
+          onTap(number);
+        }
+      },
+      child: Container(
+        width: tileSize,
+        height: tileSize,
+        decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: Colors.blue,
+              width: 1,
+            ),
+            borderRadius: BorderRadius.circular(tileSize / 5)),
+        child: Center(
+          child: Text(
+            '$number',
+            style: TextStyle(
+              fontSize: tileSize / 2,
+              fontWeight: FontWeight.bold,
+              color: Colors.blue.shade900,
+            ),
           ),
         ),
       ),
@@ -37,21 +55,24 @@ class Tile extends StatelessWidget {
 
 class Grid extends StatelessWidget {
   final Puzzle _puzzle;
+  final Function(int number) onTap;
 
-  const Grid(this._puzzle, {Key? key}) : super(key: key);
+  const Grid(this._puzzle, this.onTap, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    List<Positioned> tiles = [];
+    List<AnimatedPositioned> tiles = [];
     for (int i = 0; i < _puzzle.tiles.length; i++) {
       final tile = _puzzle.tiles[i];
       final row = i ~/ _puzzle.size;
       final col = i % _puzzle.size;
       if (tile != 0) {
-        tiles.add(Positioned(
+        tiles.add(AnimatedPositioned(
+          key: ValueKey(tile),
           left: col * tileSize,
           top: row * tileSize,
-          child: Tile(tile, key: ValueKey(tile)),
+          duration: const Duration(milliseconds: 100),
+          child: Tile(tile, onTap, _puzzle.canMoveHorizontal(tile), _puzzle.canMoveVertical(tile)),
         ));
       }
     }
