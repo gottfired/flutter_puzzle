@@ -1,0 +1,3 @@
+-   wrap in gesture detector
+-   store puzzle state somewhere above grid
+-   use AnimatedPositioned to render tiles
