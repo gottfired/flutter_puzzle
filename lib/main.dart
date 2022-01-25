@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
@@ -40,27 +41,30 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            const Countdown(seconds: 10),
-            Grid(_puzzle, (int number) {
-              setState(() {
-                _puzzle.move(number);
-              });
-            })
-          ],
+      // appBar: AppBar(
+      //   title: Text(widget.title),
+      // ),
+      body: Stack(children: [
+        Background(),
+        Center(
+          child: Column(
+            // Invoke "debug painting" (press "p" in the console, choose the
+            // "Toggle Debug Paint" action from the Flutter Inspector in Android
+            // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
+            // to see the wireframe for each widget.
+            //
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // const Countdown(seconds: 10),
+              Grid(_puzzle, (int number) {
+                setState(() {
+                  _puzzle.move(number);
+                });
+              })
+            ],
+          ),
         ),
-      ),
+      ]),
     );
   }
 }
