@@ -2,7 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
-const tileSize = 60.0;
+import 'config.dart';
 
 class Tile extends StatelessWidget {
   final int number;
@@ -71,7 +71,7 @@ class Grid extends StatelessWidget {
           key: ValueKey(tile),
           left: col * tileSize,
           top: row * tileSize,
-          duration: const Duration(milliseconds: 100),
+          duration: const Duration(milliseconds: slideTimeMs),
           child: Tile(tile, onTap, _puzzle.canMoveHorizontal(tile), _puzzle.canMoveVertical(tile)),
         ));
       }

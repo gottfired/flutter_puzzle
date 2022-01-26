@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_puzzle/config.dart';
 
 const shuffleCount = 20;
 
@@ -124,6 +125,10 @@ class Puzzle {
 
   // Debug print to console
   void debugOutput() {
+    if (!debugEnabled) {
+      return;
+    }
+
     var line = "";
     for (var i = 0; i < size; i++) {
       for (var j = 0; j < size; j++) {

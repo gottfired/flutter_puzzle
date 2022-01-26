@@ -16,12 +16,12 @@ class App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Pushtrix',
       theme: ThemeData(
         // This is the theme of your application.
         primarySwatch: Colors.blue,
       ),
-      home: const MainPage(title: 'Flutter Puzzle Hack'),
+      home: const MainPage(title: 'Pushtrix'),
     );
   }
 }

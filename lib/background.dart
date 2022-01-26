@@ -10,6 +10,8 @@ class BackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    // Todo: Wrap value in 0, 2*PI for precision
+
     var paint = Paint()
       ..color = Colors.red
       ..strokeWidth = 50
