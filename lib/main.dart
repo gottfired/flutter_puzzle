@@ -64,7 +64,16 @@ class _MainPageState extends State<MainPage> {
                         _game.start();
                       });
                     },
-                    child: const Text("Start")),
+                    style: ElevatedButton.styleFrom(
+                        fixedSize: const Size(200, 100),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(100.0),
+                        )),
+                    child: const Text("Start",
+                        style: TextStyle(
+                          fontSize: 40,
+                          color: Colors.white,
+                        ))),
               if (_game.state == GameState.playing)
                 Grid(_game.puzzle!, (int number) {
                   setState(() {
