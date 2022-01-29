@@ -136,38 +136,42 @@ class _MainPageState extends State<MainPage> {
                                 setState(() {
                                   _game.move(number);
                                   if (_game.isSolved()) {
-                                    // debugPrint("### dropOut");
-                                    // Drop out
-                                    setPuzzleTop(_game.puzzleTop(context));
-                                    puzzleRotation = _game.puzzleRotation();
-
-                                    // Reset after drop out
-                                    Timer(const Duration(milliseconds: dropInAnimMs), () {
+                                    Timer(Duration(milliseconds: (slideTimeMs * 0.7).toInt()), () {
                                       setState(() {
-                                        // debugPrint("### reset");
-                                        _game.reset();
+                                        // Drop out
+                                        _game.dropOut();
                                         setPuzzleTop(_game.puzzleTop(context));
                                         puzzleRotation = _game.puzzleRotation();
-                                      });
-                                    });
 
-                                    // Drop in
-                                    Timer(const Duration(milliseconds: dropInAnimMs + resetMs), () {
-                                      setState(() {
-                                        // debugPrint("### dropIn");
-                                        _game.startLevel();
-                                        setPuzzleTop(_game.puzzleTop(context));
-                                        puzzleRotation = _game.puzzleRotation();
-                                      });
-                                    });
+                                        // Reset after drop out
+                                        Timer(const Duration(milliseconds: dropInAnimMs), () {
+                                          setState(() {
+                                            // debugPrint("### reset");
+                                            _game.reset();
+                                            setPuzzleTop(_game.puzzleTop(context));
+                                            puzzleRotation = _game.puzzleRotation();
 
-                                    // Finish drop in
-                                    Timer(const Duration(milliseconds: 2 * dropInAnimMs + resetMs), () {
-                                      setState(() {
-                                        // debugPrint("### dropInFinished");
-                                        _game.dropIn = false;
-                                        setPuzzleTop(_game.puzzleTop(context));
-                                        puzzleRotation = _game.puzzleRotation();
+                                            // Drop in
+                                            Timer(const Duration(milliseconds: resetMs), () {
+                                              setState(() {
+                                                // debugPrint("### dropIn");
+                                                _game.startLevel();
+                                                setPuzzleTop(_game.puzzleTop(context));
+                                                puzzleRotation = _game.puzzleRotation();
+
+                                                // Finish drop in
+                                                Timer(const Duration(milliseconds: dropInAnimMs), () {
+                                                  setState(() {
+                                                    // debugPrint("### dropInFinished");
+                                                    _game.puzzleState = PuzzleState.playing;
+                                                    setPuzzleTop(_game.puzzleTop(context));
+                                                    puzzleRotation = _game.puzzleRotation();
+                                                  });
+                                                });
+                                              });
+                                            });
+                                          });
+                                        });
                                       });
                                     });
                                   }

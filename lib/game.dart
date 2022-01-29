@@ -11,6 +11,12 @@ enum GameState {
   gameOver,
 }
 
+enum PuzzleState {
+  dropIn,
+  playing,
+  dropOut,
+}
+
 class Game {
   Puzzle? puzzle;
   GameState state = GameState.startScreen;
@@ -18,7 +24,7 @@ class Game {
   int currentLevel = 0;
   int currentShuffleCount = 1;
 
-  bool dropIn = false;
+  PuzzleState puzzleState = PuzzleState.playing;
 
   Timer? _timer;
   double _timerValue = 0;
@@ -48,9 +54,11 @@ class Game {
   double? puzzleTop(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    if (puzzle?.isSolved() == true) {
+    if (puzzleState == PuzzleState.dropOut) {
       return size.height / 2 + getPuzzleScreenSize();
-    } else if (dropIn) {
+    }
+
+    if (puzzleState == PuzzleState.dropIn) {
       return -size.height * 0.8;
     }
 
@@ -58,11 +66,11 @@ class Game {
   }
 
   double puzzleRotation() {
-    if (puzzle?.isSolved() == true) {
-      return Random().nextDouble() * 3 - 1.5;
+    if (puzzleState == PuzzleState.dropOut) {
+      return Random().nextDouble() * 2 - 1;
     }
 
-    if (dropIn) {
+    if (puzzleState == PuzzleState.dropIn) {
       final v = Random().nextDouble() - 0.5;
       return v + v.sign;
     }
@@ -72,11 +80,11 @@ class Game {
 
   void reset() {
     puzzle = null;
-    dropIn = true;
+    puzzleState = PuzzleState.dropIn;
   }
 
   bool isResetting() {
-    return puzzle == null && dropIn;
+    return puzzle == null && puzzleState == PuzzleState.dropIn;
   }
 
   int sizeFromLevel() {
@@ -127,6 +135,10 @@ class Game {
   }
 
   bool showCountdown() {
-    return state == GameState.playing && !isResetting() && !dropIn && !isSolved();
+    return state == GameState.playing && !isResetting() && puzzleState != PuzzleState.dropIn && !isSolved();
+  }
+
+  void dropOut() {
+    puzzleState = PuzzleState.dropOut;
   }
 }
