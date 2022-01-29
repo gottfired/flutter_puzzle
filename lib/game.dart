@@ -15,13 +15,13 @@ class Game {
   Puzzle? puzzle;
   GameState state = GameState.startScreen;
 
-  int currentPuzzleSize = 2;
-  int currentLevel = 1;
+  int currentLevel = 0;
+  int currentShuffleCount = 1;
 
   bool dropIn = false;
 
   void start() {
-    puzzle = Puzzle(currentPuzzleSize);
+    solved();
     state = GameState.playing;
   }
 
@@ -62,14 +62,26 @@ class Game {
     return puzzle == null && dropIn;
   }
 
-  void solved() {
-    currentLevel++;
+  int sizeFromLevel() {
     if (alwaysSmallPuzzles) {
-      currentPuzzleSize = 2;
-    } else {
-      currentPuzzleSize = 2 + currentLevel ~/ 4;
+      return 2;
     }
 
-    puzzle = Puzzle(currentPuzzleSize);
+    const sizeIncreaseAtLevel = 9;
+    const maxSize = 4;
+    return min(2 + currentLevel ~/ sizeIncreaseAtLevel, maxSize);
+  }
+
+  void solved() {
+    final currentSize = sizeFromLevel();
+    currentLevel++;
+    final newSize = sizeFromLevel();
+    if (newSize > currentSize) {
+      currentShuffleCount = 1;
+    }
+
+    puzzle = Puzzle(newSize, currentShuffleCount);
+
+    currentShuffleCount++;
   }
 }

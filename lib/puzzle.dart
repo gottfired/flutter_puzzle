@@ -3,32 +3,35 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_puzzle/config.dart';
 
-const shuffleCount = 20;
-
 class Puzzle {
   final List<int> tiles = [];
   final List<int> _empty;
   final int size;
   late final double screenSize;
 
-  Puzzle(this.size) : _empty = [size - 1, size - 1] {
-    for (int i = 0; i < size * size - 1; i++) {
-      tiles.add(i + 1);
-    }
-
+  Puzzle(this.size, int shuffleCount) : _empty = [size - 1, size - 1] {
     screenSize = size * tileSize + 2 * puzzleBorderSize;
-
-    // Empty is marked with 0
-    tiles.add(0);
+    reset();
 
     while (isSolved()) {
-      shuffle();
+      reset();
+      shuffle(shuffleCount);
     }
 
     _debugOutput();
   }
 
-  void shuffle() {
+  void reset() {
+    tiles.clear();
+    for (int i = 0; i < size * size - 1; i++) {
+      tiles.add(i + 1);
+    }
+
+// Empty is marked with 0
+    tiles.add(0);
+  }
+
+  void shuffle(int shuffleCount) {
     for (var i = 0; i < shuffleCount; ++i) {
       final xOrY = Random().nextInt(2);
       if (xOrY == 0) {
