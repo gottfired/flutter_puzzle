@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
@@ -43,6 +44,7 @@ class _MainPageState extends State<MainPage> {
   final _game = Game();
   double? puzzleTop = 0;
   double puzzleRotation = 0;
+  double timerValue = 0;
 
   void setPuzzleTop(double? top) {
     // debugPrint("new top $top");
@@ -54,6 +56,8 @@ class _MainPageState extends State<MainPage> {
     setPuzzleTop(_game.puzzleTop(context));
     puzzleRotation = _game.puzzleRotation();
 
+    final screenSize = MediaQuery.of(context).size;
+
     return Scaffold(
       // appBar: AppBar(
       //   title: Text(widget.title),
@@ -62,12 +66,39 @@ class _MainPageState extends State<MainPage> {
         alignment: Alignment.center,
         children: [
           Background(),
-          // const Countdown(seconds: 10),
-          if (_game.state == GameState.startScreen)
+          if (_game.showCountdown())
+            Positioned(
+                top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 50,
+                child: Row(
+                  children: [
+                    Text(
+                      timerValue.toInt().toString(),
+                      style: const TextStyle(
+                        fontSize: 40,
+                        fontWeight: FontWeight.bold,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Text(
+                      (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
+                      style: const TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        fontFeatures: [FontFeature.tabularFigures()],
+                      ),
+                    ),
+                  ],
+                )),
+          if (_game.state == GameState.startScreen || _game.state == GameState.gameOver)
             ElevatedButton(
                 onPressed: () {
                   setState(() {
-                    _game.start();
+                    _game.start((value) {
+                      setState(() {
+                        timerValue = value;
+                      });
+                    });
                     setPuzzleTop(_game.puzzleTop(context));
                   });
                 },
@@ -86,10 +117,11 @@ class _MainPageState extends State<MainPage> {
               child: Stack(
                 clipBehavior: Clip.none,
                 children: [
-                  Container(
-                    width: _game.puzzle?.screenSize ?? 0,
-                    height: _game.puzzle?.screenSize ?? 0,
-                    // color: Colors.green,
+                  // Needed for properly centering the puzzle. Stays in center
+                  // during puzzle drop in/out phases
+                  SizedBox(
+                    width: _game.getPuzzleScreenSize(),
+                    height: _game.getPuzzleScreenSize(),
                   ),
                   AnimatedPositioned(
                     duration: Duration(milliseconds: _game.isResetting() ? 0 : dropInAnimMs),
@@ -123,7 +155,7 @@ class _MainPageState extends State<MainPage> {
                                     Timer(const Duration(milliseconds: dropInAnimMs + resetMs), () {
                                       setState(() {
                                         // debugPrint("### dropIn");
-                                        _game.solved();
+                                        _game.startLevel();
                                         setPuzzleTop(_game.puzzleTop(context));
                                         puzzleRotation = _game.puzzleRotation();
                                       });
