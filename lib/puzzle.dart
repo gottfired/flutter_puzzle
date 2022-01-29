@@ -9,11 +9,14 @@ class Puzzle {
   final List<int> tiles = [];
   final List<int> _empty;
   final int size;
+  late final double screenSize;
 
   Puzzle(this.size) : _empty = [size - 1, size - 1] {
     for (int i = 0; i < size * size - 1; i++) {
       tiles.add(i + 1);
     }
+
+    screenSize = size * tileSize + 2 * puzzleBorderSize;
 
     // Empty is marked with 0
     tiles.add(0);

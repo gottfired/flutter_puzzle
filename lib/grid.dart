@@ -35,7 +35,7 @@ class Tile extends StatelessWidget {
             color: Colors.white,
             border: Border.all(
               color: Colors.blue,
-              width: 1,
+              width: tileBorderSize,
             ),
             borderRadius: BorderRadius.circular(tileSize / 5)),
         child: Center(
@@ -81,7 +81,7 @@ class Grid extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(
           color: Colors.blue,
-          width: 4,
+          width: puzzleBorderSize,
         ),
         borderRadius: BorderRadius.circular(tileSize / 5),
       ),
