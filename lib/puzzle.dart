@@ -7,10 +7,12 @@ class Puzzle {
   final List<int> tiles = [];
   final List<int> _empty;
   final int size;
-  late final double screenSize;
+
+  static double getScreenSize(int puzzleHeight) {
+    return puzzleHeight * tileSize + 2 * puzzleBorderSize;
+  }
 
   Puzzle(this.size, int shuffleCount) : _empty = [size - 1, size - 1] {
-    screenSize = size * tileSize + 2 * puzzleBorderSize;
     reset();
 
     while (isSolved()) {

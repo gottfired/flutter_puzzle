@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/config.dart';
-
+import 'dart:async';
 import 'puzzle.dart';
 
 enum GameState {
@@ -20,13 +20,25 @@ class Game {
 
   bool dropIn = false;
 
-  void start() {
-    solved();
+  Timer? _timer;
+  double _timerValue = 0;
+
+  Function(double value)? onTimerTick;
+
+  void start(Function(double value)? onTimerTick) {
+    currentLevel = 0;
+    currentShuffleCount = 1;
+
+    startLevel();
     state = GameState.playing;
+    this.onTimerTick = onTimerTick;
   }
 
   void move(int number) {
     puzzle?.move(number);
+    if (puzzle?.isSolved() == true) {
+      _timer?.cancel();
+    }
   }
 
   bool isSolved() {
@@ -37,7 +49,7 @@ class Game {
     final size = MediaQuery.of(context).size;
 
     if (puzzle?.isSolved() == true) {
-      return size.height / 2 + puzzle!.screenSize;
+      return size.height / 2 + getPuzzleScreenSize();
     } else if (dropIn) {
       return -size.height * 0.8;
     }
@@ -46,8 +58,13 @@ class Game {
   }
 
   double puzzleRotation() {
-    if (puzzle?.isSolved() == true || dropIn) {
-      return Random().nextDouble() - 0.5;
+    if (puzzle?.isSolved() == true) {
+      return Random().nextDouble() * 3 - 1.5;
+    }
+
+    if (dropIn) {
+      final v = Random().nextDouble() - 0.5;
+      return v + v.sign;
     }
 
     return 0;
@@ -72,7 +89,7 @@ class Game {
     return min(2 + currentLevel ~/ sizeIncreaseAtLevel, maxSize);
   }
 
-  void solved() {
+  void startLevel() {
     final currentSize = sizeFromLevel();
     currentLevel++;
     final newSize = sizeFromLevel();
@@ -84,5 +101,32 @@ class Game {
     puzzle = Puzzle(newSize, currentShuffleCount);
 
     currentShuffleCount++;
+
+    _timerValue = 10;
+    _timer?.cancel();
+    _timer = Timer.periodic(
+      const Duration(milliseconds: 10),
+      (Timer timer) {
+        if (_timerValue <= 0) {
+          timer.cancel();
+          state = GameState.gameOver;
+        } else {
+          _timerValue -= 0.01;
+          if (_timerValue < 0) {
+            _timerValue = 0;
+          }
+        }
+
+        onTimerTick?.call(_timerValue);
+      },
+    );
+  }
+
+  double getPuzzleScreenSize() {
+    return puzzle != null ? Puzzle.getScreenSize(puzzle!.size) : 0;
+  }
+
+  bool showCountdown() {
+    return state == GameState.playing && !isResetting() && !dropIn && !isSolved();
   }
 }

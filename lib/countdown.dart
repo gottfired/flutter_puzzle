@@ -7,20 +7,19 @@ class Countdown extends StatefulWidget {
   const Countdown({Key? key, required this.seconds}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _CountdownState();
+  State<StatefulWidget> createState() => _CountdownState(seconds);
 }
 
 class _CountdownState extends State<Countdown> {
   Timer? _timer;
   double _value = 0;
 
-  _CountdownState() {
-    // _value = widget.seconds.toDouble();
-    // _value = widget.seconds.toDouble();
+  _CountdownState(int seconds) {
+    startTimer(seconds);
   }
 
-  void startTimer() {
-    _value = widget.seconds.toDouble();
+  void startTimer(int seconds) {
+    _value = seconds.toDouble();
     _timer = Timer.periodic(
       const Duration(milliseconds: 10),
       (Timer timer) => setState(
@@ -46,16 +45,14 @@ class _CountdownState extends State<Countdown> {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        ElevatedButton(
-          onPressed: () {
-            startTimer();
-          },
-          child: const Text("start"),
+    return Container(
+      child: Text(
+        _value.toInt().toString(),
+        style: TextStyle(
+          fontSize: 40,
+          fontWeight: FontWeight.bold,
         ),
-        Text(_value.toStringAsFixed(2)),
-      ],
+      ),
     );
   }
 }
