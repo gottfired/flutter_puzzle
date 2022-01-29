@@ -3,6 +3,7 @@ import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
+import 'game.dart';
 import 'grid.dart';
 
 void main() {
@@ -36,7 +37,7 @@ class MainPage extends StatefulWidget {
 }
 
 class _MainPageState extends State<MainPage> {
-  final Puzzle _puzzle = Puzzle(4);
+  final _game = Game();
 
   @override
   Widget build(BuildContext context) {
@@ -56,11 +57,20 @@ class _MainPageState extends State<MainPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // const Countdown(seconds: 10),
-              Grid(_puzzle, (int number) {
-                setState(() {
-                  _puzzle.move(number);
-                });
-              })
+              if (_game.state == GameState.startScreen)
+                ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        _game.start();
+                      });
+                    },
+                    child: const Text("Start")),
+              if (_game.state == GameState.playing)
+                Grid(_game.puzzle!, (int number) {
+                  setState(() {
+                    _game.move(number);
+                  });
+                })
             ],
           ),
         ),

@@ -18,20 +18,27 @@ class Puzzle {
     // Empty is marked with 0
     tiles.add(0);
 
-    shuffle();
-    debugOutput();
+    while (isSolved()) {
+      shuffle();
+    }
+
+    _debugOutput();
   }
 
   void shuffle() {
     for (var i = 0; i < shuffleCount; ++i) {
       final xOrY = Random().nextInt(2);
       if (xOrY == 0) {
+        // Fill array with empty x values
         final empty = [for (var j = 0; j < size - 1; j++) j < _empty[0] ? j : j + 1];
         final newEmpty = empty[Random().nextInt(size - 1)];
+        // Move row starting from newEmpty value
         _moveRow(newEmpty);
       } else {
+        // Fill array with empty y values
         final empty = [for (var j = 0; j < size - 1; j++) j < _empty[1] ? j : j + 1];
         final newEmpty = empty[Random().nextInt(size - 1)];
+        // Move column starting from newEmpty value
         _moveColumn(newEmpty);
       }
     }
@@ -43,17 +50,27 @@ class Puzzle {
     }
 
     // find coords of number
-    final coords = getCoords(number);
+    final coords = _getCoords(number);
     final x = coords[0];
     final y = coords[1];
 
     if (x == _empty[0]) {
       _moveColumn(y);
-      debugOutput();
+      _debugOutput();
     } else if (y == _empty[1]) {
       _moveRow(x);
-      debugOutput();
+      _debugOutput();
     }
+  }
+
+  bool isSolved() {
+    for (int i = 0; i < size * size - 1; i++) {
+      if (tiles[i] != i + 1) {
+        return false;
+      }
+    }
+
+    return true;
   }
 
   void _moveRow(int newX) {
@@ -94,7 +111,7 @@ class Puzzle {
     tiles[newY * size + x] = 0;
   }
 
-  List<int> getCoords(int number) {
+  List<int> _getCoords(int number) {
     for (var y = 0; y < size; ++y) {
       for (var x = 0; x < size; ++x) {
         if (tiles[y * size + x] == number) {
@@ -110,7 +127,7 @@ class Puzzle {
       return false;
     }
 
-    final coords = getCoords(number);
+    final coords = _getCoords(number);
     return coords[1] == _empty[1];
   }
 
@@ -119,12 +136,12 @@ class Puzzle {
       return false;
     }
 
-    final coords = getCoords(number);
+    final coords = _getCoords(number);
     return coords[0] == _empty[0];
   }
 
   // Debug print to console
-  void debugOutput() {
+  void _debugOutput() {
     if (!debugEnabled) {
       return;
     }
