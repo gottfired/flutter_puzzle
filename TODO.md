@@ -1,3 +1,4 @@
--   wrap in gesture detector
--   store puzzle state somewhere above grid
--   use AnimatedPositioned to render tiles
+-   add scoring depending on time
+-   add countdown
+-   add red colored tile matching for time bonus
+-   add green colored tile matching for level reset
