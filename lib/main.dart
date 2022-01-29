@@ -45,7 +45,7 @@ class _MainPageState extends State<MainPage> {
   double puzzleRotation = 0;
 
   void setPuzzleTop(double? top) {
-    debugPrint("new top $top");
+    // debugPrint("new top $top");
     puzzleTop = top;
   }
 
@@ -92,7 +92,7 @@ class _MainPageState extends State<MainPage> {
                     // color: Colors.green,
                   ),
                   AnimatedPositioned(
-                    duration: Duration(milliseconds: _game.isResetting() ? 0 : 200),
+                    duration: Duration(milliseconds: _game.isResetting() ? 0 : dropInAnimMs),
                     top: puzzleTop,
                     child: AnimatedRotation(
                       duration: const Duration(milliseconds: dropInAnimMs),
@@ -104,7 +104,7 @@ class _MainPageState extends State<MainPage> {
                                 setState(() {
                                   _game.move(number);
                                   if (_game.isSolved()) {
-                                    debugPrint("### dropOut");
+                                    // debugPrint("### dropOut");
                                     // Drop out
                                     setPuzzleTop(_game.puzzleTop(context));
                                     puzzleRotation = _game.puzzleRotation();
@@ -112,7 +112,7 @@ class _MainPageState extends State<MainPage> {
                                     // Reset after drop out
                                     Timer(const Duration(milliseconds: dropInAnimMs), () {
                                       setState(() {
-                                        debugPrint("### reset");
+                                        // debugPrint("### reset");
                                         _game.reset();
                                         setPuzzleTop(_game.puzzleTop(context));
                                         puzzleRotation = _game.puzzleRotation();
@@ -122,7 +122,7 @@ class _MainPageState extends State<MainPage> {
                                     // Drop in
                                     Timer(const Duration(milliseconds: dropInAnimMs + resetMs), () {
                                       setState(() {
-                                        debugPrint("### dropIn");
+                                        // debugPrint("### dropIn");
                                         _game.solved();
                                         setPuzzleTop(_game.puzzleTop(context));
                                         puzzleRotation = _game.puzzleRotation();
@@ -132,7 +132,7 @@ class _MainPageState extends State<MainPage> {
                                     // Finish drop in
                                     Timer(const Duration(milliseconds: 2 * dropInAnimMs + resetMs), () {
                                       setState(() {
-                                        debugPrint("### dropInFinished");
+                                        // debugPrint("### dropInFinished");
                                         _game.dropIn = false;
                                         setPuzzleTop(_game.puzzleTop(context));
                                         puzzleRotation = _game.puzzleRotation();

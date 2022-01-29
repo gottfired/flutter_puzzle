@@ -39,7 +39,7 @@ class Game {
     if (puzzle?.isSolved() == true) {
       return size.height / 2 + puzzle!.screenSize;
     } else if (dropIn) {
-      return -size.height * 0.7;
+      return -size.height * 0.8;
     }
 
     return 0;
@@ -80,6 +80,7 @@ class Game {
       currentShuffleCount = 1;
     }
 
+    debugPrint("New puzzle size: $newSize, shuffleCount $currentShuffleCount");
     puzzle = Puzzle(newSize, currentShuffleCount);
 
     currentShuffleCount++;
