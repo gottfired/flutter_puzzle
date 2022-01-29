@@ -51,6 +51,33 @@ class _MainPageState extends State<MainPage> {
     puzzleTop = top;
   }
 
+  _buildCountdown(Size screenSize) {
+    return Positioned(
+      top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 50,
+      child: Row(
+        children: [
+          Text(
+            timerValue.toInt().toString(),
+            style: const TextStyle(
+              fontSize: 40,
+              fontWeight: FontWeight.bold,
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Text(
+            (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              fontFeatures: [FontFeature.tabularFigures()],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     setPuzzleTop(_game.puzzleTop(context));
@@ -59,37 +86,11 @@ class _MainPageState extends State<MainPage> {
     final screenSize = MediaQuery.of(context).size;
 
     return Scaffold(
-      // appBar: AppBar(
-      //   title: Text(widget.title),
-      // ),
       body: Stack(
         alignment: Alignment.center,
         children: [
           Background(),
-          if (_game.showCountdown())
-            Positioned(
-                top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 50,
-                child: Row(
-                  children: [
-                    Text(
-                      timerValue.toInt().toString(),
-                      style: const TextStyle(
-                        fontSize: 40,
-                        fontWeight: FontWeight.bold,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                    const SizedBox(width: 10),
-                    Text(
-                      (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
-                      style: const TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        fontFeatures: [FontFeature.tabularFigures()],
-                      ),
-                    ),
-                  ],
-                )),
+          if (_game.showCountdown()) _buildCountdown(screenSize),
           if (_game.state == GameState.startScreen || _game.state == GameState.gameOver)
             ElevatedButton(
                 onPressed: () {
@@ -132,50 +133,22 @@ class _MainPageState extends State<MainPage> {
                       child: _game.puzzle != null
                           ? Grid(
                               _game.puzzle!,
-                              (int number) {
-                                setState(() {
-                                  _game.move(number);
-                                  if (_game.isSolved()) {
-                                    Timer(Duration(milliseconds: (slideTimeMs * 0.7).toInt()), () {
-                                      setState(() {
-                                        // Drop out
-                                        _game.dropOut();
-                                        setPuzzleTop(_game.puzzleTop(context));
-                                        puzzleRotation = _game.puzzleRotation();
+                              (int number) async {
+                                setState(() => _game.move(number));
 
-                                        // Reset after drop out
-                                        Timer(const Duration(milliseconds: dropInAnimMs), () {
-                                          setState(() {
-                                            // debugPrint("### reset");
-                                            _game.reset();
-                                            setPuzzleTop(_game.puzzleTop(context));
-                                            puzzleRotation = _game.puzzleRotation();
+                                if (_game.isSolved()) {
+                                  await Future.delayed(Duration(milliseconds: (slideTimeMs * 0.7).toInt()));
+                                  setState(() => _game.dropOut());
 
-                                            // Drop in
-                                            Timer(const Duration(milliseconds: resetMs), () {
-                                              setState(() {
-                                                // debugPrint("### dropIn");
-                                                _game.startLevel();
-                                                setPuzzleTop(_game.puzzleTop(context));
-                                                puzzleRotation = _game.puzzleRotation();
+                                  await Future.delayed(const Duration(milliseconds: dropInAnimMs));
+                                  setState(() => _game.reset());
 
-                                                // Finish drop in
-                                                Timer(const Duration(milliseconds: dropInAnimMs), () {
-                                                  setState(() {
-                                                    // debugPrint("### dropInFinished");
-                                                    _game.puzzleState = PuzzleState.playing;
-                                                    setPuzzleTop(_game.puzzleTop(context));
-                                                    puzzleRotation = _game.puzzleRotation();
-                                                  });
-                                                });
-                                              });
-                                            });
-                                          });
-                                        });
-                                      });
-                                    });
-                                  }
-                                });
+                                  await Future.delayed(const Duration(milliseconds: resetMs));
+                                  setState(() => _game.startLevel());
+
+                                  await Future.delayed(const Duration(milliseconds: dropInAnimMs));
+                                  setState(() => _game.puzzleState = PuzzleState.playing);
+                                }
                               },
                             )
                           : const SizedBox(),
