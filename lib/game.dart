@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/config.dart';
 import 'dart:async';
 import 'puzzle.dart';
+import 'config.dart';
 
 enum GameState {
   startScreen,
@@ -28,6 +29,14 @@ class Game {
 
   Timer? _timer;
   double _timerValue = 0;
+
+  int gameOverTime = 0;
+
+  static late final Game instance;
+
+  Game() {
+    instance = this;
+  }
 
   Function(double value)? onTimerTick;
 
@@ -87,6 +96,11 @@ class Game {
     return puzzle == null && puzzleState == PuzzleState.dropIn;
   }
 
+  void _gameOver() {
+    state = GameState.gameOver;
+    gameOverTime = DateTime.now().millisecondsSinceEpoch;
+  }
+
   int sizeFromLevel() {
     if (alwaysSmallPuzzles) {
       return 2;
@@ -110,14 +124,14 @@ class Game {
 
     currentShuffleCount++;
 
-    _timerValue = 10;
+    _timerValue = levelDurationSeconds;
     _timer?.cancel();
     _timer = Timer.periodic(
       const Duration(milliseconds: 10),
       (Timer timer) {
         if (_timerValue <= 0) {
           timer.cancel();
-          state = GameState.gameOver;
+          _gameOver();
         } else {
           _timerValue -= 0.01;
           if (_timerValue < 0) {

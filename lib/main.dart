@@ -3,8 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
-import 'package:flutter_puzzle/countdown.dart';
-import 'package:flutter_puzzle/puzzle.dart';
+import 'package:flutter_puzzle/game_over.dart';
 
 import 'config.dart';
 import 'game.dart';
@@ -91,7 +90,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           Background(),
           if (_game.showCountdown()) _buildCountdown(screenSize),
-          if (_game.state == GameState.startScreen || _game.state == GameState.gameOver)
+          if (_game.state == GameState.startScreen)
             ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -113,7 +112,7 @@ class _MainPageState extends State<MainPage> {
                       fontSize: 40,
                       color: Colors.white,
                     ))),
-          if (_game.state == GameState.playing)
+          if (_game.state == GameState.playing || _game.state == GameState.gameOver)
             Center(
               child: Stack(
                 clipBehavior: Clip.none,
@@ -157,6 +156,12 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
             ),
+          if (_game.state == GameState.gameOver)
+            GameOver(() {
+              setState(() {
+                Game.instance.state = GameState.startScreen;
+              });
+            }),
         ],
       ),
     );

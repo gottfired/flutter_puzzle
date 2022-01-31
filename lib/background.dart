@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:flutter_puzzle/game.dart';
 
 class BackgroundPainter extends CustomPainter {
   final double value;
@@ -10,7 +11,17 @@ class BackgroundPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    // Todo: Wrap value in 0, 2*PI for precision
+    if (Game.instance.state == GameState.startScreen) {
+      final paint = Paint()
+        ..color = Colors.white
+        ..strokeWidth = 5
+        ..strokeCap = StrokeCap.round;
+
+      final Path path = Path();
+      path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+      canvas.drawPath(path, paint);
+      return;
+    }
 
     var paint = Paint()
       ..color = Colors.red
@@ -71,6 +82,12 @@ class _BackgroundState extends State<Background> {
     });
 
     ticker.start();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    ticker.dispose();
   }
 
   @override
