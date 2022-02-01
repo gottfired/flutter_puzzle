@@ -14,7 +14,7 @@ class GameOverPainter extends CustomPainter {
     final center = Offset(size.width / 2, size.height / 2);
     // below one is big circle and instead of this circle you can draw your shape here.
     final paint = Paint()
-      ..color = Colors.white
+      ..color = Colors.blue.shade600
       ..strokeWidth = 5
       ..strokeCap = StrokeCap.round;
 

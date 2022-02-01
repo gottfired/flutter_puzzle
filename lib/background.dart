@@ -13,7 +13,7 @@ class BackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (Game.instance.state == GameState.startScreen) {
       final paint = Paint()
-        ..color = Colors.white
+        ..color = Colors.blue.shade50
         ..strokeWidth = 5
         ..strokeCap = StrokeCap.round;
 
@@ -32,7 +32,7 @@ class BackgroundPainter extends CustomPainter {
     final length = min(size.width, size.height);
 
     // Paint line moving up/down
-    final range = size.width / 4;
+    final range = size.height / 3;
     final y = size.height / 2 + sin(value) * range;
     canvas.drawLine(Offset(0, y), Offset(size.width, y), paint);
 
