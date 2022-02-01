@@ -15,12 +15,12 @@ class Puzzle {
   Puzzle(this.size, int shuffleCount) : _empty = [size - 1, size - 1] {
     reset();
 
-    while (isSolved()) {
-      reset();
-      shuffle(shuffleCount);
+    if (shuffleCount > 0) {
+      while (isSolved()) {
+        reset();
+        shuffle(shuffleCount);
+      }
     }
-
-    _debugOutput();
   }
 
   void reset() {
