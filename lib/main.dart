@@ -88,7 +88,7 @@ class _MainPageState extends State<MainPage> {
       body: Stack(
         alignment: Alignment.center,
         children: [
-          Background(),
+          const Background(),
           if (_game.showCountdown()) _buildCountdown(screenSize),
           if (_game.state == GameState.startScreen)
             ElevatedButton(

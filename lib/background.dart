@@ -59,10 +59,12 @@ class BackgroundPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter painter) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 class Background extends StatefulWidget {
+  const Background({Key? key}) : super(key: key);
+
   @override
   State<Background> createState() => _BackgroundState();
 }

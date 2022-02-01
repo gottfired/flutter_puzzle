@@ -26,15 +26,15 @@ class GameOverPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(CustomPainter painter) => true;
+  bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
 
 class GameOver extends StatefulWidget {
   final Function() onGameOverFinished;
-  GameOver(this.onGameOverFinished);
+  const GameOver(this.onGameOverFinished, {Key? key}) : super(key: key);
 
   @override
-  State<GameOver> createState() => _GameOverState(onGameOverFinished);
+  State<GameOver> createState() => _GameOverState();
 }
 
 class _GameOverState extends State<GameOver> {
@@ -42,9 +42,8 @@ class _GameOverState extends State<GameOver> {
   double time = 0;
   double dt = 0;
   double delta = 0;
-  final Function() onGameOverFinished;
 
-  _GameOverState(this.onGameOverFinished) {
+  _GameOverState() {
     ticker = Ticker((duration) {
       final current = duration.inMilliseconds / 1000.0;
       setState(() {
@@ -54,7 +53,7 @@ class _GameOverState extends State<GameOver> {
         delta = (DateTime.now().millisecondsSinceEpoch - Game.instance.gameOverTime) / 1000;
         if (delta > 1.1) {
           ticker.stop();
-          onGameOverFinished();
+          widget.onGameOverFinished();
         }
       });
     });
