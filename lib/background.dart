@@ -3,26 +3,15 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_puzzle/game.dart';
+import 'package:flutter_puzzle/particle.dart';
 
 class BackgroundPainter extends CustomPainter {
   final double value;
+  ParticleSystem? particles;
 
-  BackgroundPainter({required this.value});
+  BackgroundPainter({required this.value, this.particles});
 
-  @override
-  void paint(Canvas canvas, Size size) {
-    if (Game.instance.state == GameState.startScreen) {
-      final paint = Paint()
-        ..color = Colors.blue.shade50
-        ..strokeWidth = 5
-        ..strokeCap = StrokeCap.round;
-
-      final Path path = Path();
-      path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-      canvas.drawPath(path, paint);
-      return;
-    }
-
+  void dummyPaint(Canvas canvas, Size size) {
     var paint = Paint()
       ..color = Colors.red
       ..strokeWidth = 50
@@ -58,6 +47,51 @@ class BackgroundPainter extends CustomPainter {
     canvas.drawCircle(Offset(center.dx + r3 * cos(2 * value), center.dy + r3 * sin(2 * value)), 20, paint);
   }
 
+  void paintPulsingCenter(Canvas canvas, Size size) {
+    var paint = Paint()
+      ..color = Colors.red
+      ..strokeWidth = 50
+      ..strokeCap = StrokeCap.round;
+
+    final center = Offset(size.width / 2, size.height / 2);
+    final length = min(size.width, size.height);
+
+    paint = Paint()
+      ..color = Colors.blue.shade50
+      ..strokeWidth = 5
+      ..strokeCap = StrokeCap.round;
+
+    final rMin = length * 0.3;
+    final rMax = length * 0.35;
+    canvas.drawCircle(Offset(center.dx, center.dy), rMin + (rMax - rMin) * sin(4 * value), paint);
+  }
+
+  void paintParticles(Canvas canvas, Size size) {
+    if (particles == null) {
+      return;
+    }
+
+    particles!.draw2d(canvas, size);
+  }
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (Game.instance.state == GameState.startScreen) {
+      final paint = Paint()
+        ..color = Colors.blue.shade50
+        ..strokeWidth = 5
+        ..strokeCap = StrokeCap.round;
+
+      final Path path = Path();
+      path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
+      canvas.drawPath(path, paint);
+      return;
+    }
+
+    paintParticles(canvas, size);
+    paintPulsingCenter(canvas, size);
+  }
+
   @override
   bool shouldRepaint(CustomPainter oldDelegate) => true;
 }
@@ -74,14 +108,19 @@ class _BackgroundState extends State<Background> {
   double time = 0;
   double dt = 0;
 
+  ParticleSystem particles = ParticleSystem();
+
   _BackgroundState() {
     ticker = Ticker((duration) {
       setState(() {
         final current = duration.inMilliseconds / 1000.0;
         dt = current - time;
         time = current;
+        particles.tick(time);
       });
     });
+
+    particles.init2dGrid();
 
     ticker.start();
   }
@@ -95,9 +134,10 @@ class _BackgroundState extends State<Background> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+
     return CustomPaint(
       size: size,
-      painter: BackgroundPainter(value: time),
+      painter: BackgroundPainter(value: time, particles: particles),
     );
   }
 }
