@@ -15,7 +15,7 @@ class Tile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
+      onTapDown: (_) {
         onTap(number);
       },
       onVerticalDragStart: (details) {

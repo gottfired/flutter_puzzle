@@ -105,10 +105,7 @@ class Game {
       return 2;
     }
 
-    debugPrint("size from level $currentLevel");
-
     if (currentLevel < 3) {
-      debugPrint("return 2");
       return 2;
     } else if (currentLevel < 6) {
       return Random().nextBool() ? 2 : 3;
@@ -136,22 +133,31 @@ class Game {
   }
 
   double _calculateLevelTime(int size, int shuffleCount) {
+    var time = 20.0;
     switch (size) {
       case 2:
+        // Smaller puzzles are easier
         const base = 3.0;
+        // The more shuffleCount, the more time
         final shuffleBonus = shuffleCount ~/ 2;
-        return min(4.0, base + shuffleBonus);
+        time = min(4.0, base + shuffleBonus);
+        break;
       case 3:
         const base = 5.0;
         final shuffleBonus = shuffleCount ~/ 2;
-        return min(15.0, base + shuffleBonus);
+        time = min(15.0, base + shuffleBonus);
+        break;
       case 4:
         const base = 8.0;
         final shuffleBonus = shuffleCount;
-        return min(60.0, base + shuffleBonus);
+        time = min(60.0, base + shuffleBonus);
+        break;
     }
 
-    return 20.0;
+    // Make first few levels easier
+    final levelBonus = max(0, (4 - currentLevel / 2));
+
+    return time + levelBonus;
   }
 
   void startLevel() {
