@@ -76,7 +76,8 @@ class ParticleSystem {
         particle.originalPosition.y = y;
         particle.originalDistance = particle.position.distanceTo(Vector3.zero());
         // Colors.fromRgba(30, 136, 229, 255, particle.color); // blue
-        Colors.fromRgba(255, 87, 34, 255, particle.color); // orange
+        // Colors.fromRgba(255, 87, 34, 255, particle.color); // orange
+        Colors.fromRgba(255, 50, 50, 255, particle.color);
         particle.size = 50.0;
 
         particles.add(particle);
