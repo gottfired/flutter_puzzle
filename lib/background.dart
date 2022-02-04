@@ -89,7 +89,7 @@ class BackgroundPainter extends CustomPainter {
     }
 
     paintParticles(canvas, size);
-    paintPulsingCenter(canvas, size);
+    // paintPulsingCenter(canvas, size);
   }
 
   @override

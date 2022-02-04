@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/stateTransition.dart';
@@ -52,29 +53,42 @@ class _MainPageState extends State<MainPage> {
 
   _buildCountdown(Size screenSize) {
     return Positioned(
-      top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 50,
-      child: Row(
-        children: [
-          Text(
-            timerValue.toInt().toString(),
-            style: const TextStyle(
-              fontSize: 40,
-              fontWeight: FontWeight.bold,
-              fontFamily: "AzeretMono",
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
+      top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 70,
+      child: Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          border: Border.all(
+            color: Colors.blue,
+            width: 6,
           ),
-          const SizedBox(width: 10),
-          Text(
-            (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
-            style: const TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              fontFamily: "AzeretMono",
-              fontFeatures: [FontFeature.tabularFigures()],
-            ),
+          color: Colors.white,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+          child: Row(
+            children: [
+              Text(
+                timerValue.toInt().toString(),
+                style: const TextStyle(
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "AzeretMono",
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
+                style: const TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: "AzeretMono",
+                  fontFeatures: [FontFeature.tabularFigures()],
+                ),
+              ),
+            ],
           ),
-        ],
+        ),
       ),
     );
   }
@@ -93,28 +107,31 @@ class _MainPageState extends State<MainPage> {
           const Background(),
           if (_game.showCountdown()) _buildCountdown(screenSize),
           if (_game.state == GameState.startScreen) ...[
-            ElevatedButton(
-                onPressed: () {
-                  debugPrint("start pressed");
-                  setState(() {
-                    _game.start((value) {
-                      setState(() {
-                        timerValue = value;
-                      });
+            AnimatedButton(
+              color: Colors.blue,
+              height: 100,
+              child: const Text(
+                'Start',
+                style: TextStyle(
+                  fontSize: 50,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              onPressed: () {
+                debugPrint("start pressed");
+                setState(() {
+                  _game.start((value) {
+                    setState(() {
+                      timerValue = value;
                     });
-                    setPuzzleTop(_game.puzzleTop(context));
                   });
-                },
-                style: ElevatedButton.styleFrom(
-                    fixedSize: const Size(200, 100),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(100.0),
-                    )),
-                child: const Text("Start",
-                    style: TextStyle(
-                      fontSize: 40,
-                      color: Colors.white,
-                    ))),
+                  setPuzzleTop(_game.puzzleTop(context));
+                });
+              },
+              enabled: true,
+              shadowDegree: ShadowDegree.light,
+            ),
           ],
           if (_game.state == GameState.playing)
             Center(
