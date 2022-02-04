@@ -9,7 +9,6 @@ import 'config.dart';
 enum GameState {
   startScreen,
   playing,
-  gameOver,
 }
 
 enum PuzzleState {
@@ -21,6 +20,7 @@ enum PuzzleState {
 class Game {
   Puzzle? puzzle;
   GameState state = GameState.startScreen;
+  GameState? nextState;
 
   int currentLevel = 0;
 
@@ -29,7 +29,7 @@ class Game {
   Timer? _timer;
   double _timerValue = 0;
 
-  int gameOverTime = 0;
+  int? transitionStarted;
 
   static late final Game instance;
 
@@ -41,11 +41,12 @@ class Game {
 
   void start(Function(double value)? onTimerTick) {
     currentLevel = 0;
-
-    debugPrint("start");
     startLevel();
-    state = GameState.playing;
     this.onTimerTick = onTimerTick;
+
+    debugPrint("Game.start");
+
+    transitionToState(GameState.playing);
   }
 
   void move(int number) {
@@ -95,9 +96,16 @@ class Game {
     return puzzle == null && puzzleState == PuzzleState.dropIn;
   }
 
-  void _gameOver() {
-    state = GameState.gameOver;
-    gameOverTime = DateTime.now().millisecondsSinceEpoch;
+  void transitionToState(GameState state) {
+    nextState = state;
+    transitionStarted = DateTime.now().millisecondsSinceEpoch;
+  }
+
+  void performTransition() {
+    if (nextState != null) {
+      state = nextState!;
+      nextState = null;
+    }
   }
 
   int _sizeFromLevel() {
@@ -187,7 +195,7 @@ class Game {
       (Timer timer) {
         if (_timerValue <= 0) {
           timer.cancel();
-          _gameOver();
+          transitionToState(GameState.startScreen);
         } else {
           _timerValue -= 0.01;
           if (_timerValue < 0) {

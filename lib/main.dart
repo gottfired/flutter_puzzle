@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
-import 'package:flutter_puzzle/game_over.dart';
+import 'package:flutter_puzzle/stateTransition.dart';
 
 import 'config.dart';
 import 'game.dart';
@@ -60,6 +60,7 @@ class _MainPageState extends State<MainPage> {
             style: const TextStyle(
               fontSize: 40,
               fontWeight: FontWeight.bold,
+              fontFamily: "AzeretMono",
               fontFeatures: [FontFeature.tabularFigures()],
             ),
           ),
@@ -69,6 +70,7 @@ class _MainPageState extends State<MainPage> {
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
+              fontFamily: "AzeretMono",
               fontFeatures: [FontFeature.tabularFigures()],
             ),
           ),
@@ -93,6 +95,7 @@ class _MainPageState extends State<MainPage> {
           if (_game.state == GameState.startScreen) ...[
             ElevatedButton(
                 onPressed: () {
+                  debugPrint("start pressed");
                   setState(() {
                     _game.start((value) {
                       setState(() {
@@ -113,7 +116,7 @@ class _MainPageState extends State<MainPage> {
                       color: Colors.white,
                     ))),
           ],
-          if (_game.state == GameState.playing || _game.state == GameState.gameOver)
+          if (_game.state == GameState.playing)
             Center(
               child: Stack(
                 clipBehavior: Clip.none,
@@ -157,12 +160,15 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
             ),
-          if (_game.state == GameState.gameOver)
-            GameOver(() {
+          if (_game.transitionStarted != null) ...[
+            StateTransition((state) {
               setState(() {
-                Game.instance.state = GameState.startScreen;
+                if (state == TransitionState.stateChange) {
+                  _game.performTransition();
+                }
               });
             }),
+          ]
         ],
       ),
     );

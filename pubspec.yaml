@@ -80,6 +80,10 @@ flutter:
           weight: 300
         - asset: fonts/Rowdies-Bold.ttf
           weight: 700
+    - family: AzeretMono
+      fonts:
+        - asset: fonts/AzeretMono-Bold.ttf
+          weight: 700
 
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
