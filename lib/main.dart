@@ -22,8 +22,8 @@ class App extends StatelessWidget {
     return MaterialApp(
       title: 'Pushtrix',
       theme: ThemeData(
-        // This is the theme of your application.
         primarySwatch: Colors.blue,
+        fontFamily: "Rowdies",
       ),
       home: const MainPage(title: 'Pushtrix'),
     );
@@ -90,7 +90,7 @@ class _MainPageState extends State<MainPage> {
         children: [
           const Background(),
           if (_game.showCountdown()) _buildCountdown(screenSize),
-          if (_game.state == GameState.startScreen)
+          if (_game.state == GameState.startScreen) ...[
             ElevatedButton(
                 onPressed: () {
                   setState(() {
@@ -112,6 +112,7 @@ class _MainPageState extends State<MainPage> {
                       fontSize: 40,
                       color: Colors.white,
                     ))),
+          ],
           if (_game.state == GameState.playing || _game.state == GameState.gameOver)
             Center(
               child: Stack(
