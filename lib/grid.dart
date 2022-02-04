@@ -32,12 +32,13 @@ class Tile extends StatelessWidget {
         width: tileSize,
         height: tileSize,
         decoration: BoxDecoration(
-            color: Colors.white,
-            border: Border.all(
-              color: Colors.blue,
-              width: tileBorderSize,
-            ),
-            borderRadius: BorderRadius.circular(tileSize / 5)),
+          color: Colors.white,
+          border: Border.all(
+            color: Colors.blue,
+            width: tileBorderSize,
+          ),
+          borderRadius: BorderRadius.circular(tileSize / 5),
+        ),
         child: Center(
           child: Text(
             '$number',
@@ -84,6 +85,14 @@ class Grid extends StatelessWidget {
           width: puzzleBorderSize,
         ),
         borderRadius: BorderRadius.circular(tileSize / 5),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.blue.shade400.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 4,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
       ),
       child: Stack(
         children: [

@@ -55,36 +55,50 @@ class _MainPageState extends State<MainPage> {
     return Positioned(
       top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 70,
       child: Container(
+        width: 120,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10),
-          border: Border.all(
-            color: Colors.blue,
-            width: 6,
-          ),
           color: Colors.white,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.shade400.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 6,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
+          ],
         ),
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          child: Row(
+          child: Column(
             children: [
-              Text(
-                timerValue.toInt().toString(),
-                style: const TextStyle(
-                  fontSize: 30,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "AzeretMono",
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    timerValue.toInt().toString(),
+                    style: TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "AzeretMono",
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  Text(
+                    (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      fontFamily: "AzeretMono",
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 10),
-              Text(
-                (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
-                style: const TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  fontFamily: "AzeretMono",
-                  fontFeatures: [FontFeature.tabularFigures()],
-                ),
+              LinearProgressIndicator(
+                value: timerValue / Game.instance.levelTime,
+                backgroundColor: Colors.blue.shade50,
               ),
             ],
           ),

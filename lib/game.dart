@@ -31,6 +31,8 @@ class Game {
 
   int? transitionStarted;
 
+  double levelTime = 0;
+
   static late final Game instance;
 
   Game() {
@@ -188,7 +190,8 @@ class Game {
     // debugPrint("New puzzle size: $newSize, shuffleCount $shuffle");
     puzzle = Puzzle(newSize, shuffle);
 
-    _timerValue = _calculateLevelTime(newSize, shuffle);
+    levelTime = _calculateLevelTime(newSize, shuffle);
+    _timerValue = levelTime;
     _timer?.cancel();
     _timer = Timer.periodic(
       const Duration(milliseconds: 10),
