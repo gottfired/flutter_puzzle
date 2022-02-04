@@ -107,16 +107,22 @@ class _BackgroundState extends State<Background> {
   late final Ticker ticker;
   double time = 0;
   double dt = 0;
+  int frame = 0;
 
   ParticleSystem particles = ParticleSystem();
 
   _BackgroundState() {
     ticker = Ticker((duration) {
+      final current = duration.inMilliseconds / 1000.0;
+      // Only animate with half frame rate
+      if (frame & 1 == 0) {
+        particles.tick(current);
+      }
+
       setState(() {
-        final current = duration.inMilliseconds / 1000.0;
         dt = current - time;
         time = current;
-        particles.tick(time);
+        frame++;
       });
     });
 
