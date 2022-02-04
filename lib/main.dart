@@ -1,10 +1,9 @@
 import 'dart:async';
-import 'dart:ui';
 
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
-import 'package:flutter_puzzle/stateTransition.dart';
+import 'package:flutter_puzzle/state_transition.dart';
 
 import 'config.dart';
 import 'game.dart';

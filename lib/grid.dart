@@ -9,8 +9,9 @@ class Tile extends StatelessWidget {
   final Function(int number) onTap;
   final bool canMoveHorizontal;
   final bool canMoveVertical;
+  final bool red;
 
-  const Tile(this.number, this.onTap, this.canMoveHorizontal, this.canMoveVertical, {Key? key}) : super(key: key);
+  const Tile(this.number, this.onTap, this.canMoveHorizontal, this.canMoveVertical, this.red, {Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +46,7 @@ class Tile extends StatelessWidget {
             style: TextStyle(
               fontSize: tileSize / 2,
               fontWeight: FontWeight.bold,
-              color: Colors.blue.shade900,
+              color: Colors.blue.shade800,
             ),
           ),
         ),
@@ -60,20 +61,36 @@ class Grid extends StatelessWidget {
 
   const Grid(this._puzzle, this.onTap, {Key? key}) : super(key: key);
 
+  bool _isRed(int number) {
+    if (_puzzle.size == 2) {
+      return number == 1;
+    } else if (_puzzle.size == 3) {
+      return number % 2 == 1;
+    } else {
+      return [1, 3, 6, 8, 9, 11, 14].contains(number);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     List<AnimatedPositioned> tiles = [];
     for (int i = 0; i < _puzzle.tiles.length; i++) {
-      final tile = _puzzle.tiles[i];
+      final number = _puzzle.tiles[i];
       final row = i ~/ _puzzle.size;
       final col = i % _puzzle.size;
-      if (tile != 0) {
+      if (number != 0) {
         tiles.add(AnimatedPositioned(
-          key: ValueKey(tile),
+          key: ValueKey(number),
           left: col * tileSize,
           top: row * tileSize,
           duration: const Duration(milliseconds: slideTimeMs),
-          child: Tile(tile, onTap, _puzzle.canMoveHorizontal(tile), _puzzle.canMoveVertical(tile)),
+          child: Tile(
+            number,
+            onTap,
+            _puzzle.canMoveHorizontal(number),
+            _puzzle.canMoveVertical(number),
+            _isRed(number),
+          ),
         ));
       }
     }

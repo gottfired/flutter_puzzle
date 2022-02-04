@@ -37,14 +37,13 @@ class ParticleSystem {
 
     final timeSwing = sin(currentTime * 0.3) * 0.0015;
 
-    bool first = true;
     for (var p in particles) {
       Paint paint = Paint()
         ..color = Color.fromRGBO(
           (p.color.x * 255).toInt(),
           (p.color.y * 255).toInt(),
           (p.color.z * 255).toInt(),
-          (p.position.z + 1) / 2,
+          (p.position.z + 1) * 0.75,
         );
 
       final angle = timeSwing * p.originalDistance;
@@ -76,7 +75,8 @@ class ParticleSystem {
         particle.originalPosition.x = x;
         particle.originalPosition.y = y;
         particle.originalDistance = particle.position.distanceTo(Vector3.zero());
-        particle.color = Colors.red;
+        // Colors.fromRgba(30, 136, 229, 255, particle.color); // blue
+        Colors.fromRgba(255, 87, 34, 255, particle.color); // orange
         particle.size = 50.0;
 
         particles.add(particle);
