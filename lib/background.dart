@@ -3,7 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_puzzle/game.dart';
+import 'package:flutter_puzzle/grid.dart';
 import 'package:flutter_puzzle/particle.dart';
+import 'package:flutter_puzzle/puzzle.dart';
 
 class BackgroundPainter extends CustomPainter {
   final double value;
@@ -78,7 +80,7 @@ class BackgroundPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     if (Game.instance.state == GameState.startScreen) {
       final paint = Paint()
-        ..color = Colors.blue.shade50
+        ..color = Colors.white10.withAlpha(180)
         ..strokeWidth = 5
         ..strokeCap = StrokeCap.round;
 
@@ -108,6 +110,9 @@ class _BackgroundState extends State<Background> {
   double time = 0;
   double dt = 0;
   int frame = 0;
+  final Puzzle _puzzle2 = Puzzle(2, 0);
+  final Puzzle _puzzle3 = Puzzle(3, 0);
+  final Puzzle _puzzle4 = Puzzle(4, 0);
 
   ParticleSystem particles = ParticleSystem();
 
@@ -137,13 +142,61 @@ class _BackgroundState extends State<Background> {
     ticker.dispose();
   }
 
+  Widget _buildStartScreen(BuildContext context, Size size) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+
+    final List<Positioned> p = [];
+
+    const num2 = 5;
+    final r2 = _puzzle2.screenSize * 1.0;
+    const d2 = 2 * pi / num2;
+    const f2 = 0.3;
+    const num3 = 9;
+    final r3 = r2 + _puzzle3.screenSize * 1;
+    const d3 = 2 * pi / num3;
+    const f3 = 0.2;
+    const num4 = 13;
+    final r4 = r3 + _puzzle4.screenSize * 1;
+    const d4 = 2 * pi / num4;
+    const f4 = 0.1;
+
+    for (var i = 0; i < num4; i++) {
+      final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
+      final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
+      p.add(Positioned(left: x, top: y, child: Grid(_puzzle4, (_) {}, withShadow: false)));
+    }
+
+    for (var i = 0; i < num3; i++) {
+      final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
+      final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
+      p.add(Positioned(left: x, top: y, child: Grid(_puzzle3, (_) {}, withShadow: false)));
+    }
+
+    for (var i = 0; i < num2; i++) {
+      final x = cx + r2 * cos(time * f2 + i * d2) - _puzzle2.screenSize / 2;
+      final y = cy + r2 * sin(time * f2 + i * d2) - _puzzle2.screenSize / 2;
+      p.add(Positioned(left: x, top: y, child: Grid(_puzzle2, (_) {}, withShadow: false)));
+    }
+
+    return Stack(
+      children: [
+        Container(),
+        ...p,
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return CustomPaint(
-      size: size,
-      painter: BackgroundPainter(value: time, particles: particles),
-    );
+    return Stack(children: [
+      Game.instance.state == GameState.startScreen ? _buildStartScreen(context, size) : const SizedBox(),
+      CustomPaint(
+        size: size,
+        painter: BackgroundPainter(value: time, particles: particles),
+      )
+    ]);
   }
 }

@@ -59,7 +59,9 @@ class Grid extends StatelessWidget {
   final Puzzle _puzzle;
   final Function(int number) onTap;
 
-  const Grid(this._puzzle, this.onTap, {Key? key}) : super(key: key);
+  final bool? withShadow;
+
+  const Grid(this._puzzle, this.onTap, {Key? key, this.withShadow}) : super(key: key);
 
   bool _isRed(int number) {
     if (_puzzle.size == 2) {
@@ -103,12 +105,13 @@ class Grid extends StatelessWidget {
         ),
         borderRadius: BorderRadius.circular(tileSize / 5),
         boxShadow: [
-          BoxShadow(
-            color: Colors.blue.shade400.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 4,
-            offset: const Offset(0, 3), // changes position of shadow
-          ),
+          if (withShadow != false)
+            BoxShadow(
+              color: Colors.blue.shade400.withOpacity(0.5),
+              spreadRadius: 2,
+              blurRadius: 4,
+              offset: const Offset(0, 3), // changes position of shadow
+            ),
         ],
       ),
       child: Stack(

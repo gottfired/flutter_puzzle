@@ -12,6 +12,10 @@ class Puzzle {
     return puzzleHeight * tileSize + 2 * puzzleBorderSize;
   }
 
+  double get screenSize {
+    return size * tileSize + 2 * puzzleBorderSize;
+  }
+
   Puzzle(this.size, int shuffleCount) : _empty = [size - 1, size - 1] {
     reset();
 
