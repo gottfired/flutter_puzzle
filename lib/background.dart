@@ -175,12 +175,12 @@ class _BackgroundState extends State<Background> {
     const f2 = 0.3;
 
     const num3 = 7;
-    final r3 = r2 + _puzzle3.screenSize * 1;
+    final r3 = r2 + _puzzle3.screenSize * 1.2;
     const d3 = 2 * pi / num3;
     const f3 = 0.2;
 
     const num4 = 9;
-    final r4 = r3 + _puzzle4.screenSize * 1;
+    final r4 = r3 + _puzzle4.screenSize * 1.2;
     const d4 = 2 * pi / num4;
     const f4 = 0.1;
 
@@ -193,7 +193,7 @@ class _BackgroundState extends State<Background> {
     //   for (var i = 0; i < num5; i++) {
     //     final x = cx + r5 * cos(time * f5 - i * d5) - _puzzle5.screenSize / 2;
     //     final y = cy + r5 * sin(time * f5 - i * d5) - _puzzle5.screenSize / 2;
-    //     p.add(Positioned(left: x, top: y, child: Grid(_puzzle5, (_) {}, withShadow: false)));
+    //     p.add(Positioned(left: x, top: y, child: Grid(_puzzle5, withShadow: false)));
     //   }
     // }
 
@@ -201,7 +201,15 @@ class _BackgroundState extends State<Background> {
       for (var i = 0; i < num4; i++) {
         final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
         final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-        p.add(Positioned(left: x, top: y, child: Grid(_puzzle4, (_) {}, withShadow: false)));
+        p.add(Positioned(key: ValueKey("4_$i"), left: x, top: y, child: Grid(_puzzle4, withShadow: false)));
+        // p.add(Positioned(
+        //     left: x,
+        //     top: y,
+        //     child: Container(
+        //       width: _puzzle4.screenSize,
+        //       height: _puzzle4.screenSize,
+        //       color: Colors.blue,
+        //     )));
       }
     }
 
@@ -209,14 +217,30 @@ class _BackgroundState extends State<Background> {
       for (var i = 0; i < num3; i++) {
         final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
         final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-        p.add(Positioned(left: x, top: y, child: Grid(_puzzle3, (_) {}, withShadow: false)));
+        p.add(Positioned(key: ValueKey("3_$i"), left: x, top: y, child: Grid(_puzzle3, withShadow: false)));
+        // p.add(Positioned(
+        //     left: x,
+        //     top: y,
+        //     child: Container(
+        //       width: _puzzle3.screenSize,
+        //       height: _puzzle3.screenSize,
+        //       color: Colors.blue,
+        //     )));
       }
     }
 
     for (var i = 0; i < num2; i++) {
       final x = cx + r2 * cos(time * f2 + i * d2) - _puzzle2.screenSize / 2;
       final y = cy + r2 * sin(time * f2 + i * d2) - _puzzle2.screenSize / 2;
-      p.add(Positioned(left: x, top: y, child: Grid(_puzzle2, (_) {}, withShadow: false)));
+      p.add(Positioned(key: ValueKey("2_$i"), left: x, top: y, child: Grid(_puzzle2, withShadow: false)));
+      // p.add(Positioned(
+      //     left: x,
+      //     top: y,
+      //     child: Container(
+      //       width: _puzzle2.screenSize,
+      //       height: _puzzle2.screenSize,
+      //       color: Colors.blue,
+      //     )));
     }
 
     return p;

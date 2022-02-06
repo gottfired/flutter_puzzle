@@ -6,27 +6,27 @@ import 'config.dart';
 
 class Tile extends StatelessWidget {
   final int number;
-  final Function(int number) onTap;
+  final Function(int number)? onTap;
   final bool canMoveHorizontal;
   final bool canMoveVertical;
-  final bool red;
+  final bool? red;
 
-  const Tile(this.number, this.onTap, this.canMoveHorizontal, this.canMoveVertical, this.red, {Key? key}) : super(key: key);
+  const Tile(this.number, this.onTap, this.canMoveHorizontal, this.canMoveVertical, {Key? key, this.red}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
       onTapDown: (_) {
-        onTap(number);
+        onTap?.call(number);
       },
       onVerticalDragStart: (details) {
         if (canMoveVertical) {
-          onTap(number);
+          onTap?.call(number);
         }
       },
       onHorizontalDragStart: (details) {
         if (canMoveHorizontal) {
-          onTap(number);
+          onTap?.call(number);
         }
       },
       child: Container(
@@ -57,11 +57,11 @@ class Tile extends StatelessWidget {
 
 class Grid extends StatelessWidget {
   final Puzzle _puzzle;
-  final Function(int number) onTap;
+  Function(int number)? onTap;
 
   final bool? withShadow;
 
-  const Grid(this._puzzle, this.onTap, {Key? key, this.withShadow}) : super(key: key);
+  Grid(this._puzzle, {Key? key, this.onTap, this.withShadow}) : super(key: key);
 
   bool _isRed(int number) {
     if (_puzzle.size == 2) {
@@ -81,19 +81,20 @@ class Grid extends StatelessWidget {
       final row = i ~/ _puzzle.size;
       final col = i % _puzzle.size;
       if (number != 0) {
-        tiles.add(AnimatedPositioned(
-          key: ValueKey(number),
-          left: col * tileSize,
-          top: row * tileSize,
-          duration: const Duration(milliseconds: slideTimeMs),
-          child: Tile(
-            number,
-            onTap,
-            _puzzle.canMoveHorizontal(number),
-            _puzzle.canMoveVertical(number),
-            _isRed(number),
+        tiles.add(
+          AnimatedPositioned(
+            key: ValueKey(number),
+            left: col * tileSize,
+            top: row * tileSize,
+            duration: const Duration(milliseconds: slideTimeMs),
+            child: Tile(
+              number,
+              onTap,
+              _puzzle.canMoveHorizontal(number),
+              _puzzle.canMoveVertical(number),
+            ),
           ),
-        ));
+        );
       }
     }
 

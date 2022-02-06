@@ -138,7 +138,7 @@ class MainState extends State<MainPage> {
         child: _game.puzzle != null
             ? Grid(
                 _game.puzzle!,
-                (int number) async {
+                onTap: (int number) async {
                   setState(() => _game.move(number));
 
                   if (_game.isSolved()) {
