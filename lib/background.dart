@@ -113,6 +113,7 @@ class _BackgroundState extends State<Background> {
   final Puzzle _puzzle2 = Puzzle(2, 0);
   final Puzzle _puzzle3 = Puzzle(3, 0);
   final Puzzle _puzzle4 = Puzzle(4, 0);
+  final Puzzle _puzzle5 = Puzzle(5, 0);
   double lastRandom2 = 0;
   double lastRandom3 = 0.33;
   double lastRandom4 = 0.66;
@@ -122,13 +123,13 @@ class _BackgroundState extends State<Background> {
   _BackgroundState() {
     ticker = Ticker((duration) {
       final current = duration.inMilliseconds / 1000.0;
-      // Only animate with half frame rate
+      frame++;
       if (frame & 1 == 0) {
         particles.tick(current);
       }
-
       if (time > lastRandom2) {
         _puzzle2.doRandomMove();
+        _puzzle5.doRandomMove();
         lastRandom2++;
       }
 
@@ -141,11 +142,12 @@ class _BackgroundState extends State<Background> {
         lastRandom4++;
       }
 
-      setState(() {
-        dt = current - time;
-        time = current;
-        frame++;
-      });
+      if (frame & 1 == 0) {
+        setState(() {
+          dt = current - time;
+          time = current;
+        });
+      }
     });
 
     particles.init2dGrid();
@@ -159,35 +161,56 @@ class _BackgroundState extends State<Background> {
     ticker.dispose();
   }
 
-  Widget _buildStartScreen(BuildContext context, Size size) {
+  List<Positioned> _buildStartScreen(BuildContext context, Size size) {
     final cx = size.width / 2;
     final cy = size.height / 2;
+
+    final maxAxis = max(size.width, size.height);
 
     final List<Positioned> p = [];
 
     const num2 = 5;
-    final r2 = _puzzle2.screenSize * 1.0;
+    final r2 = _puzzle2.screenSize * 1;
     const d2 = 2 * pi / num2;
     const f2 = 0.3;
-    const num3 = 9;
-    final r3 = r2 + _puzzle3.screenSize * 1;
+
+    const num3 = 7;
+    final r3 = r2 + _puzzle3.screenSize * 1.1;
     const d3 = 2 * pi / num3;
     const f3 = 0.2;
-    const num4 = 13;
-    final r4 = r3 + _puzzle4.screenSize * 1;
+
+    const num4 = 9;
+    final r4 = r3 + _puzzle4.screenSize * 1.1;
     const d4 = 2 * pi / num4;
     const f4 = 0.1;
 
-    for (var i = 0; i < num4; i++) {
-      final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-      final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-      p.add(Positioned(left: x, top: y, child: Grid(_puzzle4, (_) {}, withShadow: false)));
+    const num5 = 11;
+    final r5 = r4 + _puzzle5.screenSize * 1;
+    const d5 = 2 * pi / num5;
+    const f5 = 0.1;
+
+    // if (r5 + _puzzle5.screenSize < maxAxis) {
+    //   for (var i = 0; i < num5; i++) {
+    //     final x = cx + r5 * cos(time * f5 - i * d5) - _puzzle5.screenSize / 2;
+    //     final y = cy + r5 * sin(time * f5 - i * d5) - _puzzle5.screenSize / 2;
+    //     p.add(Positioned(left: x, top: y, child: Grid(_puzzle5, (_) {}, withShadow: false)));
+    //   }
+    // }
+
+    if (r4 + _puzzle4.screenSize < maxAxis) {
+      for (var i = 0; i < num4; i++) {
+        final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
+        final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
+        p.add(Positioned(left: x, top: y, child: Grid(_puzzle4, (_) {}, withShadow: false)));
+      }
     }
 
-    for (var i = 0; i < num3; i++) {
-      final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-      final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-      p.add(Positioned(left: x, top: y, child: Grid(_puzzle3, (_) {}, withShadow: false)));
+    if (r3 + _puzzle3.screenSize < maxAxis) {
+      for (var i = 0; i < num3; i++) {
+        final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
+        final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
+        p.add(Positioned(left: x, top: y, child: Grid(_puzzle3, (_) {}, withShadow: false)));
+      }
     }
 
     for (var i = 0; i < num2; i++) {
@@ -196,12 +219,7 @@ class _BackgroundState extends State<Background> {
       p.add(Positioned(left: x, top: y, child: Grid(_puzzle2, (_) {}, withShadow: false)));
     }
 
-    return Stack(
-      children: [
-        Container(),
-        ...p,
-      ],
-    );
+    return p;
   }
 
   @override
@@ -209,7 +227,7 @@ class _BackgroundState extends State<Background> {
     final size = MediaQuery.of(context).size;
 
     return Stack(children: [
-      Game.instance.state == GameState.startScreen ? _buildStartScreen(context, size) : const SizedBox(),
+      ...(Game.instance.state == GameState.startScreen ? _buildStartScreen(context, size) : [const SizedBox()]),
       CustomPaint(
         size: size,
         painter: BackgroundPainter(value: time, particles: particles),
