@@ -170,17 +170,17 @@ class _BackgroundState extends State<Background> {
     final List<Positioned> p = [];
 
     const num2 = 5;
-    final r2 = _puzzle2.screenSize * 1;
+    final r2 = _puzzle2.screenSize * 1.2;
     const d2 = 2 * pi / num2;
     const f2 = 0.3;
 
     const num3 = 7;
-    final r3 = r2 + _puzzle3.screenSize * 1.1;
+    final r3 = r2 + _puzzle3.screenSize * 1;
     const d3 = 2 * pi / num3;
     const f3 = 0.2;
 
     const num4 = 9;
-    final r4 = r3 + _puzzle4.screenSize * 1.1;
+    final r4 = r3 + _puzzle4.screenSize * 1;
     const d4 = 2 * pi / num4;
     const f4 = 0.1;
 
