@@ -77,12 +77,11 @@ class Game {
 
   double puzzleRotation() {
     if (puzzleState == PuzzleState.dropOut) {
-      return Random().nextDouble() * 2 - 1;
+      return Random().nextDouble() - 0.5;
     }
 
     if (puzzleState == PuzzleState.dropIn) {
-      final v = Random().nextDouble() - 0.5;
-      return v + v.sign;
+      return Random().nextDouble() * 0.2 - 0.1;
     }
 
     return 0;
