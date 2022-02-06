@@ -73,32 +73,12 @@ class MainState extends State<MainPage> {
           const Background(),
           Countdown(_game),
           if (_game.state == GameState.startScreen) ...[
-            AnimatedButton(
-              color: Colors.blue,
-              height: 100,
-              child: const Text(
-                'Start',
-                style: TextStyle(
-                  fontSize: 50,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
-                ),
-              ),
-              onPressed: () {
-                debugPrint("start pressed");
-                setState(() {
-                  _game.start();
-                  setPuzzleTop(_game.puzzleTop(context));
-                });
-              },
-              enabled: true,
-              shadowDegree: ShadowDegree.light,
-            ),
+            buildStartButton(context),
           ],
           if (_game.state == GameState.playing)
             Center(
               child: Stack(
-                clipBehavior: Clip.none,
+                clipBehavior: Clip.none, // So that the puzzle doesn't clip during drop in/out anims
                 children: [
                   // Needed for properly centering the puzzle. Stays in center
                   // during puzzle drop in/out phases
@@ -106,36 +86,7 @@ class MainState extends State<MainPage> {
                     width: _game.getPuzzleScreenSize(),
                     height: _game.getPuzzleScreenSize(),
                   ),
-                  AnimatedPositioned(
-                    duration: Duration(milliseconds: _game.isResetting() ? 0 : dropInAnimMs),
-                    top: puzzleTop,
-                    child: AnimatedRotation(
-                      duration: const Duration(milliseconds: dropInAnimMs),
-                      turns: puzzleRotation,
-                      child: _game.puzzle != null
-                          ? Grid(
-                              _game.puzzle!,
-                              (int number) async {
-                                setState(() => _game.move(number));
-
-                                if (_game.isSolved()) {
-                                  await Future.delayed(Duration(milliseconds: (slideTimeMs * 0.7).toInt()));
-                                  setState(() => _game.dropOut());
-
-                                  await Future.delayed(const Duration(milliseconds: dropInAnimMs));
-                                  setState(() => _game.reset());
-
-                                  await Future.delayed(const Duration(milliseconds: resetMs));
-                                  setState(() => _game.startLevel());
-
-                                  await Future.delayed(const Duration(milliseconds: dropInAnimMs));
-                                  setState(() => _game.puzzleState = PuzzleState.playing);
-                                }
-                              },
-                            )
-                          : const SizedBox(),
-                    ),
-                  ),
+                  buildPuzzle(),
                 ],
               ),
             ),
@@ -149,6 +100,63 @@ class MainState extends State<MainPage> {
             }),
           ]
         ],
+      ),
+    );
+  }
+
+  AnimatedButton buildStartButton(BuildContext context) {
+    return AnimatedButton(
+      color: Colors.blue,
+      height: 100,
+      child: const Text(
+        'Start',
+        style: TextStyle(
+          fontSize: 50,
+          color: Colors.white,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      onPressed: () {
+        debugPrint("start pressed");
+        setState(() {
+          _game.start();
+          setPuzzleTop(_game.puzzleTop(context));
+        });
+      },
+      enabled: true,
+      shadowDegree: ShadowDegree.light,
+    );
+  }
+
+  AnimatedPositioned buildPuzzle() {
+    return AnimatedPositioned(
+      duration: Duration(milliseconds: _game.isResetting() ? 0 : dropInAnimMs),
+      top: puzzleTop,
+      child: AnimatedRotation(
+        duration: const Duration(milliseconds: dropInAnimMs),
+        turns: puzzleRotation,
+        child: _game.puzzle != null
+            ? Grid(
+                _game.puzzle!,
+                (int number) async {
+                  setState(() => _game.move(number));
+
+                  if (_game.isSolved()) {
+                    await Future.delayed(Duration(milliseconds: (slideTimeMs * 0.7).toInt()));
+                    setState(() => _game.dropOut());
+
+                    await Future.delayed(const Duration(milliseconds: dropInAnimMs));
+                    setState(() => _game.reset());
+
+                    await Future.delayed(const Duration(milliseconds: resetMs));
+                    setState(() => _game.startLevel());
+
+                    await Future.delayed(const Duration(milliseconds: dropInAnimMs));
+                    setState(() => _game.puzzleState = PuzzleState.playing);
+                  }
+                },
+              )
+            : const SizedBox(),
       ),
     );
   }
