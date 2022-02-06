@@ -113,6 +113,9 @@ class _BackgroundState extends State<Background> {
   final Puzzle _puzzle2 = Puzzle(2, 0);
   final Puzzle _puzzle3 = Puzzle(3, 0);
   final Puzzle _puzzle4 = Puzzle(4, 0);
+  double lastRandom2 = 0;
+  double lastRandom3 = 0.33;
+  double lastRandom4 = 0.66;
 
   ParticleSystem particles = ParticleSystem();
 
@@ -122,6 +125,20 @@ class _BackgroundState extends State<Background> {
       // Only animate with half frame rate
       if (frame & 1 == 0) {
         particles.tick(current);
+      }
+
+      if (time > lastRandom2) {
+        _puzzle2.doRandomMove();
+        lastRandom2++;
+      }
+
+      if (time > lastRandom3) {
+        _puzzle3.doRandomMove();
+        lastRandom3++;
+      }
+      if (time > lastRandom4) {
+        _puzzle4.doRandomMove();
+        lastRandom4++;
       }
 
       setState(() {

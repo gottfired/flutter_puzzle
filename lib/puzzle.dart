@@ -39,20 +39,7 @@ class Puzzle {
 
   void shuffle(int shuffleCount) {
     for (var i = 0; i < shuffleCount; ++i) {
-      final xOrY = Random().nextInt(2);
-      if (xOrY == 0) {
-        // Fill array with empty x values
-        final empty = [for (var j = 0; j < size - 1; j++) j < _empty[0] ? j : j + 1];
-        final newEmpty = empty[Random().nextInt(size - 1)];
-        // Move row starting from newEmpty value
-        _moveRow(newEmpty);
-      } else {
-        // Fill array with empty y values
-        final empty = [for (var j = 0; j < size - 1; j++) j < _empty[1] ? j : j + 1];
-        final newEmpty = empty[Random().nextInt(size - 1)];
-        // Move column starting from newEmpty value
-        _moveColumn(newEmpty);
-      }
+      doRandomMove();
     }
   }
 
@@ -172,5 +159,22 @@ class Puzzle {
     }
 
     debugPrint(line);
+  }
+
+  void doRandomMove() {
+    final xOrY = Random().nextInt(2);
+    if (xOrY == 0) {
+      // Fill array with empty x values
+      final empty = [for (var j = 0; j < size - 1; j++) j < _empty[0] ? j : j + 1];
+      final newEmpty = empty[Random().nextInt(size - 1)];
+      // Move row starting from newEmpty value
+      _moveRow(newEmpty);
+    } else {
+      // Fill array with empty y values
+      final empty = [for (var j = 0; j < size - 1; j++) j < _empty[1] ? j : j + 1];
+      final newEmpty = empty[Random().nextInt(size - 1)];
+      // Move column starting from newEmpty value
+      _moveColumn(newEmpty);
+    }
   }
 }
