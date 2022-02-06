@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
+import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/state_transition.dart';
 
 import 'config.dart';
@@ -36,10 +37,10 @@ class MainPage extends StatefulWidget {
   final String title;
 
   @override
-  State<MainPage> createState() => _MainPageState();
+  State<MainPage> createState() => MainState();
 }
 
-class _MainPageState extends State<MainPage> {
+class MainState extends State<MainPage> {
   final _game = Game();
   double? puzzleTop = 0;
   double puzzleRotation = 0;
@@ -50,60 +51,14 @@ class _MainPageState extends State<MainPage> {
     puzzleTop = top;
   }
 
-  _buildCountdown(Size screenSize) {
-    return Positioned(
-      top: screenSize.height / 2 - _game.getPuzzleScreenSize() / 2 - 70,
-      child: Container(
-        width: 120,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: Colors.white,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.blue.shade400.withOpacity(0.5),
-              spreadRadius: 3,
-              blurRadius: 6,
-              offset: const Offset(0, 3), // changes position of shadow
-            ),
-          ],
-        ),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8),
-          child: Column(
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    timerValue.toInt().toString(),
-                    style: TextStyle(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "AzeretMono",
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                  const SizedBox(width: 10),
-                  Text(
-                    (timerValue - timerValue.toInt()).toStringAsFixed(2).substring(2),
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      fontFamily: "AzeretMono",
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                ],
-              ),
-              LinearProgressIndicator(
-                value: timerValue / Game.instance.levelTime,
-                backgroundColor: Colors.blue.shade50,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
+  void redraw() {
+    setState(() {});
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _game.setMainState(this);
   }
 
   @override
@@ -111,14 +66,12 @@ class _MainPageState extends State<MainPage> {
     setPuzzleTop(_game.puzzleTop(context));
     puzzleRotation = _game.puzzleRotation();
 
-    final screenSize = MediaQuery.of(context).size;
-
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
         children: [
           const Background(),
-          if (_game.showCountdown()) _buildCountdown(screenSize),
+          Countdown(_game),
           if (_game.state == GameState.startScreen) ...[
             AnimatedButton(
               color: Colors.blue,
@@ -134,11 +87,7 @@ class _MainPageState extends State<MainPage> {
               onPressed: () {
                 debugPrint("start pressed");
                 setState(() {
-                  _game.start((value) {
-                    setState(() {
-                      timerValue = value;
-                    });
-                  });
+                  _game.start();
                   setPuzzleTop(_game.puzzleTop(context));
                 });
               },

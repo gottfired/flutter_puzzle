@@ -2,9 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/config.dart';
-import 'dart:async';
-import 'puzzle.dart';
+import 'package:flutter_puzzle/countdown.dart';
+import 'package:flutter_puzzle/main.dart';
+
 import 'config.dart';
+import 'puzzle.dart';
 
 enum GameState {
   startScreen,
@@ -26,12 +28,12 @@ class Game {
 
   PuzzleState puzzleState = PuzzleState.playing;
 
-  Timer? _timer;
-  double _timerValue = 0;
-
   int? transitionStarted;
 
   double levelTime = 0;
+
+  CountdownState? _countDownState;
+  MainState? _mainState;
 
   static late final Game instance;
 
@@ -39,12 +41,9 @@ class Game {
     instance = this;
   }
 
-  Function(double value)? onTimerTick;
-
-  void start(Function(double value)? onTimerTick) {
+  void start() {
     currentLevel = 0;
     startLevel();
-    this.onTimerTick = onTimerTick;
 
     debugPrint("Game.start");
 
@@ -54,7 +53,7 @@ class Game {
   void move(int number) {
     puzzle?.move(number);
     if (puzzle?.isSolved() == true) {
-      _timer?.cancel();
+      _countDownState?.solved();
     }
   }
 
@@ -191,24 +190,12 @@ class Game {
     puzzle = Puzzle(newSize, shuffle);
 
     levelTime = _calculateLevelTime(newSize, shuffle);
-    _timerValue = levelTime;
-    _timer?.cancel();
-    _timer = Timer.periodic(
-      const Duration(milliseconds: 10),
-      (Timer timer) {
-        if (_timerValue <= 0) {
-          timer.cancel();
-          transitionToState(GameState.startScreen);
-        } else {
-          _timerValue -= 0.01;
-          if (_timerValue < 0) {
-            _timerValue = 0;
-          }
-        }
+    _countDownState?.start(levelTime);
+  }
 
-        onTimerTick?.call(_timerValue);
-      },
-    );
+  void onTimerFinished() {
+    transitionToState(GameState.startScreen);
+    _mainState?.redraw();
   }
 
   double getPuzzleScreenSize() {
@@ -221,5 +208,13 @@ class Game {
 
   void dropOut() {
     puzzleState = PuzzleState.dropOut;
+  }
+
+  void setCountdownState(CountdownState countdownState) {
+    _countDownState = countdownState;
+  }
+
+  void setMainState(MainState mainState) {
+    _mainState = mainState;
   }
 }

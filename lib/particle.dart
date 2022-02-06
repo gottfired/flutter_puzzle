@@ -37,18 +37,19 @@ class ParticleSystem {
 
     final timeSwing = sin(currentTime * 0.3) * 0.0015;
 
-    for (var p in particles) {
-      Paint paint = Paint()
-        ..color = Color.fromRGBO(
-          (p.color.x * 255).toInt(),
-          (p.color.y * 255).toInt(),
-          (p.color.z * 255).toInt(),
-          (p.position.z + 1) * 0.75,
-        );
+    Paint paint = Paint();
 
+    for (var p in particles) {
       final angle = timeSwing * p.originalDistance;
       final rot = Quaternion.euler(0, 0, angle);
       final pos = rot.rotated(p.position);
+
+      paint.color = Color.fromRGBO(
+        (p.color.x * 255).toInt(),
+        (p.color.y * 255).toInt(),
+        (p.color.z * 255).toInt(),
+        (p.position.z + 1) * 0.75,
+      );
 
       double x = pos.x * factorX + centerX;
       double y = pos.y * factorY + centerY;
