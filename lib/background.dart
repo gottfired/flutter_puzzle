@@ -1,4 +1,5 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -7,11 +8,14 @@ import 'package:flutter_puzzle/grid.dart';
 import 'package:flutter_puzzle/particle.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
+import 'config.dart';
+
 class BackgroundPainter extends CustomPainter {
   final double value;
   ParticleSystem? particles;
+  _BackgroundState state;
 
-  BackgroundPainter({required this.value, this.particles});
+  BackgroundPainter({required this.value, required this.state, this.particles});
 
   void dummyPaint(Canvas canvas, Size size) {
     var paint = Paint()
@@ -76,17 +80,101 @@ class BackgroundPainter extends CustomPainter {
     particles!.draw2d(canvas, size);
   }
 
+  void paintPuzzle(Puzzle puzzle, Canvas canvas) {
+    if (puzzle == null) {
+      return;
+    }
+
+    Paint paint = Paint();
+    paint.color = Colors.blue;
+    canvas.drawRRect(
+      RRect.fromLTRBR(
+        0,
+        0,
+        puzzle.screenSize,
+        puzzle.screenSize,
+        const Radius.circular(tileSize / 5),
+      ),
+      paint,
+    );
+
+    for (int i = 0; i < puzzle.size; ++i) {
+      for (int j = 0; j < puzzle.size; ++j) {
+        final tile = puzzle.tiles[i * puzzle.size + j];
+        if (tile == 0) {
+          continue;
+        }
+
+        final left = puzzleBorderSize + j * tileSize;
+        final top = puzzleBorderSize + i * tileSize;
+        final right = left + tileSize;
+        final bottom = top + tileSize;
+
+        paint.color = Colors.white;
+        canvas.drawRRect(
+          RRect.fromLTRBR(
+            left + tileBorderSize,
+            top + tileBorderSize,
+            right - tileBorderSize,
+            bottom - tileBorderSize,
+            const Radius.circular(tileSize / 5),
+          ),
+          paint,
+        );
+
+        TextSpan ts = TextSpan(
+          style: TextStyle(
+            fontSize: tileSize / 2,
+            fontWeight: FontWeight.bold,
+            fontFamily: "Rowdies",
+            color: Colors.blue.shade800,
+          ),
+          text: "$tile",
+        );
+
+        TextPainter tp = TextPainter(text: ts, textAlign: TextAlign.center, textDirection: TextDirection.ltr);
+        tp.layout();
+        tp.paint(canvas, Offset(left + (tileSize - tp.width) / 2, top + (tileSize - tp.height) / 2));
+      }
+    }
+  }
+
+  void paintPuzzleRing(Canvas canvas, Size size, Puzzle puzzle, int count, double radius, double frequency) {
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final d = 2 * pi / count;
+    for (var i = 0; i < count; i++) {
+      final x = cx + radius * cos(value * frequency + i * d) - puzzle.screenSize / 2;
+      final y = cy + radius * sin(value * frequency + i * d) - puzzle.screenSize / 2;
+      canvas.save();
+      canvas.translate(x, y);
+      paintPuzzle(puzzle, canvas);
+      canvas.restore();
+    }
+  }
+
+  void paintStartScreen(Canvas canvas, Size size) {
+    const num2 = 5;
+    final r2 = state._puzzle2.screenSize * 1;
+    const f2 = 0.3;
+
+    const num3 = 9;
+    final r3 = r2 + state._puzzle3.screenSize * 1;
+    const f3 = 0.2;
+
+    const num4 = 11;
+    final r4 = r3 + state._puzzle4.screenSize * 1;
+    const f4 = 0.1;
+
+    paintPuzzleRing(canvas, size, state._puzzle2, num2, r2, f2);
+    paintPuzzleRing(canvas, size, state._puzzle3, num3, r3, f3);
+    paintPuzzleRing(canvas, size, state._puzzle4, num4, r4, f4);
+  }
+
   @override
   void paint(Canvas canvas, Size size) {
     if (Game.instance.state == GameState.startScreen) {
-      final paint = Paint()
-        ..color = Colors.white10.withAlpha(180)
-        ..strokeWidth = 5
-        ..strokeCap = StrokeCap.round;
-
-      final Path path = Path();
-      path.addRect(Rect.fromLTWH(0, 0, size.width, size.height));
-      canvas.drawPath(path, paint);
+      paintStartScreen(canvas, size);
       return;
     }
 
@@ -197,51 +285,27 @@ class _BackgroundState extends State<Background> {
     //   }
     // }
 
-    if (r4 + _puzzle4.screenSize < maxAxis) {
-      for (var i = 0; i < num4; i++) {
-        final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-        final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-        p.add(Positioned(key: ValueKey("4_$i"), left: x, top: y, child: Grid(_puzzle4, withShadow: false)));
-        // p.add(Positioned(
-        //     left: x,
-        //     top: y,
-        //     child: Container(
-        //       width: _puzzle4.screenSize,
-        //       height: _puzzle4.screenSize,
-        //       color: Colors.blue,
-        //     )));
-      }
-    }
+    // if (r4 + _puzzle4.screenSize < maxAxis) {
+    //   for (var i = 0; i < num4; i++) {
+    //     final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
+    //     final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
+    //     p.add(Positioned(key: ValueKey("4_$i"), left: x, top: y, child: Grid(_puzzle4, withShadow: false)));
+    //   }
+    // }
 
-    if (r3 + _puzzle3.screenSize < maxAxis) {
-      for (var i = 0; i < num3; i++) {
-        final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-        final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-        p.add(Positioned(key: ValueKey("3_$i"), left: x, top: y, child: Grid(_puzzle3, withShadow: false)));
-        // p.add(Positioned(
-        //     left: x,
-        //     top: y,
-        //     child: Container(
-        //       width: _puzzle3.screenSize,
-        //       height: _puzzle3.screenSize,
-        //       color: Colors.blue,
-        //     )));
-      }
-    }
+    // if (r3 + _puzzle3.screenSize < maxAxis) {
+    //   for (var i = 0; i < num3; i++) {
+    //     final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
+    //     final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
+    //     p.add(Positioned(key: ValueKey("3_$i"), left: x, top: y, child: Grid(_puzzle3, withShadow: false)));
+    //   }
+    // }
 
-    for (var i = 0; i < num2; i++) {
-      final x = cx + r2 * cos(time * f2 + i * d2) - _puzzle2.screenSize / 2;
-      final y = cy + r2 * sin(time * f2 + i * d2) - _puzzle2.screenSize / 2;
-      p.add(Positioned(key: ValueKey("2_$i"), left: x, top: y, child: Grid(_puzzle2, withShadow: false)));
-      // p.add(Positioned(
-      //     left: x,
-      //     top: y,
-      //     child: Container(
-      //       width: _puzzle2.screenSize,
-      //       height: _puzzle2.screenSize,
-      //       color: Colors.blue,
-      //     )));
-    }
+    // for (var i = 0; i < num2; i++) {
+    //   final x = cx + r2 * cos(time * f2 + i * d2) - _puzzle2.screenSize / 2;
+    //   final y = cy + r2 * sin(time * f2 + i * d2) - _puzzle2.screenSize / 2;
+    //   p.add(Positioned(key: ValueKey("2_$i"), left: x, top: y, child: Grid(_puzzle2, withShadow: false)));
+    // }
 
     return p;
   }
@@ -254,7 +318,7 @@ class _BackgroundState extends State<Background> {
       ...(Game.instance.state == GameState.startScreen ? _buildStartScreen(context, size) : [const SizedBox()]),
       CustomPaint(
         size: size,
-        painter: BackgroundPainter(value: time, particles: particles),
+        painter: BackgroundPainter(value: time, state: this, particles: particles),
       )
     ]);
   }
