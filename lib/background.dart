@@ -4,7 +4,6 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_puzzle/game.dart';
-import 'package:flutter_puzzle/grid.dart';
 import 'package:flutter_puzzle/particle.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
@@ -15,7 +14,26 @@ class BackgroundPainter extends CustomPainter {
   ParticleSystem? particles;
   _BackgroundState state;
 
-  BackgroundPainter({required this.value, required this.state, this.particles});
+  List<TextPainter> textPainters = [];
+
+  BackgroundPainter({required this.value, required this.state, this.particles}) {
+    // Cache the text painters because TextPainter.layout() is slow.
+    for (int i = 0; i < 26; ++i) {
+      TextSpan ts = TextSpan(
+        style: TextStyle(
+          fontSize: tileSize / 2,
+          fontWeight: FontWeight.bold,
+          fontFamily: "Rowdies",
+          color: Colors.blue.shade800,
+        ),
+        text: "$i",
+      );
+
+      TextPainter tp = TextPainter(text: ts, textAlign: TextAlign.center, textDirection: TextDirection.ltr);
+      tp.layout();
+      textPainters.add(tp);
+    }
+  }
 
   void dummyPaint(Canvas canvas, Size size) {
     var paint = Paint()
@@ -81,18 +99,15 @@ class BackgroundPainter extends CustomPainter {
   }
 
   void paintPuzzle(Puzzle puzzle, Canvas canvas) {
-    if (puzzle == null) {
-      return;
-    }
-
     Paint paint = Paint();
     paint.color = Colors.blue;
+    final sizeHalf = puzzle.screenSize / 2;
     canvas.drawRRect(
       RRect.fromLTRBR(
-        0,
-        0,
-        puzzle.screenSize,
-        puzzle.screenSize,
+        -sizeHalf,
+        -sizeHalf,
+        sizeHalf,
+        sizeHalf,
         const Radius.circular(tileSize / 5),
       ),
       paint,
@@ -105,8 +120,8 @@ class BackgroundPainter extends CustomPainter {
           continue;
         }
 
-        final left = puzzleBorderSize + j * tileSize;
-        final top = puzzleBorderSize + i * tileSize;
+        final left = puzzleBorderSize + j * tileSize - sizeHalf;
+        final top = puzzleBorderSize + i * tileSize - sizeHalf;
         final right = left + tileSize;
         final bottom = top + tileSize;
 
@@ -122,18 +137,7 @@ class BackgroundPainter extends CustomPainter {
           paint,
         );
 
-        TextSpan ts = TextSpan(
-          style: TextStyle(
-            fontSize: tileSize / 2,
-            fontWeight: FontWeight.bold,
-            fontFamily: "Rowdies",
-            color: Colors.blue.shade800,
-          ),
-          text: "$tile",
-        );
-
-        TextPainter tp = TextPainter(text: ts, textAlign: TextAlign.center, textDirection: TextDirection.ltr);
-        tp.layout();
+        TextPainter tp = textPainters[tile];
         tp.paint(canvas, Offset(left + (tileSize - tp.width) / 2, top + (tileSize - tp.height) / 2));
       }
     }
@@ -144,31 +148,42 @@ class BackgroundPainter extends CustomPainter {
     final cy = size.height / 2;
     final d = 2 * pi / count;
     for (var i = 0; i < count; i++) {
-      final x = cx + radius * cos(value * frequency + i * d) - puzzle.screenSize / 2;
-      final y = cy + radius * sin(value * frequency + i * d) - puzzle.screenSize / 2;
+      final angle = value * frequency + i * d;
+      final x = cx + radius * cos(angle);
+      final y = cy + radius * sin(angle);
       canvas.save();
       canvas.translate(x, y);
+      canvas.rotate(angle + pi / 2);
       paintPuzzle(puzzle, canvas);
       canvas.restore();
     }
   }
 
   void paintStartScreen(Canvas canvas, Size size) {
-    const num2 = 5;
-    final r2 = state._puzzle2.screenSize * 1;
+    const num2 = 6;
+    final r2 = state._puzzle2.screenSize * 1.2;
     const f2 = 0.3;
 
-    const num3 = 9;
+    const num3 = 10;
     final r3 = r2 + state._puzzle3.screenSize * 1;
     const f3 = 0.2;
 
-    const num4 = 11;
+    const num4 = 13;
     final r4 = r3 + state._puzzle4.screenSize * 1;
     const f4 = 0.1;
+
+    const num5 = 15;
+    final r5 = r4 + state._puzzle5.screenSize * 1;
+    const f5 = 0.1;
 
     paintPuzzleRing(canvas, size, state._puzzle2, num2, r2, f2);
     paintPuzzleRing(canvas, size, state._puzzle3, num3, r3, f3);
     paintPuzzleRing(canvas, size, state._puzzle4, num4, r4, f4);
+    paintPuzzleRing(canvas, size, state._puzzle5, num5, r5, f5);
+
+    Paint paint = Paint();
+    paint.color = Colors.white.withOpacity(0.6);
+    canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paint);
   }
 
   @override
@@ -249,77 +264,13 @@ class _BackgroundState extends State<Background> {
     ticker.dispose();
   }
 
-  List<Positioned> _buildStartScreen(BuildContext context, Size size) {
-    final cx = size.width / 2;
-    final cy = size.height / 2;
-
-    final maxAxis = max(size.width, size.height);
-
-    final List<Positioned> p = [];
-
-    const num2 = 5;
-    final r2 = _puzzle2.screenSize * 1.2;
-    const d2 = 2 * pi / num2;
-    const f2 = 0.3;
-
-    const num3 = 7;
-    final r3 = r2 + _puzzle3.screenSize * 1.2;
-    const d3 = 2 * pi / num3;
-    const f3 = 0.2;
-
-    const num4 = 9;
-    final r4 = r3 + _puzzle4.screenSize * 1.2;
-    const d4 = 2 * pi / num4;
-    const f4 = 0.1;
-
-    const num5 = 11;
-    final r5 = r4 + _puzzle5.screenSize * 1;
-    const d5 = 2 * pi / num5;
-    const f5 = 0.1;
-
-    // if (r5 + _puzzle5.screenSize < maxAxis) {
-    //   for (var i = 0; i < num5; i++) {
-    //     final x = cx + r5 * cos(time * f5 - i * d5) - _puzzle5.screenSize / 2;
-    //     final y = cy + r5 * sin(time * f5 - i * d5) - _puzzle5.screenSize / 2;
-    //     p.add(Positioned(left: x, top: y, child: Grid(_puzzle5, withShadow: false)));
-    //   }
-    // }
-
-    // if (r4 + _puzzle4.screenSize < maxAxis) {
-    //   for (var i = 0; i < num4; i++) {
-    //     final x = cx + r4 * cos(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-    //     final y = cy + r4 * sin(time * f4 - i * d4) - _puzzle4.screenSize / 2;
-    //     p.add(Positioned(key: ValueKey("4_$i"), left: x, top: y, child: Grid(_puzzle4, withShadow: false)));
-    //   }
-    // }
-
-    // if (r3 + _puzzle3.screenSize < maxAxis) {
-    //   for (var i = 0; i < num3; i++) {
-    //     final x = cx + r3 * cos(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-    //     final y = cy + r3 * sin(-(time * f3 - i * d3)) - _puzzle3.screenSize / 2;
-    //     p.add(Positioned(key: ValueKey("3_$i"), left: x, top: y, child: Grid(_puzzle3, withShadow: false)));
-    //   }
-    // }
-
-    // for (var i = 0; i < num2; i++) {
-    //   final x = cx + r2 * cos(time * f2 + i * d2) - _puzzle2.screenSize / 2;
-    //   final y = cy + r2 * sin(time * f2 + i * d2) - _puzzle2.screenSize / 2;
-    //   p.add(Positioned(key: ValueKey("2_$i"), left: x, top: y, child: Grid(_puzzle2, withShadow: false)));
-    // }
-
-    return p;
-  }
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return Stack(children: [
-      ...(Game.instance.state == GameState.startScreen ? _buildStartScreen(context, size) : [const SizedBox()]),
-      CustomPaint(
-        size: size,
-        painter: BackgroundPainter(value: time, state: this, particles: particles),
-      )
-    ]);
+    return CustomPaint(
+      size: size,
+      painter: BackgroundPainter(value: time, state: this, particles: particles),
+    );
   }
 }
