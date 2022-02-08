@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/config.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/main.dart';
+import 'package:flutter_puzzle/save_game.dart';
 
 import 'config.dart';
 import 'puzzle.dart';
@@ -174,6 +175,7 @@ class Game {
 
   void startLevel() {
     currentLevel++;
+    SaveGame.instance.saveLevel(currentLevel);
     final newSize = _sizeFromLevel();
 
     int shuffle = 0;
@@ -194,6 +196,7 @@ class Game {
 
   void onTimerFinished() {
     transitionToState(GameState.startScreen);
+    SaveGame.instance.gameOver();
     _mainState?.redraw();
   }
 

@@ -3,75 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
 import 'config.dart';
-
-class Tile extends StatelessWidget {
-  final int number;
-  final Function(int number)? onTap;
-  final bool canMoveHorizontal;
-  final bool canMoveVertical;
-  final bool? red;
-
-  const Tile(this.number, this.onTap, this.canMoveHorizontal, this.canMoveVertical, {Key? key, this.red}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTapDown: (_) {
-        onTap?.call(number);
-      },
-      onVerticalDragStart: (details) {
-        if (canMoveVertical) {
-          onTap?.call(number);
-        }
-      },
-      onHorizontalDragStart: (details) {
-        if (canMoveHorizontal) {
-          onTap?.call(number);
-        }
-      },
-      child: Container(
-        width: tileSize,
-        height: tileSize,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color: Colors.blue,
-            width: tileBorderSize,
-          ),
-          borderRadius: BorderRadius.circular(tileSize / 5),
-        ),
-        child: Center(
-          child: Text(
-            '$number',
-            style: TextStyle(
-              fontSize: tileSize / 2,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade800,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
+import 'tile.dart';
 
 class Grid extends StatelessWidget {
   final Puzzle _puzzle;
-  Function(int number)? onTap;
+  final Function(int number)? onTap;
 
   final bool? withShadow;
 
-  Grid(this._puzzle, {Key? key, this.onTap, this.withShadow}) : super(key: key);
-
-  bool _isRed(int number) {
-    if (_puzzle.size == 2) {
-      return number == 1;
-    } else if (_puzzle.size == 3) {
-      return number % 2 == 1;
-    } else {
-      return [1, 3, 6, 8, 9, 11, 14].contains(number);
-    }
-  }
+  const Grid(this._puzzle, {Key? key, this.onTap, this.withShadow}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

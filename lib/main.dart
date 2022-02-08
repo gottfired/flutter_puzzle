@@ -4,13 +4,18 @@ import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/countdown.dart';
+import 'package:flutter_puzzle/save_game.dart';
 import 'package:flutter_puzzle/state_transition.dart';
 
 import 'config.dart';
 import 'game.dart';
 import 'grid.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final saveGame = SaveGame();
+  await saveGame.init();
+
   runApp(const App());
 }
 
@@ -65,7 +70,6 @@ class MainState extends State<MainPage> {
   Widget build(BuildContext context) {
     setPuzzleTop(_game.puzzleTop(context));
     puzzleRotation = _game.puzzleRotation();
-
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
@@ -74,6 +78,9 @@ class MainState extends State<MainPage> {
           Countdown(_game),
           if (_game.state == GameState.startScreen) ...[
             buildStartButton(context),
+            if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
+              buildLevel("Highscore ", true),
+            ],
           ],
           if (_game.state == GameState.playing) ...[
             Center(
@@ -90,7 +97,7 @@ class MainState extends State<MainPage> {
                 ],
               ),
             ),
-            buildLevel(),
+            buildLevel("Level "),
           ],
           if (_game.transitionStarted != null) ...[
             StateTransition((state) {
@@ -106,15 +113,15 @@ class MainState extends State<MainPage> {
     );
   }
 
-  Positioned buildLevel() {
+  Positioned buildLevel(String label, [highscore = false]) {
+    final background = highscore ? Colors.red.shade700 : Colors.white;
+    final color = highscore ? Colors.white : Colors.blue.shade600;
     return Positioned(
       top: 0,
       child: Container(
-        width: 120,
-        height: 40,
         alignment: Alignment.center,
         decoration: BoxDecoration(
-          color: Colors.white,
+          color: background,
           borderRadius: const BorderRadius.only(
             bottomLeft: Radius.circular(10),
             bottomRight: Radius.circular(10),
@@ -127,19 +134,22 @@ class MainState extends State<MainPage> {
             )
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Text(
-              "Level ",
-              style: TextStyle(fontSize: 20, color: Colors.blue.shade600),
-            ),
-            Text(
-              "${_game.currentLevel}",
-              style: TextStyle(fontFamily: "AzeretMono", fontWeight: FontWeight.bold, fontSize: 24, color: Colors.blue.shade600),
-            ),
-          ],
+        child: Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                label,
+                style: TextStyle(fontSize: 20, color: color),
+              ),
+              Text(
+                "${highscore ? SaveGame.instance.maxLevel : _game.currentLevel}",
+                style: TextStyle(fontFamily: "AzeretMono", fontWeight: FontWeight.bold, fontSize: 24, color: color),
+              ),
+            ],
+          ),
         ),
       ),
     );
