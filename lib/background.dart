@@ -154,7 +154,7 @@ class BackgroundPainter extends CustomPainter {
     }
   }
 
-  void paintStartScreen(Canvas canvas, Size size) {
+  void paintRays(Canvas canvas, Size size) {
     Paint paint = Paint();
     paint.color = Colors.red;
 
@@ -180,6 +180,10 @@ class BackgroundPainter extends CustomPainter {
       path.close();
       canvas.drawPath(path, paint);
     }
+  }
+
+  void paintStartScreen(Canvas canvas, Size size) {
+    paintRays(canvas, size);
 
     const num2 = 6;
     final r2 = state._puzzle2.screenSize * 1.2;
@@ -200,6 +204,7 @@ class BackgroundPainter extends CustomPainter {
     paintPuzzleRing(canvas, size, state._puzzle2, num2, r2, f2);
     paintPuzzleRing(canvas, size, state._puzzle3, num3, r3, f3);
 
+    final maxSize = max(size.width, size.height);
     if (maxSize > r4 + state._puzzle4.screenSize) {
       paintPuzzleRing(canvas, size, state._puzzle4, num4, r4, f4);
     }
@@ -208,8 +213,7 @@ class BackgroundPainter extends CustomPainter {
       paintPuzzleRing(canvas, size, state._puzzle5, num5, r5, f5);
     }
 
-    paint.color = Colors.white.withOpacity(0.4);
-    canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paint);
+    canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), Paint()..color = Colors.white.withOpacity(0.4));
   }
 
   @override
