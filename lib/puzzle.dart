@@ -147,7 +147,7 @@ class Puzzle {
   }
 
   List<int> _getCoords(int number, [bool last = false]) {
-    List<int> t = last ? lastTiles : tiles;
+    List<int> t = last && lastTiles.isNotEmpty ? lastTiles : tiles;
     for (var y = 0; y < size; ++y) {
       for (var x = 0; x < size; ++x) {
         if (t[y * size + x] == number) {
