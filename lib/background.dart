@@ -1,5 +1,4 @@
 import 'dart:math';
-import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -35,6 +34,7 @@ class BackgroundPainter extends CustomPainter {
     }
   }
 
+/*
   void dummyPaint(Canvas canvas, Size size) {
     var paint = Paint()
       ..color = Colors.red
@@ -89,6 +89,7 @@ class BackgroundPainter extends CustomPainter {
     final rMax = length * 0.35;
     canvas.drawCircle(Offset(center.dx, center.dy), rMin + (rMax - rMin) * sin(4 * value), paint);
   }
+  */
 
   void paintParticles(Canvas canvas, Size size) {
     if (particles == null) {
@@ -113,33 +114,27 @@ class BackgroundPainter extends CustomPainter {
       paint,
     );
 
-    for (int i = 0; i < puzzle.size; ++i) {
-      for (int j = 0; j < puzzle.size; ++j) {
-        final tile = puzzle.tiles[i * puzzle.size + j];
-        if (tile == 0) {
-          continue;
-        }
+    for (int i = 1; i < puzzle.size * puzzle.size; ++i) {
+      final offset = puzzle.getTileOffset(i);
+      final left = offset.dx - sizeHalf;
+      final top = offset.dy - sizeHalf;
+      final right = left + tileSize;
+      final bottom = top + tileSize;
 
-        final left = puzzleBorderSize + j * tileSize - sizeHalf;
-        final top = puzzleBorderSize + i * tileSize - sizeHalf;
-        final right = left + tileSize;
-        final bottom = top + tileSize;
+      paint.color = Colors.white;
+      canvas.drawRRect(
+        RRect.fromLTRBR(
+          left + tileBorderSize,
+          top + tileBorderSize,
+          right - tileBorderSize,
+          bottom - tileBorderSize,
+          const Radius.circular(tileSize / 5),
+        ),
+        paint,
+      );
 
-        paint.color = Colors.white;
-        canvas.drawRRect(
-          RRect.fromLTRBR(
-            left + tileBorderSize,
-            top + tileBorderSize,
-            right - tileBorderSize,
-            bottom - tileBorderSize,
-            const Radius.circular(tileSize / 5),
-          ),
-          paint,
-        );
-
-        TextPainter tp = textPainters[tile];
-        tp.paint(canvas, Offset(left + (tileSize - tp.width) / 2, top + (tileSize - tp.height) / 2));
-      }
+      TextPainter tp = textPainters[i];
+      tp.paint(canvas, Offset(left + (tileSize - tp.width) / 2, top + (tileSize - tp.height) / 2));
     }
   }
 
@@ -160,6 +155,32 @@ class BackgroundPainter extends CustomPainter {
   }
 
   void paintStartScreen(Canvas canvas, Size size) {
+    Paint paint = Paint();
+    paint.color = Colors.red;
+
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    final maxSize = max(size.width, size.height);
+
+    const numSections = 10;
+    const sectionDelta = 2 * pi / numSections;
+
+    for (int i = 0; i < numSections; i++) {
+      final angle = value * 0.2 + i * sectionDelta;
+      final x = cx + maxSize * sin(angle);
+      final y = cy + maxSize * cos(angle);
+
+      final x2 = cx + maxSize * sin(angle + sectionDelta / 2);
+      final y2 = cy + maxSize * cos(angle + sectionDelta / 2);
+
+      var path = Path();
+      path.moveTo(cx, cy);
+      path.lineTo(x, y);
+      path.lineTo(x2, y2);
+      path.close();
+      canvas.drawPath(path, paint);
+    }
+
     const num2 = 6;
     final r2 = state._puzzle2.screenSize * 1.2;
     const f2 = 0.3;
@@ -178,11 +199,16 @@ class BackgroundPainter extends CustomPainter {
 
     paintPuzzleRing(canvas, size, state._puzzle2, num2, r2, f2);
     paintPuzzleRing(canvas, size, state._puzzle3, num3, r3, f3);
-    paintPuzzleRing(canvas, size, state._puzzle4, num4, r4, f4);
-    paintPuzzleRing(canvas, size, state._puzzle5, num5, r5, f5);
 
-    Paint paint = Paint();
-    paint.color = Colors.white.withOpacity(0.6);
+    if (maxSize > r4 + state._puzzle4.screenSize) {
+      paintPuzzleRing(canvas, size, state._puzzle4, num4, r4, f4);
+    }
+
+    if (maxSize > r5 + state._puzzle5.screenSize) {
+      paintPuzzleRing(canvas, size, state._puzzle5, num5, r5, f5);
+    }
+
+    paint.color = Colors.white.withOpacity(0.4);
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), paint);
   }
 
@@ -230,6 +256,7 @@ class _BackgroundState extends State<Background> {
       if (frame & 1 == 0) {
         particles.tick(current);
       }
+
       if (time > lastRandom2) {
         _puzzle2.doRandomMove();
         _puzzle5.doRandomMove();
@@ -249,6 +276,11 @@ class _BackgroundState extends State<Background> {
         setState(() {
           dt = current - time;
           time = current;
+
+          _puzzle2.tickTileMoveAnim(dt);
+          _puzzle3.tickTileMoveAnim(dt);
+          _puzzle4.tickTileMoveAnim(dt);
+          _puzzle5.tickTileMoveAnim(dt);
         });
       }
     });

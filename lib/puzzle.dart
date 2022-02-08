@@ -1,12 +1,16 @@
 import 'dart:math';
+import 'dart:ui';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/config.dart';
 
 class Puzzle {
   final List<int> tiles = [];
+  List<int> lastTiles = [];
   final List<int> _empty;
   final int size;
+  double _animTime = 0;
 
   static double getScreenSize(int puzzleHeight) {
     return puzzleHeight * tileSize + 2 * puzzleBorderSize;
@@ -72,7 +76,38 @@ class Puzzle {
     return true;
   }
 
+  void _startTileMoveAnim() {
+    lastTiles = tiles.toList(growable: false);
+    _animTime = 0;
+  }
+
+  void tickTileMoveAnim(double dt) {
+    _animTime += dt * 5;
+  }
+
+  Offset getTileOffset(int number) {
+    final coords = _getCoords(number);
+    if (_animTime >= 1) {
+      return Offset(coords[0] * tileSize + puzzleBorderSize, coords[1] * tileSize + puzzleBorderSize);
+    }
+
+    final lastCoords = _getCoords(number, true);
+    final lastX = lastCoords[0];
+    final lastY = lastCoords[1];
+
+    if (coords[0] == lastX && coords[1] == lastY) {
+      return Offset(coords[0] * tileSize + puzzleBorderSize, coords[1] * tileSize + puzzleBorderSize);
+    }
+
+    // Animate from last position to current position using animTime
+    final x = lerpDouble(lastX, coords[0], _animTime) ?? coords[0];
+    final y = lerpDouble(lastY, coords[1], _animTime) ?? coords[1];
+
+    return Offset(x * tileSize + puzzleBorderSize, y * tileSize + puzzleBorderSize);
+  }
+
   void _moveRow(int newX) {
+    _startTileMoveAnim();
     final y = _empty[1];
     if (newX < _empty[0]) {
       // Move tiles right
@@ -92,6 +127,7 @@ class Puzzle {
   }
 
   void _moveColumn(int newY) {
+    _startTileMoveAnim();
     final x = _empty[0];
     if (newY < _empty[1]) {
       // Move tiles down
@@ -110,10 +146,11 @@ class Puzzle {
     tiles[newY * size + x] = 0;
   }
 
-  List<int> _getCoords(int number) {
+  List<int> _getCoords(int number, [bool last = false]) {
+    List<int> t = last ? lastTiles : tiles;
     for (var y = 0; y < size; ++y) {
       for (var x = 0; x < size; ++x) {
-        if (tiles[y * size + x] == number) {
+        if (t[y * size + x] == number) {
           return [x, y];
         }
       }
