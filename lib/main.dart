@@ -75,7 +75,7 @@ class MainState extends State<MainPage> {
           if (_game.state == GameState.startScreen) ...[
             buildStartButton(context),
           ],
-          if (_game.state == GameState.playing)
+          if (_game.state == GameState.playing) ...[
             Center(
               child: Stack(
                 clipBehavior: Clip.none, // So that the puzzle doesn't clip during drop in/out anims
@@ -90,6 +90,8 @@ class MainState extends State<MainPage> {
                 ],
               ),
             ),
+            buildLevel(),
+          ],
           if (_game.transitionStarted != null) ...[
             StateTransition((state) {
               setState(() {
@@ -100,6 +102,45 @@ class MainState extends State<MainPage> {
             }),
           ]
         ],
+      ),
+    );
+  }
+
+  Positioned buildLevel() {
+    return Positioned(
+      top: 0,
+      child: Container(
+        width: 120,
+        height: 40,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: const BorderRadius.only(
+            bottomLeft: Radius.circular(10),
+            bottomRight: Radius.circular(10),
+          ),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.blue.shade400.withOpacity(0.5),
+              spreadRadius: 3,
+              blurRadius: 6,
+            )
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Text(
+              "Level ",
+              style: TextStyle(fontSize: 20, color: Colors.blue.shade600),
+            ),
+            Text(
+              "${_game.currentLevel}",
+              style: TextStyle(fontFamily: "AzeretMono", fontWeight: FontWeight.bold, fontSize: 24, color: Colors.blue.shade600),
+            ),
+          ],
+        ),
       ),
     );
   }
