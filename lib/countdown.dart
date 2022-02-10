@@ -38,6 +38,8 @@ class CountdownState extends State<Countdown> {
             if (_timerValue < 0) {
               _timerValue = 0;
             }
+
+            widget.game.tick(_timerValue);
           }
         });
         // onTimerTick?.call(_timerValue);

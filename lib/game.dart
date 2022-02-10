@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_puzzle/audio.dart';
 import 'package:flutter_puzzle/config.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/main.dart';
@@ -32,6 +33,7 @@ class Game {
   int? transitionStarted;
 
   double levelTime = 0;
+  double timeLeft = 0;
 
   CountdownState? _countDownState;
   MainState? _mainState;
@@ -47,14 +49,30 @@ class Game {
     startLevel();
 
     debugPrint("Game.start");
-
     transitionToState(GameState.playing);
+  }
+
+  void tick(double timeLeft) {
+    final before = this.timeLeft;
+    if (timeLeft < 4) {
+      if (before.toInt() != timeLeft.toInt()) {
+        Audio.instance.beep();
+      }
+    }
+    this.timeLeft = timeLeft;
   }
 
   void move(int number) {
     puzzle?.move(number);
     if (puzzle?.isSolved() == true) {
       _countDownState?.solved();
+      if (currentLevel > 5 && timeLeft < 2) {
+        Audio.instance.thatWasClose();
+      } else if (currentLevel > 5 && levelTime - timeLeft < 2 && (puzzle?.size ?? 0) > 2) {
+        Audio.instance.tooEasy();
+      } else {
+        Audio.instance.praise();
+      }
     }
   }
 
@@ -106,6 +124,12 @@ class Game {
     if (nextState != null) {
       state = nextState!;
       nextState = null;
+
+      if (state == GameState.playing) {
+        Audio.instance.gameMusic();
+      } else if (state == GameState.startScreen) {
+        Audio.instance.menuMusic();
+      }
     }
   }
 
@@ -149,13 +173,13 @@ class Game {
       switch (size) {
         case 2:
           // Smaller puzzles are easier
-          const base = 3.0;
+          const base = 4.0;
           // The more shuffleCount, the more time
           final shuffleBonus = shuffleCount ~/ 2;
-          time = min(4.0, base + shuffleBonus);
+          time = min(5.0, base + shuffleBonus);
           break;
         case 3:
-          const base = 5.0;
+          const base = 6.0;
           final shuffleBonus = shuffleCount ~/ 2;
           time = min(15.0, base + shuffleBonus);
           break;
@@ -191,12 +215,14 @@ class Game {
     puzzle = Puzzle(newSize, shuffle);
 
     levelTime = _calculateLevelTime(newSize, shuffle);
+    timeLeft = levelTime;
     _countDownState?.start(levelTime);
   }
 
   void onTimerFinished() {
     transitionToState(GameState.startScreen);
     SaveGame.instance.gameOver();
+    Audio.instance.gameOver();
     _mainState?.redraw();
   }
 

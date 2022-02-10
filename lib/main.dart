@@ -7,6 +7,7 @@ import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/save_game.dart';
 import 'package:flutter_puzzle/state_transition.dart';
 
+import 'audio.dart';
 import 'config.dart';
 import 'game.dart';
 import 'grid.dart';
@@ -15,6 +16,8 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final saveGame = SaveGame();
   await saveGame.init();
+
+  Audio.instance.init();
 
   runApp(const App());
 }
@@ -29,6 +32,8 @@ class App extends StatelessWidget {
       title: 'Pushtrix',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        backgroundColor: Colors.white,
+        scaffoldBackgroundColor: Colors.white,
         fontFamily: "Rowdies",
       ),
       home: const MainPage(title: 'Pushtrix'),
@@ -98,6 +103,7 @@ class MainState extends State<MainPage> {
               ),
             ),
             buildLevel("Level "),
+            // Positioned(top: 530, child: Text("  Loading ...", style: TextStyle(color: Colors.blue.shade800, fontSize: 40))),
           ],
           if (_game.transitionStarted != null) ...[
             StateTransition((state) {
@@ -170,6 +176,7 @@ class MainState extends State<MainPage> {
       onPressed: () {
         debugPrint("start pressed");
         setState(() {
+          // Audio.instance.click();
           _game.start();
           setPuzzleTop(_game.puzzleTop(context));
         });

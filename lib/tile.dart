@@ -1,6 +1,6 @@
-// create a stateless widget
 import 'package:flutter/material.dart';
 
+import 'audio.dart';
 import 'config.dart';
 
 class Tile extends StatelessWidget {
@@ -17,6 +17,7 @@ class Tile extends StatelessWidget {
     return GestureDetector(
       onPanDown: (_) {
         onTap?.call(number);
+        Audio.instance.swish();
       },
       // onVerticalDragStart: (details) {
       //   if (canMoveVertical) {
