@@ -16,6 +16,8 @@ const praises = [
 class Audio {
   static final Audio instance = Audio();
 
+  bool enabled = true;
+
   int lastPraise = -1;
 
   AudioPlayer? player;
@@ -37,14 +39,20 @@ class Audio {
   }
 
   void click() {
+    if (!enabled) return;
+
     FlameAudio.play("sounds/click.wav");
   }
 
   void swish() {
+    if (!enabled) return;
+
     FlameAudio.play("sounds/swish.wav", volume: 0.5);
   }
 
   void praise() {
+    if (!enabled) return;
+
     int nextPraise = 0;
     while (nextPraise == lastPraise) {
       nextPraise = Random().nextInt(praises.length);
@@ -55,26 +63,37 @@ class Audio {
   }
 
   void thatWasClose() {
+    if (!enabled) return;
+
     FlameAudio.play("sounds/that_was_close.mp3");
   }
 
   void gameOver() {
+    if (!enabled) return;
+
     FlameAudio.play("sounds/game_over.mp3");
   }
 
   void tooEasy() {
+    if (!enabled) return;
+
     FlameAudio.play("sounds/too_easy.mp3");
   }
 
   void beep() {
+    if (!enabled) return;
     FlameAudio.play("sounds/beep.mp3");
   }
 
   void beepLong() {
+    if (!enabled) return;
+
     FlameAudio.play("sounds/beep_long.mp3");
   }
 
   void menuMusic() async {
+    if (!enabled) return;
+
     if (player != null) {
       await player?.stop();
       player = null;
@@ -89,6 +108,8 @@ class Audio {
   }
 
   void gameMusic() async {
+    if (!enabled) return;
+
     if (player != null) {
       await player?.stop();
       player = null;
@@ -109,11 +130,17 @@ class Audio {
   }
 
   void gameMusicFast() async {
+    if (!enabled) return;
+
     if (player != null) {
       await player?.stop();
       player = null;
     }
 
     player = await FlameAudio.loop("music/bensound-extremeaction.mp3", volume: 0.4);
+  }
+
+  void enable(bool enabled) {
+    this.enabled = enabled;
   }
 }

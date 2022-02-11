@@ -9,6 +9,7 @@ import 'package:flutter_puzzle/save_game.dart';
 import 'package:flutter_puzzle/state_transition.dart';
 
 import 'audio.dart';
+import 'audio_dialog.dart';
 import 'config.dart';
 import 'game.dart';
 import 'grid.dart';
@@ -71,89 +72,22 @@ class MainState extends State<MainPage> {
     super.initState();
     _game.setMainState(this);
 
-    if (true) {
-      const optionStyle = TextStyle(
-        fontSize: 20,
-        fontFamily: "Rowdies",
-        fontWeight: FontWeight.w300,
-      );
+    // Web doesn't allow autoplay of audio. Display dialog to allow user to enable audio.
+    if (kIsWeb) {
+      Future.delayed(const Duration(seconds: 0), () async {
+        final enable = await showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const AudioDialog();
+          },
+        );
 
-      final ButtonStyle okStyle = ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(20),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(100)),
-        ),
-      );
-
-      final ButtonStyle cancelStyle = ElevatedButton.styleFrom(
-        padding: const EdgeInsets.all(20),
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(100)),
-        ),
-      );
-
-      Future.delayed(
-          const Duration(seconds: 0),
-          () => showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Dialog(
-                  // title: const Text("Enable sound?"),
-                  // titleTextStyle: const TextStyle(
-                  //   fontSize: 30,
-                  //   fontFamily: "Rowdies",
-                  //   fontWeight: FontWeight.w300,
-                  // ),
-                  // insetPadding: EdgeInsets.symmetric(vertical: 24, horizontal: 80),
-                  backgroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(minWidth: 320), // TODO: Why is minWidth not working?
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          const Text(
-                            "La La La or Hush?",
-                            style: TextStyle(
-                              fontSize: 32,
-                              fontFamily: "Rowdies",
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text(
-                            "This game was designed with audio in mind.\nYou decide: fun and funky or quiet and boring?",
-                            style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: "Rowdies",
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
-                          const SizedBox(height: 48),
-                          ElevatedButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("Thank you for the music!", style: optionStyle),
-                            style: okStyle,
-                          ),
-                          TextButton(
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                            child: const Text("Shh, everyone's asleep.", style: optionStyle),
-                            style: TextButton.styleFrom(
-                              padding: const EdgeInsets.all(20),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-              }));
+        if (enable) {
+          Audio.instance.menuMusic();
+        } else {
+          Audio.instance.enable(false);
+        }
+      });
     }
   }
 
