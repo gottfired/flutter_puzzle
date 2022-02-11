@@ -16,6 +16,7 @@ class Countdown extends StatefulWidget {
 class CountdownState extends State<Countdown> {
   double _timerValue = 0;
 
+  double _levelTime = 0;
   Timer? _timer;
 
   @override
@@ -29,12 +30,13 @@ class CountdownState extends State<Countdown> {
     _timer = Timer.periodic(
       const Duration(milliseconds: 10),
       (Timer timer) {
+        // debugPrint('timer tick ${timer.tick}');
         setState(() {
           if (_timerValue <= 0) {
             timer.cancel();
             widget.game.onTimerFinished();
           } else {
-            _timerValue -= 0.01;
+            _timerValue = _levelTime - timer.tick * 0.01;
             if (_timerValue < 0) {
               _timerValue = 0;
             }
@@ -48,6 +50,7 @@ class CountdownState extends State<Countdown> {
 
     setState(() {
       _timerValue = levelTime;
+      _levelTime = levelTime;
     });
   }
 

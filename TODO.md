@@ -1,2 +1,3 @@
+-   add pointer for tiles
 -   add red colored tile matching for time bonus
 -   add green colored tile matching for level reset
