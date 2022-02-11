@@ -56,6 +56,7 @@ class AudioDialog extends StatelessWidget {
                   ),
                 ),
               ),
+              const SizedBox(height: 8),
               TextButton(
                 onPressed: () {
                   Navigator.pop(context, false);

@@ -23,7 +23,6 @@ class SaveGame {
   Future<void> saveLevel(int level) async {
     if (level > maxLevel) {
       maxLevel = level;
-      debugPrint("### set maxLevel $maxLevel");
       await _prefs.setInt("maxLevel", level);
     }
   }

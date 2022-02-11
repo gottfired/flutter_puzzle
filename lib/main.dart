@@ -57,6 +57,8 @@ class MainState extends State<MainPage> {
   double? puzzleTop = 0;
   double puzzleRotation = 0;
   double timerValue = 0;
+  bool _creditsShown = false;
+  Timer? _creditsTimer;
 
   void setPuzzleTop(double? top) {
     // debugPrint("new top $top");
@@ -82,15 +84,36 @@ class MainState extends State<MainPage> {
           },
         );
 
-        if (enable) {
-          Audio.instance.menuMusic();
-        } else {
-          Audio.instance.enable(false);
-        }
+        setState(() {
+          if (enable) {
+            Audio.instance.menuMusic();
+            _showCredits();
+          } else {
+            Audio.instance.enable(false);
+          }
+        });
       });
     } else {
       Audio.instance.menuMusic();
+      _showCredits();
     }
+  }
+
+  void _showCredits() {
+    setState(() {
+      _creditsShown = true;
+    });
+
+    if (_creditsTimer != null) {
+      _creditsTimer!.cancel();
+    }
+
+    // Hide after 2 seconds
+    _creditsTimer = Timer(const Duration(seconds: 2), () {
+      setState(() {
+        _creditsShown = false;
+      });
+    });
   }
 
   @override
@@ -114,11 +137,38 @@ class MainState extends State<MainPage> {
                 onPressed: () {
                   setState(() {
                     Audio.instance.enable(!Audio.instance.enabled);
+                    if (Audio.instance.enabled) {
+                      _showCredits();
+                    } else {
+                      _creditsShown = false;
+                    }
                   });
                 },
               ),
               bottom: 16,
               right: 16,
+            ),
+            Positioned(
+              child: AnimatedOpacity(
+                duration: const Duration(milliseconds: 500),
+                opacity: _creditsShown ? 1 : 0,
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(8),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.3),
+                        blurRadius: 8,
+                        offset: const Offset(2, 4),
+                      ),
+                    ],
+                  ),
+                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+                  child: const Text("Music by Bensound.com"),
+                ),
+              ),
+              bottom: 16,
             ),
           ],
           if (_game.state == GameState.playing) ...[
