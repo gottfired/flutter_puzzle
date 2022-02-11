@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:animated_button/animated_button.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/countdown.dart';
@@ -69,6 +70,77 @@ class MainState extends State<MainPage> {
   void initState() {
     super.initState();
     _game.setMainState(this);
+
+    if (true) {
+      const optionStyle = TextStyle(
+        fontSize: 20,
+        fontFamily: "Rowdies",
+        fontWeight: FontWeight.w300,
+      );
+
+      final ButtonStyle okStyle = ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(20),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(100)),
+        ),
+      );
+
+      final ButtonStyle cancelStyle = ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(20),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(100)),
+        ),
+      );
+
+      Future.delayed(
+          const Duration(seconds: 0),
+          () => showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return Dialog(
+                  // title: const Text("Enable sound?"),
+                  // titleTextStyle: const TextStyle(
+                  //   fontSize: 30,
+                  //   fontFamily: "Rowdies",
+                  //   fontWeight: FontWeight.w300,
+                  // ),
+                  insetPadding: EdgeInsets.symmetric(vertical: 24, horizontal: 80),
+                  backgroundColor: Colors.white,
+                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+                  child: Container(
+                    padding: const EdgeInsets.all(30),
+                    child: Column(
+                      children: [
+                        const Text(
+                          "You decide: fun and funky or quiet and boring?",
+                          style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: "Rowdies",
+                            fontWeight: FontWeight.w300,
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Thank you for the music!", style: optionStyle),
+                          style: okStyle,
+                        ),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          child: const Text("Shh, everyone's asleep.", style: optionStyle),
+                          style: TextButton.styleFrom(
+                            padding: const EdgeInsets.all(20),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              }));
+    }
   }
 
   @override
@@ -161,28 +233,32 @@ class MainState extends State<MainPage> {
     );
   }
 
-  AnimatedButton buildStartButton(BuildContext context) {
-    return AnimatedButton(
-      color: Colors.blue,
-      height: 100,
-      child: const Text(
-        'Start',
-        style: TextStyle(
-          fontSize: 50,
-          color: Colors.white,
-          fontWeight: FontWeight.w500,
-        ),
-      ),
-      onPressed: () {
-        debugPrint("start pressed");
-        setState(() {
-          // Audio.instance.click();
-          _game.start();
-          setPuzzleTop(_game.puzzleTop(context));
-        });
+  GestureDetector buildStartButton(BuildContext context) {
+    return GestureDetector(
+      onTapDown: (_) {
+        Audio.instance.click();
       },
-      enabled: true,
-      shadowDegree: ShadowDegree.light,
+      child: AnimatedButton(
+        color: Colors.blue,
+        height: 100,
+        child: const Text(
+          'Start',
+          style: TextStyle(
+            fontSize: 50,
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+        onPressed: () {
+          debugPrint("start pressed");
+          setState(() {
+            _game.start();
+            setPuzzleTop(_game.puzzleTop(context));
+          });
+        },
+        enabled: true,
+        shadowDegree: ShadowDegree.light,
+      ),
     );
   }
 
