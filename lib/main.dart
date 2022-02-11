@@ -104,38 +104,52 @@ class MainState extends State<MainPage> {
                   //   fontFamily: "Rowdies",
                   //   fontWeight: FontWeight.w300,
                   // ),
-                  insetPadding: EdgeInsets.symmetric(vertical: 24, horizontal: 80),
+                  // insetPadding: EdgeInsets.symmetric(vertical: 24, horizontal: 80),
                   backgroundColor: Colors.white,
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
                   child: Container(
-                    padding: const EdgeInsets.all(30),
-                    child: Column(
-                      children: [
-                        const Text(
-                          "You decide: fun and funky or quiet and boring?",
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: "Rowdies",
-                            fontWeight: FontWeight.w300,
+                    padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minWidth: 320), // TODO: Why is minWidth not working?
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const Text(
+                            "La La La or Hush?",
+                            style: TextStyle(
+                              fontSize: 32,
+                              fontFamily: "Rowdies",
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Thank you for the music!", style: optionStyle),
-                          style: okStyle,
-                        ),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text("Shh, everyone's asleep.", style: optionStyle),
-                          style: TextButton.styleFrom(
-                            padding: const EdgeInsets.all(20),
+                          const SizedBox(height: 16),
+                          const Text(
+                            "This game was designed with audio in mind.\nYou decide: fun and funky or quiet and boring?",
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: "Rowdies",
+                              fontWeight: FontWeight.w300,
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 48),
+                          ElevatedButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Thank you for the music!", style: optionStyle),
+                            style: okStyle,
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.pop(context);
+                            },
+                            child: const Text("Shh, everyone's asleep.", style: optionStyle),
+                            style: TextButton.styleFrom(
+                              padding: const EdgeInsets.all(20),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 );
