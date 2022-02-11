@@ -71,6 +71,7 @@ flutter:
     - assets/audio/sounds/that_was_close.mp3
     - assets/audio/sounds/too_easy.mp3
     - assets/audio/sounds/beep.mp3
+    - assets/audio/sounds/beep_long.mp3
     - assets/audio/music/bensound-extremeaction.mp3
     - assets/audio/music/bensound-punky.mp3
     - assets/audio/music/bensound-scifi.mp3

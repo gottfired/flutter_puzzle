@@ -30,6 +30,7 @@ class Audio {
       "sounds/too_easy.mp3",
       "sounds/that_was_close.mp3",
       "sounds/beep.mp3",
+      "sounds/beep_long.mp3",
       "music/bensound-scifi.mp3",
       "music/bensound-punky.mp3",
     ]);
@@ -67,6 +68,10 @@ class Audio {
 
   void beep() {
     FlameAudio.play("sounds/beep.mp3");
+  }
+
+  void beepLong() {
+    FlameAudio.play("sounds/beep_long.mp3");
   }
 
   void menuMusic() async {
