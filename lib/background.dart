@@ -238,7 +238,13 @@ class Background extends StatefulWidget {
   State<Background> createState() => _BackgroundState();
 }
 
-class _BackgroundState extends State<Background> {
+class _BackgroundState extends State<Background> with TickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    duration: const Duration(seconds: 3600),
+    upperBound: 3600,
+    vsync: this,
+  )..repeat();
+
   late final Ticker ticker;
   double time = 0;
   double dt = 0;
@@ -277,15 +283,16 @@ class _BackgroundState extends State<Background> {
       }
 
       if (frame & 1 == 0) {
-        setState(() {
-          dt = current - time;
-          time = current;
+        dt = current - time;
+        time = current;
 
-          _puzzle2.tickTileMoveAnim(dt);
-          _puzzle3.tickTileMoveAnim(dt);
-          _puzzle4.tickTileMoveAnim(dt);
-          _puzzle5.tickTileMoveAnim(dt);
-        });
+        _puzzle2.tickTileMoveAnim(dt);
+        _puzzle3.tickTileMoveAnim(dt);
+        _puzzle4.tickTileMoveAnim(dt);
+        _puzzle5.tickTileMoveAnim(dt);
+        // setState(() {
+
+        // });
       }
     });
 
@@ -298,15 +305,28 @@ class _BackgroundState extends State<Background> {
   void dispose() {
     super.dispose();
     ticker.dispose();
+    _controller.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return CustomPaint(
-      size: size,
-      painter: BackgroundPainter(value: time, state: this, particles: particles),
-    );
+    return AnimatedBuilder(
+        animation: _controller,
+        builder: (context, _) {
+          return CustomPaint(
+            painter: BackgroundPainter(
+              particles: particles,
+              value: _controller.value,
+              state: this,
+            ),
+            size: size,
+          );
+        });
+    // CustomPaint(
+    //   size: size,
+    //   painter: BackgroundPainter(value: time, state: this, particles: particles),
+    // );
   }
 }
