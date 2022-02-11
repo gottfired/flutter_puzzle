@@ -1,4 +1,4 @@
--   improve timer performance
+-   add bensound credits
 
 -   add red colored tile matching for time bonus
 -   add green colored tile matching for level reset

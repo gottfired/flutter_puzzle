@@ -18,10 +18,10 @@ class Audio {
 
   bool enabled = true;
 
-  int lastPraise = -1;
+  int _lastPraise = -1;
 
-  AudioPlayer? player;
-  Timer? timer;
+  AudioPlayer? _player;
+  Timer? _timer;
 
   void init() {
     FlameAudio.audioCache.loadAll([
@@ -54,12 +54,12 @@ class Audio {
     if (!enabled) return;
 
     int nextPraise = 0;
-    while (nextPraise == lastPraise) {
+    while (nextPraise == _lastPraise) {
       nextPraise = Random().nextInt(praises.length);
     }
 
     FlameAudio.play(praises[nextPraise]);
-    lastPraise = nextPraise;
+    _lastPraise = nextPraise;
   }
 
   void thatWasClose() {
@@ -94,36 +94,36 @@ class Audio {
   void menuMusic() async {
     if (!enabled) return;
 
-    if (player != null) {
-      await player?.stop();
-      player = null;
+    if (_player != null) {
+      await _player?.stop();
+      _player = null;
     }
 
-    if (timer != null) {
-      timer!.cancel();
-      timer = null;
+    if (_timer != null) {
+      _timer!.cancel();
+      _timer = null;
     }
 
-    player = await FlameAudio.loop("music/bensound-scifi.mp3");
+    _player = await FlameAudio.loop("music/bensound-scifi.mp3");
   }
 
   void gameMusic() async {
     if (!enabled) return;
 
-    if (player != null) {
-      await player?.stop();
-      player = null;
+    if (_player != null) {
+      await _player?.stop();
+      _player = null;
     }
-    player = await FlameAudio.play("music/bensound-punky.mp3", volume: 0.4);
+    _player = await FlameAudio.play("music/bensound-punky.mp3", volume: 0.4);
 
     if (kIsWeb) {
       // No streams on web -> use timer instead
-      timer = Timer(const Duration(seconds: 125), () {
+      _timer = Timer(const Duration(seconds: 125), () {
         gameMusicFast();
-        timer = null;
+        _timer = null;
       });
     } else {
-      player!.onPlayerCompletion.listen((onDone) {
+      _player!.onPlayerCompletion.listen((onDone) {
         gameMusicFast();
       });
     }
@@ -132,15 +132,22 @@ class Audio {
   void gameMusicFast() async {
     if (!enabled) return;
 
-    if (player != null) {
-      await player?.stop();
-      player = null;
+    if (_player != null) {
+      await _player?.stop();
+      _player = null;
     }
 
-    player = await FlameAudio.loop("music/bensound-extremeaction.mp3", volume: 0.4);
+    _player = await FlameAudio.loop("music/bensound-extremeaction.mp3", volume: 0.4);
   }
 
-  void enable(bool enabled) {
+  void enable(bool enabled) async {
     this.enabled = enabled;
+    if (!enabled) {
+      await _player?.stop();
+      _player = null;
+      _timer?.cancel();
+    } else {
+      menuMusic();
+    }
   }
 }

@@ -88,6 +88,8 @@ class MainState extends State<MainPage> {
           Audio.instance.enable(false);
         }
       });
+    } else {
+      Audio.instance.menuMusic();
     }
   }
 
@@ -106,6 +108,18 @@ class MainState extends State<MainPage> {
             if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
               buildLevel("Highscore ", true),
             ],
+            Positioned(
+              child: FloatingActionButton(
+                child: Icon(Audio.instance.enabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
+                onPressed: () {
+                  setState(() {
+                    Audio.instance.enable(!Audio.instance.enabled);
+                  });
+                },
+              ),
+              bottom: 16,
+              right: 16,
+            ),
           ],
           if (_game.state == GameState.playing) ...[
             Center(
