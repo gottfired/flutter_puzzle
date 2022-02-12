@@ -39,6 +39,9 @@ class ParticleSystem {
 
     Paint paint = Paint();
 
+    // paint.color = Color(0xff000000);
+    // canvas.drawPaint(paint);
+
     for (var p in particles) {
       final angle = timeSwing * p.originalDistance;
       final rot = Quaternion.euler(0, 0, angle);
@@ -78,7 +81,10 @@ class ParticleSystem {
         particle.originalDistance = particle.position.distanceTo(Vector3.zero());
         // Colors.fromRgba(30, 136, 229, 255, particle.color); // blue
         // Colors.fromRgba(255, 87, 34, 255, particle.color); // orange
-        Colors.fromRgba(255, 50, 50, 255, particle.color);
+        // Colors.hslToRgb(Vector4(particle.originalDistance / 1000, 1.0, 0.5, 1.0), particle.color);
+
+        // Colors.fromRgba(255, 50, 50, 255, particle.color);
+
         particle.size = 50.0;
 
         particles.add(particle);
@@ -91,10 +97,15 @@ class ParticleSystem {
 
   void tick(double time) {
     currentTime = time;
+    final cosine = cos(time);
+    final sine = sin(time);
     for (var particle in particles) {
-      particle.position.x = particle.originalPosition.x + cos(time) * 30;
-      particle.position.y = particle.originalPosition.y + sin(time) * 100;
+      particle.position.x = particle.originalPosition.x + cosine * 30;
+      particle.position.y = particle.originalPosition.y + sine * 100;
       particle.position.z = 0.3 * sin(5 * time + particle.position.x * 0.3 + particle.position.y * 0.1);
+      Colors.hslToRgb(Vector4(sine * particle.originalDistance / 800, 1.0, 0.5, 1.0), particle.color);
+      // continue here -> start with original color -> interpolate to color shift
+      // start with white -> interpolate to black
     }
   }
 }
