@@ -44,6 +44,7 @@ class ParticleSystem {
 
     for (var p in particles) {
       final angle = timeSwing * p.originalDistance;
+
       final rot = Quaternion.euler(0, 0, angle);
       final pos = rot.rotated(p.position);
 
@@ -58,7 +59,11 @@ class ParticleSystem {
       double y = pos.y * factorY + centerY;
       double offset = (0.55 * factorX) / (pos.z * 0.8 + 1.1);
       double radius = p.size * offset;
+
+      // canvas.save();
+      // canvas.rotate(angle * 0.3);
       canvas.drawCircle(Offset(x, y), radius, paint);
+      // canvas.restore();
     }
   }
 
@@ -103,7 +108,7 @@ class ParticleSystem {
       particle.position.x = particle.originalPosition.x + cosine * 30;
       particle.position.y = particle.originalPosition.y + sine * 100;
       particle.position.z = 0.3 * sin(5 * time + particle.position.x * 0.3 + particle.position.y * 0.1);
-      Colors.hslToRgb(Vector4(sine * particle.originalDistance / 800, 1.0, 0.5, 1.0), particle.color);
+      Colors.hslToRgb(Vector4(sine * particle.originalDistance / 900, 1.0, 0.5, 1.0), particle.color);
       // continue here -> start with original color -> interpolate to color shift
       // start with white -> interpolate to black
     }
