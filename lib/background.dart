@@ -240,11 +240,7 @@ class Background extends StatefulWidget {
 }
 
 class _BackgroundState extends State<Background> with TickerProviderStateMixin {
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(seconds: 3600),
-    upperBound: 3600,
-    vsync: this,
-  )..repeat();
+  late final AnimationController _controller;
 
   late final Ticker ticker;
   int frame = 0;
@@ -259,6 +255,14 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
   ParticleSystem particles = ParticleSystem();
 
   _BackgroundState() {
+    if (useAnimationController) {
+      _controller = AnimationController(
+        duration: const Duration(seconds: 3600),
+        upperBound: 3600,
+        vsync: this,
+      )..repeat();
+    }
+
     ticker = Ticker((duration) {
       final current = duration.inMilliseconds / 1000.0;
       frame++;
@@ -290,6 +294,8 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
           _puzzle4.tickTileMoveAnim(dt);
           _puzzle5.tickTileMoveAnim(dt);
         }
+
+        setState(() {});
       }
     });
 
@@ -302,28 +308,33 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
   void dispose() {
     super.dispose();
     ticker.dispose();
-    _controller.dispose();
+    if (useAnimationController) {
+      _controller.dispose();
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    return AnimatedBuilder(
-        animation: _controller,
-        builder: (context, _) {
-          return CustomPaint(
-            painter: BackgroundPainter(
-              particles: particles,
-              value: _controller.value,
-              state: this,
-            ),
-            size: size,
-          );
-        });
-    // CustomPaint(
-    //   size: size,
-    //   painter: BackgroundPainter(value: time, state: this, particles: particles),
-    // );
+    if (useAnimationController) {
+      return AnimatedBuilder(
+          animation: _controller,
+          builder: (context, _) {
+            return CustomPaint(
+              painter: BackgroundPainter(
+                particles: particles,
+                value: _controller.value,
+                state: this,
+              ),
+              size: size,
+            );
+          });
+    } else {
+      return CustomPaint(
+        size: size,
+        painter: BackgroundPainter(value: GameTime.instance.current, state: this, particles: particles),
+      );
+    }
   }
 }
