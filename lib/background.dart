@@ -7,6 +7,7 @@ import 'package:flutter_puzzle/particle.dart';
 import 'package:flutter_puzzle/puzzle.dart';
 
 import 'config.dart';
+import 'game_time.dart';
 
 class BackgroundPainter extends CustomPainter {
   final double value;
@@ -246,8 +247,6 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
   )..repeat();
 
   late final Ticker ticker;
-  double time = 0;
-  double dt = 0;
   int frame = 0;
   final Puzzle _puzzle2 = Puzzle(2, 0);
   final Puzzle _puzzle3 = Puzzle(3, 0);
@@ -263,36 +262,34 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
     ticker = Ticker((duration) {
       final current = duration.inMilliseconds / 1000.0;
       frame++;
-      if (frame & 1 == 0) {
-        particles.tick(current);
-      }
 
-      if (time > lastRandom2) {
+      if (GameTime.instance.current > lastRandom2) {
         _puzzle2.doRandomMove();
         _puzzle5.doRandomMove();
         lastRandom2++;
       }
 
-      if (time > lastRandom3) {
+      if (GameTime.instance.current > lastRandom3) {
         _puzzle3.doRandomMove();
         lastRandom3++;
       }
-      if (time > lastRandom4) {
+      if (GameTime.instance.current > lastRandom4) {
         _puzzle4.doRandomMove();
         lastRandom4++;
       }
 
       if (frame & 1 == 0) {
-        dt = current - time;
-        time = current;
+        final dt = current - GameTime.instance.current;
+        GameTime.instance.tick(dt);
 
-        _puzzle2.tickTileMoveAnim(dt);
-        _puzzle3.tickTileMoveAnim(dt);
-        _puzzle4.tickTileMoveAnim(dt);
-        _puzzle5.tickTileMoveAnim(dt);
-        // setState(() {
-
-        // });
+        if (Game.instance.state == GameState.playing) {
+          particles.tick();
+        } else {
+          _puzzle2.tickTileMoveAnim(dt);
+          _puzzle3.tickTileMoveAnim(dt);
+          _puzzle4.tickTileMoveAnim(dt);
+          _puzzle5.tickTileMoveAnim(dt);
+        }
       }
     });
 

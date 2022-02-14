@@ -12,12 +12,14 @@ import 'audio.dart';
 import 'audio_dialog.dart';
 import 'config.dart';
 import 'game.dart';
+import 'game_time.dart';
 import 'grid.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   final saveGame = SaveGame();
   await saveGame.init();
+  GameTime.init();
 
   Audio.instance.init();
 
@@ -67,6 +69,13 @@ class MainState extends State<MainPage> {
 
   void redraw() {
     setState(() {});
+  }
+
+  @override
+  void dispose() {
+    _creditsTimer?.cancel();
+    _creditsTimer = null;
+    super.dispose();
   }
 
   @override

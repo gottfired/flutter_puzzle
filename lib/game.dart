@@ -8,6 +8,7 @@ import 'package:flutter_puzzle/main.dart';
 import 'package:flutter_puzzle/save_game.dart';
 
 import 'config.dart';
+import 'game_time.dart';
 import 'puzzle.dart';
 
 enum GameState {
@@ -124,6 +125,7 @@ class Game {
     if (nextState != null) {
       state = nextState!;
       nextState = null;
+      GameTime.instance.stateStart();
 
       if (state == GameState.playing) {
         Audio.instance.gameMusic();

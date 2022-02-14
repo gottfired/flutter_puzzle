@@ -1,7 +1,14 @@
 import 'dart:math';
 
-import 'package:vector_math/vector_math.dart';
 import 'package:flutter/material.dart' hide Colors;
+import 'package:flutter_puzzle/game_time.dart';
+import 'package:flutter_puzzle/lerp_value.dart';
+import 'package:vector_math/vector_math.dart';
+
+const colorsStartAtSec = 30;
+const flickerStartsAtSec = 20;
+const swirlStartAtSec = 10;
+const rotateStartAtSec = 0.2;
 
 class Particle {
   Vector3 position = Vector3.zero();
@@ -20,7 +27,11 @@ class ParticleSystem {
   List<Particle> particles = [];
   double width = 0;
   double height = 0;
-  double currentTime = 0.0;
+
+  final colorLerp = LerpValue(0);
+  final zFlickerLerp = LerpValue(0);
+  final rotateLerp = LerpValue(0);
+  final swirlLerp = LerpValue(0);
 
   ParticleSystem({int? count}) {
     if (count != null) {
@@ -35,7 +46,7 @@ class ParticleSystem {
     final factorX = maxSide / width;
     final factorY = maxSide / height;
 
-    final timeSwing = sin(currentTime * 0.3) * 0.0015;
+    final timeSwing = sin(GameTime.instance.current * 0.3) * 0.0015;
 
     Paint paint = Paint();
 
@@ -43,7 +54,7 @@ class ParticleSystem {
     // canvas.drawPaint(paint);
 
     for (var p in particles) {
-      final angle = timeSwing * p.originalDistance;
+      final angle = swirlLerp.value * timeSwing * p.originalDistance;
 
       final rot = Quaternion.euler(0, 0, angle);
       final pos = rot.rotated(p.position);
@@ -84,11 +95,6 @@ class ParticleSystem {
         particle.originalPosition.x = x;
         particle.originalPosition.y = y;
         particle.originalDistance = particle.position.distanceTo(Vector3.zero());
-        // Colors.fromRgba(30, 136, 229, 255, particle.color); // blue
-        // Colors.fromRgba(255, 87, 34, 255, particle.color); // orange
-        // Colors.hslToRgb(Vector4(particle.originalDistance / 1000, 1.0, 0.5, 1.0), particle.color);
-
-        // Colors.fromRgba(255, 50, 50, 255, particle.color);
 
         particle.size = 50.0;
 
@@ -100,17 +106,50 @@ class ParticleSystem {
     height = 2 * heightHalf;
   }
 
-  void tick(double time) {
-    currentTime = time;
+  void tick() {
+    final time = GameTime.instance.stateTime;
     final cosine = cos(time);
     final sine = sin(time);
     for (var particle in particles) {
-      particle.position.x = particle.originalPosition.x + cosine * 30;
-      particle.position.y = particle.originalPosition.y + sine * 100;
-      particle.position.z = 0.3 * sin(5 * time + particle.position.x * 0.3 + particle.position.y * 0.1);
-      Colors.hslToRgb(Vector4(sine * particle.originalDistance / 900, 1.0, 0.5, 1.0), particle.color);
-      // continue here -> start with original color -> interpolate to color shift
-      // start with white -> interpolate to black
+      particle.position.x = particle.originalPosition.x + rotateLerp.value * cosine * 30;
+      particle.position.y = particle.originalPosition.y + rotateLerp.value * sine * 100;
+      particle.position.z = zFlickerLerp.value * 0.3 * sin(5 * time + particle.position.x * 0.3 + particle.position.y * 0.1);
+      Vector4 color = Vector4.zero();
+
+      // Lerp between red and hsl shift
+      Colors.hslToRgb(Vector4(sine * particle.originalDistance / 900, 1.0, 0.5, 1.0), color);
+      particle.color.x = (1 - colorLerp.value) + (colorLerp.value) * color.x;
+      particle.color.y = (1 - colorLerp.value) * 50 / 255 + (colorLerp.value) * color.y;
+      particle.color.z = (1 - colorLerp.value) * 50 / 255 + (colorLerp.value) * color.z;
+      particle.color.w = 1;
+    }
+
+    if (time < colorsStartAtSec) {
+      colorLerp.set(0);
+    } else {
+      colorLerp.lerpTo(1, 4);
+      colorLerp.tick(GameTime.instance.dt);
+    }
+
+    if (time < flickerStartsAtSec) {
+      zFlickerLerp.set(0);
+    } else {
+      zFlickerLerp.lerpTo(1, 20);
+      zFlickerLerp.tick(GameTime.instance.dt);
+    }
+
+    if (time < rotateStartAtSec) {
+      rotateLerp.set(0);
+    } else {
+      rotateLerp.lerpTo(1, 6);
+      rotateLerp.tick(GameTime.instance.dt);
+    }
+
+    if (time < swirlStartAtSec) {
+      swirlLerp.set(0);
+    } else {
+      swirlLerp.lerpTo(1, 14);
+      swirlLerp.tick(GameTime.instance.dt);
     }
   }
 }
