@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart' hide Colors;
 import 'package:flutter_puzzle/game_time.dart';
 import 'package:flutter_puzzle/lerp_value.dart';
+import 'package:flutter_puzzle/scene.dart';
 import 'package:vector_math/vector_math.dart';
 
 const colorsStartAtSec = 30;
@@ -24,7 +25,7 @@ double wrap(double x, double min, double max) {
   return x - (max - min) * (x / (max - min)).floor();
 }
 
-class ParticleSystem {
+class ParticleSystem extends Scene {
   List<Particle> particles = [];
   double width = 0;
   double height = 0;
@@ -39,9 +40,12 @@ class ParticleSystem {
     if (count != null) {
       particles = List<Particle>.generate(count, (index) => Particle());
     }
+
+    _init2dGrid();
   }
 
-  void draw2d(Canvas canvas, Size size) {
+  @override
+  void render(Canvas canvas, Size size) {
     final maxSide = max(size.width, size.height) * 1.3;
     final centerX = size.width / 2;
     final centerY = size.height / 2;
@@ -81,7 +85,7 @@ class ParticleSystem {
     }
   }
 
-  void init2dGrid() {
+  void _init2dGrid() {
     const widthHalf = 800.0;
     const heightHalf = 800.0;
 
@@ -109,13 +113,14 @@ class ParticleSystem {
     height = 2 * heightHalf;
   }
 
+  @override
   void tick() {
     final time = GameTime.instance.stateTime;
     final cosine = cos(time);
     final sine = sin(time);
     for (var particle in particles) {
-      particle.position.x = particle.originalPosition.x + rotateLerp.value * cosine * 30;
-      particle.position.y = particle.originalPosition.y + rotateLerp.value * sine * 100;
+      particle.position.x = particle.originalPosition.x + (0.2 + rotateLerp.value) * cosine * 30;
+      particle.position.y = particle.originalPosition.y + (0.2 + rotateLerp.value) * sine * 100;
       particle.position.z = zFlickerLerp.value * 0.3 * sin(5 * time + particle.position.x * 0.3 + particle.position.y * 0.1);
       Vector4 color = Vector4.zero();
 
@@ -144,7 +149,7 @@ class ParticleSystem {
     if (time < rotateStartAtSec) {
       rotateLerp.set(0);
     } else {
-      rotateLerp.lerpTo(1, 10);
+      rotateLerp.lerpTo(0.8, 10);
       rotateLerp.tick(GameTime.instance.dt);
     }
 
