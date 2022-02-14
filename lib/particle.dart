@@ -9,6 +9,7 @@ const colorsStartAtSec = 30;
 const flickerStartsAtSec = 20;
 const swirlStartAtSec = 10;
 const rotateStartAtSec = 0.2;
+const toBlackStartAtSec = 40;
 
 class Particle {
   Vector3 position = Vector3.zero();
@@ -32,6 +33,7 @@ class ParticleSystem {
   final zFlickerLerp = LerpValue(0);
   final rotateLerp = LerpValue(0);
   final swirlLerp = LerpValue(0);
+  final goToBlack = LerpValue(1);
 
   ParticleSystem({int? count}) {
     if (count != null) {
@@ -50,8 +52,9 @@ class ParticleSystem {
 
     Paint paint = Paint();
 
-    // paint.color = Color(0xff000000);
-    // canvas.drawPaint(paint);
+    final brightness = (goToBlack.value * 255).toInt();
+    paint.color = Color.fromRGBO(brightness, brightness, brightness, 1);
+    canvas.drawPaint(paint);
 
     for (var p in particles) {
       final angle = swirlLerp.value * timeSwing * p.originalDistance;
@@ -141,7 +144,7 @@ class ParticleSystem {
     if (time < rotateStartAtSec) {
       rotateLerp.set(0);
     } else {
-      rotateLerp.lerpTo(1, 6);
+      rotateLerp.lerpTo(1, 10);
       rotateLerp.tick(GameTime.instance.dt);
     }
 
@@ -150,6 +153,13 @@ class ParticleSystem {
     } else {
       swirlLerp.lerpTo(1, 14);
       swirlLerp.tick(GameTime.instance.dt);
+    }
+
+    if (time < toBlackStartAtSec) {
+      goToBlack.set(1);
+    } else {
+      goToBlack.lerpTo(0, 0.5);
+      goToBlack.tick(GameTime.instance.dt);
     }
   }
 }
