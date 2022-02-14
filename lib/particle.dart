@@ -10,7 +10,7 @@ const colorsStartAtSec = 30;
 const flickerStartsAtSec = 20;
 const swirlStartAtSec = 10;
 const rotateStartAtSec = 0.2;
-const toBlackStartAtSec = 40;
+const toBlackStartAtSec = 50;
 
 class Particle {
   Vector3 position = Vector3.zero();

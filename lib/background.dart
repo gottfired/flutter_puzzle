@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_puzzle/game.dart';
 import 'package:flutter_puzzle/particle.dart';
+import 'package:flutter_puzzle/rays.dart';
 import 'package:flutter_puzzle/scene.dart';
 import 'package:flutter_puzzle/start_screen.dart';
 
@@ -100,6 +101,7 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
 
   final particles = ParticleSystem();
   final startScreen = StartScreen();
+  final rays = Rays();
 
   _BackgroundState() {
     if (useAnimationController) {
@@ -117,18 +119,20 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
       if (frame & 1 == 0) {
         final dt = current - GameTime.instance.current;
         GameTime.instance.tick(dt);
-
-        if (Game.instance.state == GameState.playing) {
-          particles.tick();
-        } else {
-          startScreen.tick();
-        }
-
+        currentScene.tick();
         setState(() {});
       }
     });
 
     ticker.start();
+  }
+
+  Scene get currentScene {
+    if (Game.instance.state == GameState.playing) {
+      return rays;
+    } else {
+      return startScreen;
+    }
   }
 
   @override
@@ -144,7 +148,7 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final scene = Game.instance.state == GameState.startScreen ? startScreen : particles;
+    final scene = currentScene;
 
     if (useAnimationController) {
       return AnimatedBuilder(
