@@ -185,4 +185,9 @@ class StartScreen extends Scene {
 
     canvas.drawRect(Rect.fromLTRB(0, 0, size.width, size.height), Paint()..color = Colors.white.withOpacity(0.4));
   }
+
+  @override
+  void reset() {
+    // pass
+  }
 }

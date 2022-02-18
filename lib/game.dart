@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_puzzle/audio.dart';
+import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/config.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/main.dart';
@@ -130,6 +131,7 @@ class Game {
       if (state == GameState.playing) {
         Audio.instance.gameMusic();
       } else if (state == GameState.startScreen) {
+        BackgroundState.instance.reset();
         Audio.instance.menuMusic();
       }
     }

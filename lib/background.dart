@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_puzzle/game.dart';
@@ -12,9 +14,12 @@ import 'game_time.dart';
 class BackgroundPainter extends CustomPainter {
   final double value;
   Scene? scene;
-  _BackgroundState state;
+  Scene? nextScene;
+  BackgroundState state;
 
-  BackgroundPainter({required this.value, required this.state, this.scene});
+  BackgroundPainter({required this.value, required this.state, this.scene, this.nextScene}) {
+    if (nextScene != null) debugPrint('BackgroundPainter $nextScene');
+  }
 
 /*
   void dummyPaint(Canvas canvas, Size size) {
@@ -79,6 +84,10 @@ class BackgroundPainter extends CustomPainter {
       return;
     }
 
+    if (nextScene != null) {
+      nextScene!.render(canvas, size);
+    }
+
     scene!.render(canvas, size);
   }
 
@@ -90,20 +99,31 @@ class Background extends StatefulWidget {
   const Background({Key? key}) : super(key: key);
 
   @override
-  State<Background> createState() => _BackgroundState();
+  State<Background> createState() => BackgroundState();
 }
 
-class _BackgroundState extends State<Background> with TickerProviderStateMixin {
+class BackgroundState extends State<Background> with TickerProviderStateMixin {
   late final AnimationController _controller;
 
   late final Ticker ticker;
   int frame = 0;
 
-  final particles = ParticleSystem();
-  final startScreen = StartScreen();
-  final rays = Rays();
+  static late BackgroundState instance;
 
-  _BackgroundState() {
+  final _scenes = [
+    Rays(),
+    ParticleSystem(),
+  ];
+
+  final startScreen = StartScreen();
+
+  int _currentSceneIndex = 0;
+
+  final particles = ParticleSystem();
+
+  BackgroundState() {
+    BackgroundState.instance = this;
+
     if (useAnimationController) {
       _controller = AnimationController(
         duration: const Duration(seconds: 3600),
@@ -119,20 +139,42 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
       if (frame & 1 == 0) {
         final dt = current - GameTime.instance.current;
         GameTime.instance.tick(dt);
-        currentScene.tick();
-        setState(() {});
+
+        _currentScene.tick();
+        if (_currentScene.state == SceneState.fadeOut || _currentScene.state == SceneState.done) {
+          final nextScene = _nextScene;
+          if (nextScene != null) {
+            nextScene.tick();
+          }
+
+          if (_currentScene.state == SceneState.done) {
+            _currentSceneIndex = min(_scenes.length - 1, _currentSceneIndex + 1);
+          }
+        }
+
+        setState(() {
+          // debugPrint("setState");
+        });
       }
     });
 
     ticker.start();
   }
 
-  Scene get currentScene {
-    if (Game.instance.state == GameState.playing) {
-      return rays;
-    } else {
+  Scene get _currentScene {
+    if (Game.instance.state == GameState.startScreen) {
       return startScreen;
+    } else {
+      return _scenes[_currentSceneIndex];
     }
+  }
+
+  Scene? get _nextScene {
+    if (_currentSceneIndex < _scenes.length - 1) {
+      return _scenes[_currentSceneIndex + 1];
+    }
+
+    return null;
   }
 
   @override
@@ -148,7 +190,13 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
-    final scene = currentScene;
+    final scene = _currentScene;
+    final nextScene = _nextScene;
+    final crossFade = _currentScene.state == SceneState.fadeOut;
+
+    if (crossFade) {
+      debugPrint("$crossFade $nextScene");
+    }
 
     if (useAnimationController) {
       return AnimatedBuilder(
@@ -157,6 +205,7 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
             return CustomPaint(
               painter: BackgroundPainter(
                 scene: scene,
+                nextScene: crossFade ? nextScene : null,
                 value: _controller.value,
                 state: this,
               ),
@@ -166,8 +215,20 @@ class _BackgroundState extends State<Background> with TickerProviderStateMixin {
     } else {
       return CustomPaint(
         size: size,
-        painter: BackgroundPainter(value: GameTime.instance.current, state: this, scene: scene),
+        painter: BackgroundPainter(
+          value: GameTime.instance.current,
+          state: this,
+          scene: scene,
+          nextScene: crossFade ? nextScene : null,
+        ),
       );
+    }
+  }
+
+  reset() {
+    _currentSceneIndex = 0;
+    for (final scene in _scenes) {
+      scene.reset();
     }
   }
 }

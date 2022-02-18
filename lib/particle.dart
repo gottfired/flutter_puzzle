@@ -6,11 +6,20 @@ import 'package:flutter_puzzle/lerp_value.dart';
 import 'package:flutter_puzzle/scene.dart';
 import 'package:vector_math/vector_math.dart';
 
-const colorsStartAtSec = 30;
-const flickerStartsAtSec = 20;
-const swirlStartAtSec = 10;
 const rotateStartAtSec = 0.2;
+const rotateDuration = 2.0;
+
+const swirlStartAtSec = 6;
+const swirlDuration = 2.0;
+
+const flickerStartsAtSec = 12;
+const flickerDuration = 1.0;
+
+const colorsStartAtSec = 22;
+const colorDuration = 2.0;
+
 const toBlackStartAtSec = 50;
+const toBlackDuration = 0.5;
 
 class Particle {
   Vector3 position = Vector3.zero();
@@ -19,6 +28,7 @@ class Particle {
   Vector3 targetPosition = Vector3.zero();
   Vector4 color = Vector4.zero();
   double size = 0.0;
+  LerpValue alpha = LerpValue(0.0);
 }
 
 double wrap(double x, double min, double max) {
@@ -29,6 +39,8 @@ class ParticleSystem extends Scene {
   List<Particle> particles = [];
   double width = 0;
   double height = 0;
+  double maxDistance = 0;
+  double time = 0;
 
   final colorLerp = LerpValue(0);
   final zFlickerLerp = LerpValue(0);
@@ -52,7 +64,7 @@ class ParticleSystem extends Scene {
     final factorX = maxSide / width;
     final factorY = maxSide / height;
 
-    final timeSwing = sin(GameTime.instance.current * 0.3) * 0.0015;
+    final timeSwing = sin(time * 0.3) * 0.0015;
 
     Paint paint = Paint();
 
@@ -60,7 +72,16 @@ class ParticleSystem extends Scene {
     paint.color = Color.fromRGBO(brightness, brightness, brightness, 1);
     canvas.drawPaint(paint);
 
+    const fadeInDuration = 2;
+
     for (var p in particles) {
+      // Fade in
+      if (time < fadeInDuration && p.originalDistance > (time / fadeInDuration) * maxDistance) {
+        continue;
+      }
+
+      p.alpha.lerpTo(1, 1.0);
+      p.alpha.tick(GameTime.instance.dt);
       final angle = swirlLerp.value * timeSwing * p.originalDistance;
 
       final rot = Quaternion.euler(0, 0, angle);
@@ -70,7 +91,7 @@ class ParticleSystem extends Scene {
         (p.color.x * 255).toInt(),
         (p.color.y * 255).toInt(),
         (p.color.z * 255).toInt(),
-        (p.position.z + 1) * 0.75,
+        (p.position.z + 1) * 0.75 * p.alpha.value,
       );
 
       double x = pos.x * factorX + centerX;
@@ -102,6 +123,7 @@ class ParticleSystem extends Scene {
         particle.originalPosition.x = x;
         particle.originalPosition.y = y;
         particle.originalDistance = particle.position.distanceTo(Vector3.zero());
+        maxDistance = max(particle.originalDistance, maxDistance);
 
         particle.size = 50.0;
 
@@ -115,7 +137,7 @@ class ParticleSystem extends Scene {
 
   @override
   void tick() {
-    final time = GameTime.instance.stateTime;
+    time += GameTime.instance.dt;
     final cosine = cos(time);
     final sine = sin(time);
     for (var particle in particles) {
@@ -135,36 +157,45 @@ class ParticleSystem extends Scene {
     if (time < colorsStartAtSec) {
       colorLerp.set(0);
     } else {
-      colorLerp.lerpTo(1, 4);
+      colorLerp.lerpTo(1, colorDuration);
       colorLerp.tick(GameTime.instance.dt);
     }
 
     if (time < flickerStartsAtSec) {
       zFlickerLerp.set(0);
     } else {
-      zFlickerLerp.lerpTo(1, 20);
+      zFlickerLerp.lerpTo(1, flickerDuration);
       zFlickerLerp.tick(GameTime.instance.dt);
     }
 
     if (time < rotateStartAtSec) {
       rotateLerp.set(0);
     } else {
-      rotateLerp.lerpTo(0.8, 10);
+      rotateLerp.lerpTo(0.8, rotateDuration);
       rotateLerp.tick(GameTime.instance.dt);
     }
 
     if (time < swirlStartAtSec) {
       swirlLerp.set(0);
     } else {
-      swirlLerp.lerpTo(1, 14);
+      swirlLerp.lerpTo(1, swirlDuration);
       swirlLerp.tick(GameTime.instance.dt);
     }
 
     if (time < toBlackStartAtSec) {
       goToBlack.set(1);
     } else {
-      goToBlack.lerpTo(0, 0.5);
+      goToBlack.lerpTo(0, toBlackDuration);
       goToBlack.tick(GameTime.instance.dt);
+    }
+  }
+
+  @override
+  void reset() {
+    state = SceneState.running;
+    time = 0;
+    for (Particle p in particles) {
+      p.alpha.set(0);
     }
   }
 }

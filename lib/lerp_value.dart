@@ -45,9 +45,12 @@ class LerpValue {
     currentTime += dt;
     if (currentTime >= durationSeconds) {
       value = to;
+      durationSeconds = 0;
     } else {
       final t = max(0.0, min(1.0, currentTime / durationSeconds));
       value = from + curve.transform(t) * (to - from);
     }
   }
+
+  bool get isLerping => durationSeconds > 0;
 }

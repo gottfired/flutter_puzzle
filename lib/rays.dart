@@ -7,53 +7,50 @@ import 'package:flutter_puzzle/scene.dart';
 import 'game_time.dart';
 
 const _numSections = 8;
-const lerpTime = 4.0;
+const lerpTime = 1.0;
 
-const switchTo4At = lerpTime;
-const switchTo8At = lerpTime * 2;
+const switchFirst = 4;
+const switchSecond = 6;
+const switchThird = 8;
 
 class Rays extends Scene {
-  LerpValue ray2Angle = LerpValue(pi / 2);
-  LerpValue ray4Angle = LerpValue(0);
-  LerpValue ray8Angle = LerpValue(0);
+  LerpValue ray2Angle = LerpValue(pi / 8);
+  LerpValue ray4Angle = LerpValue(pi / 8);
+  LerpValue ray8Angle = LerpValue(pi / 8);
   double angle = 0;
   int color = 0;
   double radius = 0;
-
-  final colors = [
-    Colors.white,
-    Colors.red.shade50,
-  ];
 
   @override
   void tick() {
     final time = GameTime.instance.stateTime;
     angle = time * 0.4;
-    radius += GameTime.instance.dt * 1000;
+    radius += GameTime.instance.dt * 1200;
 
-    if (time < 0.2) {
-      ray2Angle.set(0);
-      ray4Angle.set(0);
-      ray8Angle.set(0);
-    } else if (time < switchTo4At) {
-      ray2Angle.lerpTo(pi / 2, lerpTime);
-      ray2Angle.tick(GameTime.instance.dt);
-    } else if (time < switchTo8At) {
+    if (time < switchFirst) {
+      ray2Angle.set(pi / 8);
+      ray4Angle.set(pi / 8);
+      ray8Angle.set(pi / 8);
+    } else if (time < switchSecond) {
       ray2Angle.lerpTo(pi / 4, lerpTime);
-      ray2Angle.tick(GameTime.instance.dt);
-
       ray4Angle.lerpTo(pi / 4, lerpTime);
-      ray4Angle.tick(GameTime.instance.dt);
+      ray8Angle.lerpTo(0);
+    } else if (time < switchThird) {
+      ray2Angle.lerpTo(pi / 2, lerpTime);
+      ray4Angle.lerpTo(0, lerpTime);
     } else {
-      ray2Angle.lerpTo(pi / 8, lerpTime);
-      ray2Angle.tick(GameTime.instance.dt);
+      ray2Angle.lerpTo(0, lerpTime);
 
-      ray4Angle.lerpTo(pi / 8, lerpTime);
-      ray4Angle.tick(GameTime.instance.dt);
-
-      ray8Angle.lerpTo(pi / 8, lerpTime);
-      ray8Angle.tick(GameTime.instance.dt);
+      if (ray2Angle.value == 0) {
+        state = SceneState.done;
+      } else {
+        state = SceneState.fadeOut;
+      }
     }
+
+    ray2Angle.tick(GameTime.instance.dt);
+    ray4Angle.tick(GameTime.instance.dt);
+    ray8Angle.tick(GameTime.instance.dt);
   }
 
   @override
@@ -64,18 +61,9 @@ class Rays extends Scene {
     final cy = size.height / 2;
     final maxSize = max(size.width, size.height);
 
-    int previousColor = color - 1;
-    if (previousColor < 0) {
-      previousColor = colors.length - 1;
-    }
-
-    paint.color = colors[previousColor];
-    canvas.drawPaint(paint);
-
-    paint.color = colors[color];
+    paint.color = Color.lerp(Colors.red.shade100, const Color.fromARGB(0, 255, 255, 255), radius / maxSize)!;
     canvas.drawCircle(Offset(cx, cy), radius, paint);
-    if (radius > maxSize) {
-      color = (color + 1) % colors.length;
+    if (radius > maxSize && !ray2Angle.isLerping) {
       radius = 0;
     }
 
@@ -107,5 +95,10 @@ class Rays extends Scene {
         canvas.drawPath(path, paint);
       }
     }
+  }
+
+  @override
+  void reset() {
+    state = SceneState.running;
   }
 }
