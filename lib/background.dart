@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_puzzle/game.dart';
 import 'package:flutter_puzzle/particle.dart';
+import 'package:flutter_puzzle/planes.dart';
 import 'package:flutter_puzzle/rays.dart';
 import 'package:flutter_puzzle/scene.dart';
 import 'package:flutter_puzzle/start_screen.dart';
@@ -111,6 +112,7 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
   static late BackgroundState instance;
 
   final _scenes = [
+    Cubes(),
     Rays(),
     ParticleSystem(),
   ];

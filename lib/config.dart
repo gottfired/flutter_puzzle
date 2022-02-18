@@ -9,4 +9,4 @@ const slideTimeMs = 100;
 const dropInAnimMs = 300;
 const resetMs = 50;
 const levelDurationSeconds = 10.0;
-const infiniteTime = false;
+const infiniteTime = true;
