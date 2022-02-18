@@ -9,10 +9,10 @@ import 'package:vector_math/vector_math.dart';
 const rotateStartAtSec = 0.2;
 const rotateDuration = 2.0;
 
-const swirlStartAtSec = 6;
-const swirlDuration = 2.0;
+const swirlStartAtSec = 2;
+const swirlDuration = 4.0;
 
-const flickerStartsAtSec = 12;
+const flickerStartsAtSec = 10;
 const flickerDuration = 1.0;
 
 const colorsStartAtSec = 22;
