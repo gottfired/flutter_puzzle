@@ -21,6 +21,8 @@ const colorDuration = 2.0;
 const toBlackStartAtSec = 50;
 const toBlackDuration = 0.5;
 
+const fadeInDuration = 2;
+
 class Particle {
   Vector3 position = Vector3.zero();
   Vector3 originalPosition = Vector3.zero();
@@ -71,8 +73,6 @@ class ParticleSystem extends Scene {
     final brightness = (goToBlack.value * 255).toInt();
     paint.color = Color.fromRGBO(brightness, brightness, brightness, 1);
     canvas.drawPaint(paint);
-
-    const fadeInDuration = 2;
 
     for (var p in particles) {
       // Fade in
