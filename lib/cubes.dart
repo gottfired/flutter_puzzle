@@ -45,7 +45,7 @@ class Cubes extends Scene {
     final ry = Matrix4.rotationY(time * 0.0);
     final rx = Matrix4.rotationX(time * 4);
 
-    final view = makeViewMatrix(Vector3(0, 0, (sin(time * 2) + 1) * 3), Vector3(0, 0, 0), Vector3(cos(time), sin(time), 0));
+    final view = makeViewMatrix(Vector3(0, 0, (sin(time * 2) + 1) * 3 + 2.0), Vector3(0, 0, 0), Vector3(cos(time), sin(time), 0));
     final projection = makePerspectiveMatrix(pi / 3, size.width / size.height, 0.1, 100);
     final vp = projection * view;
 
@@ -57,7 +57,7 @@ class Cubes extends Scene {
       ..color = const Color(0xFFff0000)
       ..strokeWidth = 4.0;
 
-    final num = 9;
+    final num = 5;
     for (var i = 0; i < num; i++) {
       for (var j = 0; j < num; j++) {
         final dist = 3.5;
