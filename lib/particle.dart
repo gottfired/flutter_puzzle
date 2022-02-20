@@ -21,7 +21,10 @@ const colorDuration = 2.0;
 const toBlackStartAtSec = 50;
 const toBlackDuration = 0.5;
 
+const fadeOutStartAtSec = 60;
+
 const fadeInDuration = 2;
+const fadeOutDuration = 2.0;
 
 class Particle {
   Vector3 position = Vector3.zero();
@@ -49,6 +52,7 @@ class ParticleSystem extends Scene {
   final rotateLerp = LerpValue(0);
   final swirlLerp = LerpValue(0);
   final goToBlack = LerpValue(1);
+  final fadeOut = LerpValue(0);
 
   ParticleSystem({int? count}) {
     if (count != null) {
@@ -70,8 +74,11 @@ class ParticleSystem extends Scene {
 
     Paint paint = Paint();
 
-    final brightness = (goToBlack.value * 255).toInt();
-    paint.color = Color.fromRGBO(brightness, brightness, brightness, 1);
+    var brightness = (goToBlack.value * 255).toInt();
+    if (state == SceneState.fadeOut) {
+      brightness = (fadeOut.value * 255).toInt();
+    }
+    paint.color = Color.fromRGBO(brightness, brightness, brightness, 1 - fadeOut.value);
     canvas.drawPaint(paint);
 
     for (var p in particles) {
@@ -80,8 +87,10 @@ class ParticleSystem extends Scene {
         continue;
       }
 
-      p.alpha.lerpTo(1, 1.0);
+      // fade in/out
+      p.alpha.lerpTo(state == SceneState.fadeOut ? 0 : 1, 1.0);
       p.alpha.tick(GameTime.instance.dt);
+
       final angle = swirlLerp.value * timeSwing * p.originalDistance;
 
       final rot = Quaternion.euler(0, 0, angle);
@@ -137,9 +146,11 @@ class ParticleSystem extends Scene {
 
   @override
   void tick() {
-    time += GameTime.instance.dt;
+    final dt = GameTime.instance.dt;
+    time += dt;
     final cosine = cos(time);
     final sine = sin(time);
+
     for (var particle in particles) {
       particle.position.x = particle.originalPosition.x + (0.2 + rotateLerp.value) * cosine * 30;
       particle.position.y = particle.originalPosition.y + (0.2 + rotateLerp.value) * sine * 100;
@@ -158,35 +169,47 @@ class ParticleSystem extends Scene {
       colorLerp.set(0);
     } else {
       colorLerp.lerpTo(1, colorDuration);
-      colorLerp.tick(GameTime.instance.dt);
+      colorLerp.tick(dt);
     }
 
     if (time < flickerStartsAtSec) {
       zFlickerLerp.set(0);
     } else {
       zFlickerLerp.lerpTo(1, flickerDuration);
-      zFlickerLerp.tick(GameTime.instance.dt);
+      zFlickerLerp.tick(dt);
     }
 
     if (time < rotateStartAtSec) {
       rotateLerp.set(0);
     } else {
       rotateLerp.lerpTo(0.8, rotateDuration);
-      rotateLerp.tick(GameTime.instance.dt);
+      rotateLerp.tick(dt);
     }
 
     if (time < swirlStartAtSec) {
       swirlLerp.set(0);
     } else {
       swirlLerp.lerpTo(1, swirlDuration);
-      swirlLerp.tick(GameTime.instance.dt);
+      swirlLerp.tick(dt);
     }
 
     if (time < toBlackStartAtSec) {
       goToBlack.set(1);
     } else {
       goToBlack.lerpTo(0, toBlackDuration);
-      goToBlack.tick(GameTime.instance.dt);
+      goToBlack.tick(dt);
+    }
+
+    if (time > fadeOutStartAtSec) {
+      if (state != SceneState.fadeOut) {
+        state = SceneState.fadeOut;
+      }
+
+      fadeOut.lerpTo(1, fadeOutDuration);
+      fadeOut.tick(dt);
+      if (fadeOut.value == 1) {
+        state = SceneState.done;
+      }
     }
   }
 

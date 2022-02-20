@@ -112,9 +112,9 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
   static late BackgroundState instance;
 
   final _scenes = [
-    Cubes(),
     Rays(),
     ParticleSystem(),
+    Cubes(),
   ];
 
   final startScreen = StartScreen();

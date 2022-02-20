@@ -10,8 +10,8 @@ const _numSections = 8;
 const lerpTime = 1.0;
 
 const switchFirst = 4;
-const switchSecond = 6;
-const switchThird = 8;
+const switchSecond = 8;
+const switchThird = 12;
 
 class Rays extends Scene {
   LerpValue ray2Angle = LerpValue(pi / 8);
@@ -60,12 +60,12 @@ class Rays extends Scene {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final maxSize = max(size.width, size.height);
+    if (radius > maxSize && state == SceneState.running) {
+      radius = 0;
+    }
 
     paint.color = Color.lerp(Colors.red.shade100, const Color.fromARGB(0, 255, 255, 255), radius / maxSize)!;
     canvas.drawCircle(Offset(cx, cy), radius, paint);
-    if (radius > maxSize && !ray2Angle.isLerping) {
-      radius = 0;
-    }
 
     const sectionDelta = 2 * pi / _numSections;
     paint.color = Colors.red;
