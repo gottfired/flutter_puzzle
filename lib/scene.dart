@@ -11,5 +11,9 @@ abstract class Scene {
   void render(Canvas canvas, Size size);
   void reset();
 
+  void gameOver() {
+    // override if needed
+  }
+
   SceneState state = SceneState.running;
 }

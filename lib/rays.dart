@@ -18,14 +18,18 @@ class Rays extends Scene {
   LerpValue ray4Angle = LerpValue(pi / 8);
   LerpValue ray8Angle = LerpValue(pi / 8);
   double angle = 0;
-  int color = 0;
   double radius = 0;
+  double time = 0;
+  final color = LerpValue(1);
 
   @override
   void tick() {
-    final time = GameTime.instance.stateTime;
+    time += GameTime.instance.dt;
     angle = time * 0.4;
     radius += GameTime.instance.dt * 1200;
+
+    color.lerpTo(1, 2);
+    color.tick(GameTime.instance.dt);
 
     if (time < switchFirst) {
       ray2Angle.set(pi / 8);
@@ -64,11 +68,12 @@ class Rays extends Scene {
       radius = 0;
     }
 
-    paint.color = Color.lerp(Colors.red.shade100, const Color.fromARGB(0, 255, 255, 255), radius / maxSize)!;
+    final circleColor = Color.lerp(const Color(0x00ffffff), Colors.red.shade100, color.value)!;
+    paint.color = Color.lerp(circleColor, const Color.fromARGB(0, 255, 255, 255), radius / maxSize)!;
     canvas.drawCircle(Offset(cx, cy), radius, paint);
 
     const sectionDelta = 2 * pi / _numSections;
-    paint.color = Colors.red;
+    paint.color = Color.lerp(const Color(0x00ffffff), Colors.red, color.value)!;
     for (int i = 0; i < _numSections; i++) {
       final angle = this.angle + i * sectionDelta;
       double width = 0;
@@ -100,5 +105,13 @@ class Rays extends Scene {
   @override
   void reset() {
     state = SceneState.running;
+    time = 0;
+    color.set(0);
+  }
+
+  @override
+  void gameOver() {
+    super.gameOver();
+    color.set(1);
   }
 }

@@ -126,7 +126,6 @@ class Game {
     if (nextState != null) {
       state = nextState!;
       nextState = null;
-      GameTime.instance.stateStart();
 
       if (state == GameState.playing) {
         Audio.instance.gameMusic();

@@ -121,8 +121,6 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
 
   int _currentSceneIndex = 0;
 
-  final particles = ParticleSystem();
-
   BackgroundState() {
     BackgroundState.instance = this;
 
@@ -150,7 +148,7 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
           }
 
           if (_currentScene.state == SceneState.done) {
-            _currentSceneIndex = min(_scenes.length - 1, _currentSceneIndex + 1);
+            _currentSceneIndex = (_currentSceneIndex + 1) % _scenes.length;
           }
         }
 
@@ -172,11 +170,7 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
   }
 
   Scene? get _nextScene {
-    if (_currentSceneIndex < _scenes.length - 1) {
-      return _scenes[_currentSceneIndex + 1];
-    }
-
-    return null;
+    return _scenes[(_currentSceneIndex + 1) % _scenes.length];
   }
 
   @override
@@ -196,9 +190,9 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
     final nextScene = _nextScene;
     final crossFade = _currentScene.state == SceneState.fadeOut;
 
-    if (crossFade) {
-      debugPrint("$crossFade $nextScene");
-    }
+    // if (crossFade) {
+    //   debugPrint("$crossFade $nextScene");
+    // }
 
     if (useAnimationController) {
       return AnimatedBuilder(
@@ -233,4 +227,6 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
       scene.reset();
     }
   }
+
+  // continue -> rays restart
 }
