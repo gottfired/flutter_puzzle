@@ -148,6 +148,7 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
           }
 
           if (_currentScene.state == SceneState.done) {
+            _currentScene.reset();
             _currentSceneIndex = (_currentSceneIndex + 1) % _scenes.length;
           }
         }
@@ -225,6 +226,7 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
     _currentSceneIndex = 0;
     for (final scene in _scenes) {
       scene.reset();
+      scene.gameOver();
     }
   }
 

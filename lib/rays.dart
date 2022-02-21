@@ -104,7 +104,7 @@ class Rays extends Scene {
 
   @override
   void reset() {
-    state = SceneState.running;
+    super.reset();
     time = 0;
     color.set(0);
   }

@@ -215,7 +215,7 @@ class ParticleSystem extends Scene {
 
   @override
   void reset() {
-    state = SceneState.running;
+    super.reset();
     time = 0;
     for (Particle p in particles) {
       p.alpha.set(0);

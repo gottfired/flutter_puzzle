@@ -168,6 +168,7 @@ class Cubes extends Scene {
 
   @override
   void reset() {
+    super.reset();
     time = 0;
     _backFaceFade.set(0);
     _frontFaceFade.set(0);

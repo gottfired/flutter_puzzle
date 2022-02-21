@@ -9,7 +9,9 @@ enum SceneState {
 abstract class Scene {
   void tick();
   void render(Canvas canvas, Size size);
-  void reset();
+  void reset() {
+    state = SceneState.running;
+  }
 
   void gameOver() {
     // override if needed
