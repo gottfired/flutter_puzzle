@@ -7,7 +7,7 @@ import 'package:flutter_puzzle/scene.dart';
 import 'game_time.dart';
 
 const _numSections = 8;
-const lerpTime = 1.0;
+const lerpTime = 2.0;
 
 const switchFirst = 4;
 const switchSecond = 8;
@@ -38,7 +38,7 @@ class Rays extends Scene {
     } else if (time < switchSecond) {
       ray2Angle.lerpTo(pi / 4, lerpTime);
       ray4Angle.lerpTo(pi / 4, lerpTime);
-      ray8Angle.lerpTo(0);
+      ray8Angle.lerpTo(0, lerpTime);
     } else if (time < switchThird) {
       ray2Angle.lerpTo(pi / 2, lerpTime);
       ray4Angle.lerpTo(0, lerpTime);
@@ -86,11 +86,11 @@ class Rays extends Scene {
       }
 
       if (width > 0) {
-        final x = cx + maxSize * sin(angle - width);
-        final y = cy + maxSize * cos(angle - width);
+        final x = cx + maxSize * sin(angle - 2 * width);
+        final y = cy + maxSize * cos(angle - 2 * width);
 
-        final x2 = cx + maxSize * sin(angle + width);
-        final y2 = cy + maxSize * cos(angle + width);
+        final x2 = cx + maxSize * sin(angle);
+        final y2 = cy + maxSize * cos(angle);
 
         var path = Path();
         path.moveTo(cx, cy);
