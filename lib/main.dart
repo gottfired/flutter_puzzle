@@ -91,7 +91,7 @@ class MainState extends State<MainPage> {
     final soundEnabled = SaveGame.instance.soundEnabled;
 
     // Web doesn't allow autoplay of audio. Display dialog to allow user to enable audio.
-    if (kIsWeb && soundEnabled) {
+    if (kIsWeb && soundEnabled && defaultTargetPlatform != TargetPlatform.iOS) {
       Future.delayed(const Duration(seconds: 0), () async {
         final enable = await showDialog(
           context: context,
@@ -152,24 +152,26 @@ class MainState extends State<MainPage> {
             if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
               buildLevel("Highscore ", context, true),
             ],
-            Positioned(
-              child: FloatingActionButton(
-                child: Icon(Audio.instance.enabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
-                onPressed: () {
-                  setState(() {
-                    Audio.instance.enable(!Audio.instance.enabled);
-                    SaveGame.instance.enableSound(Audio.instance.enabled);
-                    if (Audio.instance.enabled) {
-                      _showCredits();
-                    } else {
-                      _creditsShown = false;
-                    }
-                  });
-                },
-              ),
-              bottom: max(mq.padding.bottom, 16),
-              right: 16,
-            ),
+            Audio.instance.isIosWeb
+                ? const SizedBox()
+                : Positioned(
+                    child: FloatingActionButton(
+                      child: Icon(Audio.instance.settingEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
+                      onPressed: () {
+                        setState(() {
+                          Audio.instance.enable(!Audio.instance.settingEnabled);
+                          SaveGame.instance.enableSound(Audio.instance.settingEnabled);
+                          if (Audio.instance.settingEnabled) {
+                            _showCredits();
+                          } else {
+                            _creditsShown = false;
+                          }
+                        });
+                      },
+                    ),
+                    bottom: max(mq.padding.bottom, 16),
+                    right: 16,
+                  ),
             Positioned(
               child: AnimatedOpacity(
                 duration: const Duration(milliseconds: 500),
