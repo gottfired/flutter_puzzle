@@ -26,7 +26,6 @@ class Rays extends Scene {
   void tick() {
     time += GameTime.instance.dt;
     angle = time * 0.4;
-    radius += GameTime.instance.dt * 1200;
 
     color.lerpTo(1, 2);
     color.tick(GameTime.instance.dt);
@@ -64,6 +63,8 @@ class Rays extends Scene {
     final cx = size.width / 2;
     final cy = size.height / 2;
     final maxSize = max(size.width, size.height);
+
+    radius += GameTime.instance.dt * maxSize * 0.5;
     if (radius > maxSize && state == SceneState.running) {
       radius = 0;
     }
