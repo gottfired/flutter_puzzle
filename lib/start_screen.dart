@@ -18,7 +18,9 @@ class StartScreen extends Scene {
 
   List<TextPainter> textPainters = [];
 
-  StartScreen() {
+  // ATTENTION: Has to be done every frame for some reason.
+  void cacheTextPainters() {
+    textPainters.clear();
     // Cache the text painters because TextPainter.layout() is slow.
     for (int i = 0; i < 26; ++i) {
       TextSpan ts = TextSpan(
@@ -153,6 +155,8 @@ class StartScreen extends Scene {
 
   @override
   void render(Canvas canvas, Size size) {
+    cacheTextPainters();
+
     paintRays(canvas, size);
 
     const num2 = 6;
