@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/save_game.dart';
@@ -17,6 +18,9 @@ import 'grid.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+
   final saveGame = SaveGame();
   await saveGame.init();
   GameTime.init();
@@ -144,7 +148,7 @@ class MainState extends State<MainPage> {
           if (_game.state == GameState.startScreen) ...[
             buildStartButton(context),
             if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
-              buildLevel("Highscore ", true),
+              buildLevel("Highscore ", context, true),
             ],
             Positioned(
               child: FloatingActionButton(
@@ -202,7 +206,7 @@ class MainState extends State<MainPage> {
                 ],
               ),
             ),
-            buildLevel("Level "),
+            buildLevel("Level ", context),
             // Positioned(top: 530, child: Text("  Loading ...", style: TextStyle(color: Colors.blue.shade800, fontSize: 40))),
           ],
           if (_game.transitionStarted != null) ...[
@@ -219,18 +223,22 @@ class MainState extends State<MainPage> {
     );
   }
 
-  Positioned buildLevel(String label, [highscore = false]) {
+  Positioned buildLevel(String label, BuildContext context, [highscore = false]) {
+    final mq = MediaQuery.of(context);
+
     final background = highscore ? Colors.red.shade700 : Colors.white;
     final color = highscore ? Colors.white : Colors.blue.shade600;
     return Positioned(
-      top: 0,
+      top: mq.padding.top,
       child: Container(
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: background,
-          borderRadius: const BorderRadius.only(
-            bottomLeft: Radius.circular(10),
-            bottomRight: Radius.circular(10),
+          borderRadius: BorderRadius.only(
+            topLeft: mq.padding.top > 0 ? Radius.circular(10) : Radius.zero,
+            topRight: mq.padding.top > 0 ? Radius.circular(10) : Radius.zero,
+            bottomLeft: const Radius.circular(10),
+            bottomRight: const Radius.circular(10),
           ),
           boxShadow: [
             BoxShadow(
