@@ -1,8 +1,7 @@
 import 'dart:async';
-import 'dart:math';
 
-import 'package:flame_audio/flame_audio.dart';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
 
 const praises = [
@@ -24,7 +23,11 @@ class Audio {
   AudioPlayer? _player;
   Timer? _timer;
 
+  bool isIosWeb = false;
+
   void init() {
+    isIosWeb = kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS);
+
     FlameAudio.audioCache.loadAll([
       "sounds/swish.wav",
       "sounds/click.wav",
@@ -34,8 +37,8 @@ class Audio {
       "sounds/that_was_close.mp3",
       "sounds/beep.mp3",
       "sounds/beep_long.mp3",
-      "music/bensound-scifi.mp3",
-      "music/bensound-punky.mp3",
+      if (!isIosWeb) "music/bensound-scifi.mp3",
+      if (!isIosWeb) "music/bensound-punky.mp3",
     ]);
 
     _praiseIndexes = List.generate(praises.length, (i) => i);
@@ -94,7 +97,7 @@ class Audio {
   }
 
   void menuMusic() async {
-    if (!enabled) return;
+    if (!enabled || isIosWeb) return;
 
     if (_player != null) {
       await _player?.stop();
@@ -110,7 +113,7 @@ class Audio {
   }
 
   void gameMusic() async {
-    if (!enabled) return;
+    if (!enabled || isIosWeb) return;
 
     if (_player != null) {
       await _player?.stop();
@@ -132,7 +135,7 @@ class Audio {
   }
 
   void gameMusicFast() async {
-    if (!enabled) return;
+    if (!enabled || isIosWeb) return;
 
     if (_player != null) {
       await _player?.stop();
