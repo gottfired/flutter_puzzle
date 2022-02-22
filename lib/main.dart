@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math';
 
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/foundation.dart';
@@ -19,7 +20,7 @@ import 'grid.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+  // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
   final saveGame = SaveGame();
   await saveGame.init();
@@ -139,6 +140,7 @@ class MainState extends State<MainPage> {
   Widget build(BuildContext context) {
     setPuzzleTop(_game.puzzleTop(context));
     puzzleRotation = _game.puzzleRotation();
+    final mq = MediaQuery.of(context);
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
@@ -165,7 +167,7 @@ class MainState extends State<MainPage> {
                   });
                 },
               ),
-              bottom: 16,
+              bottom: max(mq.padding.bottom, 16),
               right: 16,
             ),
             Positioned(
@@ -228,6 +230,7 @@ class MainState extends State<MainPage> {
 
     final background = highscore ? Colors.red.shade700 : Colors.white;
     final color = highscore ? Colors.white : Colors.blue.shade600;
+    const radius = Radius.circular(10);
     return Positioned(
       top: mq.padding.top,
       child: Container(
@@ -235,10 +238,10 @@ class MainState extends State<MainPage> {
         decoration: BoxDecoration(
           color: background,
           borderRadius: BorderRadius.only(
-            topLeft: mq.padding.top > 0 ? Radius.circular(10) : Radius.zero,
-            topRight: mq.padding.top > 0 ? Radius.circular(10) : Radius.zero,
-            bottomLeft: const Radius.circular(10),
-            bottomRight: const Radius.circular(10),
+            topLeft: mq.padding.top > 0 ? radius : Radius.zero,
+            topRight: mq.padding.top > 0 ? radius : Radius.zero,
+            bottomLeft: radius,
+            bottomRight: radius,
           ),
           boxShadow: [
             BoxShadow(
