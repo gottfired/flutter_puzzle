@@ -18,7 +18,8 @@ class Audio {
 
   bool enabled = true;
 
-  int _lastPraise = -1;
+  List<int> _praiseIndexes = [];
+  int _currentPraise = 0;
 
   AudioPlayer? _player;
   Timer? _timer;
@@ -36,6 +37,9 @@ class Audio {
       "music/bensound-scifi.mp3",
       "music/bensound-punky.mp3",
     ]);
+
+    _praiseIndexes = List.generate(praises.length, (i) => i);
+    _praiseIndexes.shuffle();
   }
 
   void click() {
@@ -53,13 +57,11 @@ class Audio {
   void praise() {
     if (!enabled) return;
 
-    int nextPraise = 0;
-    while (nextPraise == _lastPraise) {
-      nextPraise = Random().nextInt(praises.length);
+    FlameAudio.play(praises[_praiseIndexes[_currentPraise++]]);
+    if (_currentPraise >= praises.length) {
+      _currentPraise = 0;
+      _praiseIndexes.shuffle();
     }
-
-    FlameAudio.play(praises[nextPraise]);
-    _lastPraise = nextPraise;
   }
 
   void thatWasClose() {
