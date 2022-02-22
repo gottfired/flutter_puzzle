@@ -22,7 +22,7 @@ class StartScreen extends Scene {
   void cacheTextPainters() {
     textPainters.clear();
     // Cache the text painters because TextPainter.layout() is slow.
-    for (int i = 0; i < 26; ++i) {
+    for (int i = 0; i < 25; ++i) {
       TextSpan ts = TextSpan(
         style: TextStyle(
           fontSize: tileSize / 2,
