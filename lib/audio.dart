@@ -15,7 +15,7 @@ const praises = [
 class Audio {
   static final Audio instance = Audio();
 
-  bool enabled = true;
+  bool settingEnabled = true;
 
   List<int> _praiseIndexes = [];
   int _currentPraise = 0;
@@ -28,37 +28,41 @@ class Audio {
   void init() {
     isIosWeb = kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS);
 
-    FlameAudio.audioCache.loadAll([
-      "sounds/swish.wav",
-      "sounds/click.wav",
-      ...praises,
-      "sounds/game_over.mp3",
-      "sounds/too_easy.mp3",
-      "sounds/that_was_close.mp3",
-      "sounds/beep.mp3",
-      "sounds/beep_long.mp3",
-      if (!isIosWeb) "music/bensound-scifi.mp3",
-      if (!isIosWeb) "music/bensound-punky.mp3",
-    ]);
+    if (!isIosWeb) {
+      FlameAudio.audioCache.loadAll([
+        "sounds/swish.wav",
+        "sounds/click.wav",
+        ...praises,
+        "sounds/game_over.mp3",
+        "sounds/too_easy.mp3",
+        "sounds/that_was_close.mp3",
+        "sounds/beep.mp3",
+        "sounds/beep_long.mp3",
+        "music/bensound-scifi.mp3",
+        "music/bensound-punky.mp3",
+      ]);
+    }
 
     _praiseIndexes = List.generate(praises.length, (i) => i);
     _praiseIndexes.shuffle();
   }
 
+  bool get _enabled => settingEnabled && !isIosWeb;
+
   void click() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play("sounds/click.wav");
   }
 
   void swish() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play("sounds/swish.wav", volume: 0.5);
   }
 
   void praise() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play(praises[_praiseIndexes[_currentPraise++]]);
     if (_currentPraise >= praises.length) {
@@ -68,36 +72,36 @@ class Audio {
   }
 
   void thatWasClose() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play("sounds/that_was_close.mp3");
   }
 
   void gameOver() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play("sounds/game_over.mp3");
   }
 
   void tooEasy() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play("sounds/too_easy.mp3");
   }
 
   void beep() {
-    if (!enabled) return;
+    if (!_enabled) return;
     FlameAudio.play("sounds/beep.mp3");
   }
 
   void beepLong() {
-    if (!enabled) return;
+    if (!_enabled) return;
 
     FlameAudio.play("sounds/beep_long.mp3");
   }
 
   void menuMusic() async {
-    if (!enabled || isIosWeb) return;
+    if (!_enabled) return;
 
     if (_player != null) {
       await _player?.stop();
@@ -113,7 +117,7 @@ class Audio {
   }
 
   void gameMusic() async {
-    if (!enabled || isIosWeb) return;
+    if (!_enabled) return;
 
     if (_player != null) {
       await _player?.stop();
@@ -135,7 +139,7 @@ class Audio {
   }
 
   void gameMusicFast() async {
-    if (!enabled || isIosWeb) return;
+    if (!_enabled) return;
 
     if (_player != null) {
       await _player?.stop();
@@ -146,7 +150,7 @@ class Audio {
   }
 
   void enable(bool enabled) async {
-    this.enabled = enabled;
+    settingEnabled = enabled;
     if (!enabled) {
       await _player?.stop();
       _player = null;
