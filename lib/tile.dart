@@ -29,24 +29,27 @@ class Tile extends StatelessWidget {
       //     onTap?.call(number);
       //   }
       // },
-      child: Container(
-        width: tileSize,
-        height: tileSize,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          border: Border.all(
-            color: Colors.blue,
-            width: tileBorderSize,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: Container(
+          width: tileSize,
+          height: tileSize,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            border: Border.all(
+              color: Colors.blue,
+              width: tileBorderSize,
+            ),
+            borderRadius: BorderRadius.circular(tileSize / 5),
           ),
-          borderRadius: BorderRadius.circular(tileSize / 5),
-        ),
-        child: Center(
-          child: Text(
-            '$number',
-            style: TextStyle(
-              fontSize: tileSize / 2,
-              fontWeight: FontWeight.bold,
-              color: Colors.blue.shade800,
+          child: Center(
+            child: Text(
+              '$number',
+              style: TextStyle(
+                fontSize: tileSize / 2,
+                fontWeight: FontWeight.bold,
+                color: Colors.blue.shade800,
+              ),
             ),
           ),
         ),

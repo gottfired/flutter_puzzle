@@ -279,26 +279,29 @@ class MainState extends State<MainPage> {
       onTapDown: (_) {
         Audio.instance.click();
       },
-      child: AnimatedButton(
-        color: Colors.blue,
-        height: 100,
-        child: const Text(
-          'Start',
-          style: TextStyle(
-            fontSize: 50,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: AnimatedButton(
+          color: Colors.blue,
+          height: 100,
+          child: const Text(
+            'Start',
+            style: TextStyle(
+              fontSize: 50,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
           ),
+          onPressed: () {
+            debugPrint("start pressed");
+            setState(() {
+              _game.start();
+              setPuzzleTop(_game.puzzleTop(context));
+            });
+          },
+          enabled: true,
+          shadowDegree: ShadowDegree.light,
         ),
-        onPressed: () {
-          debugPrint("start pressed");
-          setState(() {
-            _game.start();
-            setPuzzleTop(_game.puzzleTop(context));
-          });
-        },
-        enabled: true,
-        shadowDegree: ShadowDegree.light,
       ),
     );
   }
