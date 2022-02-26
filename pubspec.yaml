@@ -37,6 +37,7 @@ dependencies:
   shared_preferences: ^2.0.13
   flame_audio: ^1.0.0
   firebase_core: ^1.13.1
+  firebase_database: ^9.0.8
 
 dev_dependencies:
   flutter_test:
