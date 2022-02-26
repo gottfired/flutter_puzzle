@@ -4,7 +4,6 @@ import 'dart:math';
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_puzzle/background.dart';
 import 'package:flutter_puzzle/countdown.dart';
 import 'package:flutter_puzzle/save_game.dart';
@@ -39,6 +38,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Pushtrix',
+      debugShowCheckedModeBanner: debugBanner,
       theme: ThemeData(
         primarySwatch: Colors.blue,
         backgroundColor: Colors.white,
