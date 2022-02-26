@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_puzzle/game.dart';
+import 'package:pushtrix/game.dart';
 
 enum TransitionState {
   stateChange,

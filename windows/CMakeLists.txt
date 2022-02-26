@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.14)
-project(flutter_puzzle LANGUAGES CXX)
+project(pushtrix LANGUAGES CXX)
 
-set(BINARY_NAME "flutter_puzzle")
+set(BINARY_NAME "pushtrix")
 
 cmake_policy(SET CMP0063 NEW)
 

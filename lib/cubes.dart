@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/game_time.dart';
-import 'package:flutter_puzzle/lerp_value.dart';
-import 'package:flutter_puzzle/scene.dart';
+import 'package:pushtrix/game_time.dart';
+import 'package:pushtrix/lerp_value.dart';
+import 'package:pushtrix/scene.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 final cube = [

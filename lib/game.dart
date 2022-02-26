@@ -1,12 +1,12 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/audio.dart';
-import 'package:flutter_puzzle/background.dart';
-import 'package:flutter_puzzle/config.dart';
-import 'package:flutter_puzzle/countdown.dart';
-import 'package:flutter_puzzle/main.dart';
-import 'package:flutter_puzzle/save_game.dart';
+import 'package:pushtrix/audio.dart';
+import 'package:pushtrix/background.dart';
+import 'package:pushtrix/config.dart';
+import 'package:pushtrix/countdown.dart';
+import 'package:pushtrix/main.dart';
+import 'package:pushtrix/save_game.dart';
 
 import 'config.dart';
 import 'game_time.dart';

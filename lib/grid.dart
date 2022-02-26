@@ -1,6 +1,6 @@
 // create a stateless widget
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/puzzle.dart';
+import 'package:pushtrix/puzzle.dart';
 
 import 'config.dart';
 import 'tile.dart';

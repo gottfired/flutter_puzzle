@@ -5,12 +5,12 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "flutter_puzzle",
+            "name": "pushtrix",
             "request": "launch",
             "type": "dart"
         },
         {
-            "name": "flutter_puzzle (profile mode)",
+            "name": "pushtrix (profile mode)",
             "request": "launch",
             "type": "dart",
             "flutterMode": "profile"

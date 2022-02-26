@@ -1,8 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/lerp_value.dart';
-import 'package:flutter_puzzle/scene.dart';
+import 'package:pushtrix/lerp_value.dart';
+import 'package:pushtrix/scene.dart';
 
 import 'game_time.dart';
 

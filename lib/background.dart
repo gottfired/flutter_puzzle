@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_puzzle/game.dart';
-import 'package:flutter_puzzle/particle.dart';
-import 'package:flutter_puzzle/cubes.dart';
-import 'package:flutter_puzzle/rays.dart';
-import 'package:flutter_puzzle/scene.dart';
-import 'package:flutter_puzzle/start_screen.dart';
+import 'package:pushtrix/game.dart';
+import 'package:pushtrix/particle.dart';
+import 'package:pushtrix/cubes.dart';
+import 'package:pushtrix/rays.dart';
+import 'package:pushtrix/scene.dart';
+import 'package:pushtrix/start_screen.dart';
 
 import 'config.dart';
 import 'game_time.dart';

@@ -1,4 +1,4 @@
-package com.example.flutter_puzzle
+package com.changine.pushtrix
 
 import io.flutter.embedding.android.FlutterActivity
 

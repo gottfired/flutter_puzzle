@@ -1,9 +1,9 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/config.dart';
-import 'package:flutter_puzzle/puzzle.dart';
-import 'package:flutter_puzzle/scene.dart';
+import 'package:pushtrix/config.dart';
+import 'package:pushtrix/puzzle.dart';
+import 'package:pushtrix/scene.dart';
 
 import 'game_time.dart';
 

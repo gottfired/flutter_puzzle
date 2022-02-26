@@ -2,7 +2,7 @@ import 'dart:math';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/config.dart';
+import 'package:pushtrix/config.dart';
 
 class Puzzle {
   final List<int> tiles = [];

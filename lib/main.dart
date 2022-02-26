@@ -4,10 +4,10 @@ import 'dart:math';
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_puzzle/background.dart';
-import 'package:flutter_puzzle/countdown.dart';
-import 'package:flutter_puzzle/save_game.dart';
-import 'package:flutter_puzzle/state_transition.dart';
+import 'package:pushtrix/background.dart';
+import 'package:pushtrix/countdown.dart';
+import 'package:pushtrix/save_game.dart';
+import 'package:pushtrix/state_transition.dart';
 
 import 'audio.dart';
 import 'audio_dialog.dart';
