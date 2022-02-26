@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:animated_button/animated_button.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pushtrix/background.dart';
@@ -12,11 +13,12 @@ import 'package:pushtrix/state_transition.dart';
 import 'audio.dart';
 import 'audio_dialog.dart';
 import 'config.dart';
+import 'firebase_options.dart';
 import 'game.dart';
 import 'game_time.dart';
 import 'grid.dart';
 
-void main() async {
+Future<void> preAppInit() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
@@ -25,7 +27,15 @@ void main() async {
   await saveGame.init();
   GameTime.init();
 
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
+
   Audio.instance.init();
+}
+
+void main() async {
+  await preAppInit();
 
   runApp(const App());
 }
