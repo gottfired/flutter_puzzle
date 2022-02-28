@@ -23,13 +23,13 @@ Future<void> preAppInit() async {
 
   // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
-  final saveGame = SaveGame();
-  await saveGame.init();
-  GameTime.init();
-
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+
+  final saveGame = SaveGame();
+  await saveGame.init();
+  GameTime.init();
 
   Audio.instance.init();
 }

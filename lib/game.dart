@@ -224,7 +224,7 @@ class Game {
 
   void onTimerFinished() {
     transitionToState(GameState.startScreen);
-    SaveGame.instance.gameOver();
+    SaveGame.instance.gameOver(currentLevel);
     Audio.instance.beepLong();
     Audio.instance.gameOver();
     _mainState?.redraw();

@@ -1,4 +1,6 @@
 const debugEnabled = false;
+const debugBanner = true;
+
 const useAnimationController = false;
 
 const alwaysSmallPuzzles = false;
@@ -9,5 +11,6 @@ const slideTimeMs = 100;
 const dropInAnimMs = 300;
 const resetMs = 50;
 const levelDurationSeconds = 10.0;
+const leaderboardSize = 20;
+
 const infiniteTime = false;
-const debugBanner = true;

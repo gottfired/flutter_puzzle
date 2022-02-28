@@ -35,7 +35,7 @@ class SaveGame {
     await _prefs.setBool("soundEnabled", enabled);
   }
 
-  Future<void> gameOver() async {
+  Future<void> gameOver(int level) async {
     finishedOnce = true;
     await _prefs.setBool("finishedOnce", true);
   }
