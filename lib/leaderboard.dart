@@ -45,7 +45,7 @@ Future<int> isHighScore(int score) async {
 Future<void> saveHighScore(String name, int score) async {
   final ref = FirebaseDatabase.instance.ref('highScores').push();
   await ref.set({
-    'name': 'gottfried',
+    'name': name,
     'score': score,
   });
 }

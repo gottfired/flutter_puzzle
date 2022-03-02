@@ -7,6 +7,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pushtrix/background.dart';
 import 'package:pushtrix/countdown.dart';
+import 'package:pushtrix/leaderboard.dart';
+import 'package:pushtrix/leaderboard_dialog.dart';
 import 'package:pushtrix/save_game.dart';
 import 'package:pushtrix/state_transition.dart';
 
@@ -105,9 +107,7 @@ class MainState extends State<MainPage> {
       Future.delayed(const Duration(seconds: 0), () async {
         final enable = await showDialog(
           context: context,
-          builder: (BuildContext context) {
-            return const AudioDialog();
-          },
+          builder: (BuildContext context) => const AudioDialog(),
         );
 
         setState(() {
@@ -204,6 +204,17 @@ class MainState extends State<MainPage> {
               ),
               bottom: 16,
             ),
+            Positioned(
+              child: FloatingActionButton(
+                child: const Icon(Icons.leaderboard_rounded),
+                onPressed: () async {
+                  await refreshLeaderboard();
+                  showDialog(context: context, builder: (BuildContext context) => const LeaderboardDialog());
+                },
+              ),
+              bottom: max(mq.padding.bottom, 16),
+              left: 16,
+            )
           ],
           if (_game.state == GameState.playing) ...[
             Center(
