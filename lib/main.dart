@@ -235,7 +235,7 @@ class MainState extends State<MainPage> {
             // Positioned(top: 530, child: Text("  Loading ...", style: TextStyle(color: Colors.blue.shade800, fontSize: 40))),
           ],
           if (_game.transitionStarted != null) ...[
-            StateTransition((state) {
+            StateTransition((state) async {
               setState(() {
                 if (state == TransitionState.stateChange) {
                   _game.performTransition();

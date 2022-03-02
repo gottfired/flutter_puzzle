@@ -10,6 +10,7 @@ import 'package:pushtrix/save_game.dart';
 
 import 'config.dart';
 import 'game_time.dart';
+import 'leaderboard.dart';
 import 'puzzle.dart';
 
 enum GameState {
@@ -222,11 +223,16 @@ class Game {
     _countDownState?.start(levelTime);
   }
 
-  void onTimerFinished() {
+  void onTimerFinished() async {
     transitionToState(GameState.startScreen);
     SaveGame.instance.gameOver(currentLevel);
     Audio.instance.beepLong();
     Audio.instance.gameOver();
+    int rank = await isHighScore(currentLevel);
+    if (rank >= 0) {
+      print("####### HIGH SCORE $rank");
+      // TODO: trigger _mainState.highScore entry
+    }
     _mainState?.redraw();
   }
 
