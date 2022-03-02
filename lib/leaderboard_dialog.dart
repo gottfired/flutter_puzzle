@@ -14,35 +14,13 @@ class LeaderboardDialog extends StatelessWidget {
     final entries = leaderboard.map((e) {
       String index = i.toString().padLeft(2);
       i++;
-      return Container(
-        width: 320,
-        margin: const EdgeInsets.only(bottom: 4),
-        child: Row(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text("$index.${e.name.toUpperCase()}", style: textStyle),
-            Text("LVL ${e.score}", style: textStyle),
-          ],
-        ),
-      );
+      return LeaderboardEntry(rank: index, name: e.name, score: e.score);
     }).toList();
 
     if (entries.length < 20) {
       for (var i = entries.length; i < 20; ++i) {
         String index = (i + 1).toString().padLeft(2);
-        entries.add(Container(
-          width: 320,
-          margin: const EdgeInsets.only(bottom: 4),
-          child: Row(
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text("$index.PUSHTRIX", style: textStyle),
-              Text("-", style: textStyle),
-            ],
-          ),
-        ));
+        entries.add(LeaderboardEntry(rank: index, name: "PUSHTRIX", score: 1));
       }
     }
 
@@ -61,35 +39,73 @@ class LeaderboardDialog extends StatelessWidget {
                 style: textStyle.copyWith(fontSize: 24),
               ),
               const SizedBox(height: 16),
-              Flexible(
-                child: Scrollbar(
-                  isAlwaysShown: true,
-                  child: SingleChildScrollView(
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Column(children: [
-                        ...entries,
-                      ]),
-                    ),
-                  ),
-                ),
-              ),
+              buildContent(entries),
               const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context, true);
-                },
-                child: const Text("Close", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300)),
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.all(20),
-                  shape: const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                  ),
-                ),
-              ),
+              buildCloseButton(context),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+  Flexible buildContent(List<LeaderboardEntry> entries) {
+    return Flexible(
+      child: Scrollbar(
+        isAlwaysShown: true,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(children: [
+              ...entries,
+            ]),
+          ),
+        ),
+      ),
+    );
+  }
+
+  ElevatedButton buildCloseButton(BuildContext context) {
+    return ElevatedButton(
+      onPressed: () {
+        Navigator.pop(context, true);
+      },
+      child: const Text("Close", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300)),
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.all(20),
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(10)),
+        ),
+      ),
+    );
+  }
+}
+
+class LeaderboardEntry extends StatelessWidget {
+  const LeaderboardEntry({
+    Key? key,
+    required this.rank,
+    required this.name,
+    required this.score,
+  }) : super(key: key);
+
+  final String rank;
+  final String name;
+  final int score;
+
+  @override
+  Widget build(BuildContext context) {
+    const textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono");
+    return Container(
+      width: 320,
+      margin: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text("$rank.${name.toUpperCase()}", style: textStyle),
+          Text("LVL $score", style: textStyle),
+        ],
       ),
     );
   }
