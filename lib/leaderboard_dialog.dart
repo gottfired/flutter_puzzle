@@ -61,7 +61,19 @@ class LeaderboardDialog extends StatelessWidget {
                 style: textStyle.copyWith(fontSize: 24),
               ),
               const SizedBox(height: 16),
-              ...entries,
+              Flexible(
+                child: Scrollbar(
+                  isAlwaysShown: true,
+                  child: SingleChildScrollView(
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Column(children: [
+                        ...entries,
+                      ]),
+                    ),
+                  ),
+                ),
+              ),
               const SizedBox(height: 32),
               ElevatedButton(
                 onPressed: () {
