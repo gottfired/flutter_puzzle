@@ -212,8 +212,8 @@ class MainState extends State<MainPage> {
                   showDialog(context: context, builder: (BuildContext context) => const LeaderboardDialog());
                 },
               ),
-              bottom: max(mq.padding.bottom, 16),
-              left: 16,
+              bottom: max(mq.padding.bottom, 16) + 80,
+              right: 16,
             )
           ],
           if (_game.state == GameState.playing) ...[
