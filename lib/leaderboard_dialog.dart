@@ -1,6 +1,18 @@
 import 'package:flutter/material.dart';
 import 'package:pushtrix/leaderboard.dart';
 
+Color getRankColor(int rank) {
+  if (rank == 0) {
+    return Colors.red.shade600;
+  } else if (rank == 1) {
+    return Colors.yellow.shade800;
+  } else if (rank == 2) {
+    return Colors.blue.shade700;
+  }
+
+  return Colors.black;
+}
+
 class LeaderboardDialog extends StatelessWidget {
   const LeaderboardDialog({
     Key? key,
@@ -10,11 +22,8 @@ class LeaderboardDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     const textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono");
 
-    int i = 1;
     final entries = leaderboard.map((e) {
-      String index = i.toString().padLeft(2);
-      i++;
-      return LeaderboardEntryWidget(rank: index, name: e.name, score: e.score);
+      return LeaderboardEntryWidget(name: e.name, score: e.score);
     }).toList();
 
     return Dialog(
@@ -77,30 +86,18 @@ class LeaderboardDialog extends StatelessWidget {
 class LeaderboardEntryWidget extends StatelessWidget {
   const LeaderboardEntryWidget({
     Key? key,
-    required this.rank,
     required this.name,
     required this.score,
     this.marginBottom = 4,
   }) : super(key: key);
 
-  final String rank;
   final String name;
   final int score;
   final double marginBottom;
 
   @override
   Widget build(BuildContext context) {
-    var color = Colors.black;
-
-    print(rank);
-
-    if (rank == " 1") {
-      color = Colors.red.shade600;
-    } else if (rank == " 2") {
-      color = Colors.yellow.shade800;
-    } else if (rank == " 3") {
-      color = Colors.blue.shade700;
-    }
+    final color = getRankColor(getRank(score));
 
     final textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono", color: color);
 
@@ -111,8 +108,8 @@ class LeaderboardEntryWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text("$rank.${name.toUpperCase()}", style: textStyle),
-          Text(score > 0 ? "LVL $score" : "-", style: textStyle),
+          Text(name.toUpperCase(), style: textStyle),
+          Text(score > 0 ? "LVL ${getScoreString(score)}" : "-", style: textStyle),
         ],
       ),
     );

@@ -7,8 +7,9 @@ class LeaderboardEntry {
 }
 
 List<LeaderboardEntry> leaderboard = [];
+List<int> topScores = [];
 
-Future<void> refreshLeaderboard() async {
+Future<void> refreshLeaderboard([int newScore = 0]) async {
   leaderboard.clear();
   final event = await FirebaseDatabase.instance.ref('highScores').orderByChild("score").limitToLast(leaderboardSize).once();
   if (event.snapshot.value != null) {
@@ -33,17 +34,43 @@ Future<void> refreshLeaderboard() async {
       leaderboard.add(leaderboardEntry);
     }
   }
+
+  List<int> scores = [];
+  for (LeaderboardEntry entry in leaderboard) {
+    scores.add(entry.score);
+  }
+
+  scores.add(newScore);
+
+  topScores = scores.toSet().toList();
+  topScores.sort((a, b) => b.compareTo(a));
+}
+
+String getScoreString(int score) {
+  int top = topScores[0];
+  int numDigits = top.toString().length;
+  return score.toString().padLeft(numDigits, "0");
 }
 
 // Returns index in leaderboard or -1
 Future<int> isHighScore(int score) async {
-  await refreshLeaderboard();
+  await refreshLeaderboard(score);
   if (score <= leaderboard.last.score) {
     return -1;
   }
 
   for (int i = 0; i < leaderboard.length; i++) {
     if (leaderboard[i].score < score) {
+      return i;
+    }
+  }
+
+  return -1;
+}
+
+int getRank(int score) {
+  for (int i = 0; i < topScores.length; ++i) {
+    if (topScores[i] == score) {
       return i;
     }
   }
