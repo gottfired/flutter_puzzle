@@ -19,6 +19,7 @@ import 'firebase_options.dart';
 import 'game.dart';
 import 'game_time.dart';
 import 'grid.dart';
+import 'highscore_dialog.dart';
 
 Future<void> preAppInit() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -146,6 +147,15 @@ class MainState extends State<MainPage> {
     });
   }
 
+  void _showLeaderboard() async {
+    await refreshLeaderboard();
+    showDialog(context: context, builder: (BuildContext context) => const LeaderboardDialog());
+  }
+
+  void showHighscoreDialog(int rank, int score) {
+    showDialog(context: context, builder: (BuildContext context) => HighScoreDialog(rank, score));
+  }
+
   @override
   Widget build(BuildContext context) {
     setPuzzleTop(_game.puzzleTop(context));
@@ -160,7 +170,7 @@ class MainState extends State<MainPage> {
           if (_game.state == GameState.startScreen) ...[
             buildStartButton(context),
             if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
-              buildLevel("Highscore ", context, true),
+              buildLevel("Your best ", context, true),
             ],
             Audio.instance.isIosWeb
                 ? const SizedBox()
@@ -207,10 +217,7 @@ class MainState extends State<MainPage> {
             Positioned(
               child: FloatingActionButton(
                 child: const Icon(Icons.leaderboard_rounded),
-                onPressed: () async {
-                  await refreshLeaderboard();
-                  showDialog(context: context, builder: (BuildContext context) => const LeaderboardDialog());
-                },
+                onPressed: _showLeaderboard,
               ),
               bottom: max(mq.padding.bottom, 16) + 80,
               right: 16,

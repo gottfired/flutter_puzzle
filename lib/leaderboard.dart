@@ -24,12 +24,21 @@ Future<void> refreshLeaderboard() async {
     // Sort descending
     leaderboard.sort((a, b) => b.score.compareTo(a.score));
   }
+
+  if (leaderboard.length < leaderboardSize) {
+    for (int i = leaderboard.length; i < leaderboardSize; i++) {
+      LeaderboardEntry leaderboardEntry = LeaderboardEntry();
+      leaderboardEntry.name = "PUSHTRIX";
+      leaderboardEntry.score = 0;
+      leaderboard.add(leaderboardEntry);
+    }
+  }
 }
 
 // Returns index in leaderboard or -1
 Future<int> isHighScore(int score) async {
   await refreshLeaderboard();
-  if (score < leaderboard.last.score) {
+  if (score <= leaderboard.last.score) {
     return -1;
   }
 

@@ -230,8 +230,7 @@ class Game {
     Audio.instance.gameOver();
     int rank = await isHighScore(currentLevel);
     if (rank >= 0) {
-      print("####### HIGH SCORE $rank");
-      // TODO: trigger _mainState.highScore entry
+      _mainState?.showHighscoreDialog(rank, currentLevel);
     }
     _mainState?.redraw();
   }

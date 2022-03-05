@@ -14,15 +14,8 @@ class LeaderboardDialog extends StatelessWidget {
     final entries = leaderboard.map((e) {
       String index = i.toString().padLeft(2);
       i++;
-      return LeaderboardEntry(rank: index, name: e.name, score: e.score);
+      return LeaderboardEntryWidget(rank: index, name: e.name, score: e.score);
     }).toList();
-
-    if (entries.length < 20) {
-      for (var i = entries.length; i < 20; ++i) {
-        String index = (i + 1).toString().padLeft(2);
-        entries.add(LeaderboardEntry(rank: index, name: "PUSHTRIX", score: 1));
-      }
-    }
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -49,7 +42,7 @@ class LeaderboardDialog extends StatelessWidget {
     );
   }
 
-  Flexible buildContent(List<LeaderboardEntry> entries) {
+  Flexible buildContent(List<LeaderboardEntryWidget> entries) {
     return Flexible(
       child: Scrollbar(
         isAlwaysShown: true,
@@ -81,30 +74,45 @@ class LeaderboardDialog extends StatelessWidget {
   }
 }
 
-class LeaderboardEntry extends StatelessWidget {
-  const LeaderboardEntry({
+class LeaderboardEntryWidget extends StatelessWidget {
+  const LeaderboardEntryWidget({
     Key? key,
     required this.rank,
     required this.name,
     required this.score,
+    this.marginBottom = 4,
   }) : super(key: key);
 
   final String rank;
   final String name;
   final int score;
+  final double marginBottom;
 
   @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono");
+    var color = Colors.black;
+
+    print(rank);
+
+    if (rank == " 1") {
+      color = Colors.red.shade600;
+    } else if (rank == " 2") {
+      color = Colors.yellow.shade800;
+    } else if (rank == " 3") {
+      color = Colors.blue.shade700;
+    }
+
+    final textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono", color: color);
+
     return Container(
       width: 320,
-      margin: const EdgeInsets.only(bottom: 4),
+      margin: EdgeInsets.only(bottom: marginBottom),
       child: Row(
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text("$rank.${name.toUpperCase()}", style: textStyle),
-          Text("LVL $score", style: textStyle),
+          Text(score > 0 ? "LVL $score" : "-", style: textStyle),
         ],
       ),
     );
