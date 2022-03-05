@@ -1,1 +1,2 @@
 -   fix shrinking load screen
+-   make PWA
