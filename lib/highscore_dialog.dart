@@ -79,7 +79,7 @@ class _HighScoreDialogState extends State<HighScoreDialog> {
               child: Padding(
                 padding: const EdgeInsets.only(top: 8, right: 32),
                 child: TextField(
-                  maxLength: 16,
+                  maxLength: 14,
                   style: rankStyle,
                   inputFormatters: [
                     UpperCaseTextFormatter(),
