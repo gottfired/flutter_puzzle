@@ -116,25 +116,29 @@ class _HighScoreDialogState extends State<HighScoreDialog> {
       entries.add(widget);
     }
 
-    return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      child: Container(
-        padding: EdgeInsets.symmetric(horizontal: context.isMobile() ? 16 : 32, vertical: 24),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minWidth: 320),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                "New High Score!",
-                style: textStyle.copyWith(fontSize: 24),
+    return Center(
+      child: SingleChildScrollView(
+        child: Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          child: Container(
+            padding: EdgeInsets.symmetric(horizontal: context.isMobile() ? 16 : 32, vertical: 24),
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(minWidth: 320),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    "New High Score!",
+                    style: textStyle.copyWith(fontSize: 24),
+                  ),
+                  const SizedBox(height: 16),
+                  ...entries,
+                  const SizedBox(height: 32),
+                  buildSendButton(context),
+                ],
               ),
-              const SizedBox(height: 16),
-              ...entries,
-              const SizedBox(height: 32),
-              buildSendButton(context),
-            ],
+            ),
           ),
         ),
       ),

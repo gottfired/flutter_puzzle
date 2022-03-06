@@ -227,7 +227,7 @@ class MainState extends State<MainPage> {
                 child: const Icon(Icons.leaderboard_rounded),
                 onPressed: _showLeaderboard,
               ),
-              bottom: max(mq.padding.bottom, 16) + 80,
+              bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWeb ? 0 : 80),
               right: 16,
             )
           ],
