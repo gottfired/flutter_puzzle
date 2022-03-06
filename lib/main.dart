@@ -108,6 +108,7 @@ class MainState extends State<MainPage> {
       Future.delayed(const Duration(seconds: 0), () async {
         final enable = await showDialog(
           context: context,
+          barrierDismissible: false,
           builder: (BuildContext context) => const AudioDialog(),
         );
 
@@ -149,11 +150,18 @@ class MainState extends State<MainPage> {
 
   void _showLeaderboard() async {
     await refreshLeaderboard();
-    showDialog(context: context, builder: (BuildContext context) => const LeaderboardDialog());
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => const LeaderboardDialog(),
+    );
   }
 
   void showHighscoreDialog(int rank, int score) {
-    showDialog(context: context, builder: (BuildContext context) => HighScoreDialog(rank, score));
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext context) => HighScoreDialog(rank, score),
+    );
   }
 
   @override

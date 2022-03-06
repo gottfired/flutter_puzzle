@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pushtrix/build_context_extension.dart';
 import 'package:pushtrix/leaderboard.dart';
 
 Color getRankColor(int rank) {
@@ -13,6 +14,10 @@ Color getRankColor(int rank) {
   return Colors.black;
 }
 
+TextStyle getLeaderboardTextStyle(BuildContext context) {
+  return TextStyle(fontSize: context.isMobile() ? 18 : 20, fontFamily: "AzeretMono");
+}
+
 class LeaderboardDialog extends StatelessWidget {
   const LeaderboardDialog({
     Key? key,
@@ -20,17 +25,17 @@ class LeaderboardDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono");
-
     final entries = leaderboard.map((e) {
       return LeaderboardEntryWidget(name: e.name, score: e.score);
     }).toList();
+
+    final textStyle = getLeaderboardTextStyle(context);
 
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        padding: EdgeInsets.symmetric(horizontal: context.isMobile() ? 0 : 16, vertical: 24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 320),
           child: Column(
@@ -98,8 +103,7 @@ class LeaderboardEntryWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = getRankColor(getRank(score));
-
-    final textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono", color: color);
+    final textStyle = getLeaderboardTextStyle(context).copyWith(color: color);
 
     return Container(
       width: 320,
@@ -108,7 +112,7 @@ class LeaderboardEntryWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.max,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(name.toUpperCase(), style: textStyle),
+          Flexible(child: Text(name.toUpperCase(), style: textStyle)),
           Text(score > 0 ? "LVL ${getScoreString(score)}" : "-", style: textStyle),
         ],
       ),

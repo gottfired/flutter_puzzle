@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:pushtrix/build_context_extension.dart';
 import 'package:pushtrix/config.dart';
 import 'package:pushtrix/leaderboard.dart';
 import 'package:pushtrix/leaderboard_dialog.dart';
@@ -14,22 +15,34 @@ class UpperCaseTextFormatter extends TextInputFormatter {
   }
 }
 
-class HighScoreDialog extends StatelessWidget {
+class HighScoreDialog extends StatefulWidget {
   final int position;
   final int score;
-  String name = "";
 
   HighScoreDialog(this.position, this.score, {Key? key}) : super(key: key);
 
   @override
+  State<HighScoreDialog> createState() => _HighScoreDialogState();
+}
+
+class _HighScoreDialogState extends State<HighScoreDialog> {
+  String name = "";
+  bool sendEnabled = false;
+
+  void send() async {
+    await saveHighScore(name, widget.score);
+    Navigator.pop(context, true);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    const textStyle = TextStyle(fontSize: 20, fontFamily: "AzeretMono");
+    final textStyle = getLeaderboardTextStyle(context);
 
     const range = 2;
     const first = 0;
     const last = leaderboardSize - 1;
-    var start = position - range;
-    var end = position + range;
+    var start = widget.position - range;
+    var end = widget.position + range;
 
     if (start < first) {
       final diff = -start;
@@ -42,7 +55,7 @@ class HighScoreDialog extends StatelessWidget {
     }
 
     List<Widget> entries = [];
-    for (int i = start; i < position; i++) {
+    for (int i = start; i < widget.position; i++) {
       final widget = LeaderboardEntryWidget(
         name: leaderboard[i].name,
         score: leaderboard[i].score,
@@ -51,7 +64,7 @@ class HighScoreDialog extends StatelessWidget {
       entries.add(widget);
     }
 
-    final rankColor = getRankColor(getRank(score));
+    final rankColor = getRankColor(getRank(widget.score));
     final rankStyle = textStyle.copyWith(color: rankColor);
     entries.add(
       Container(
@@ -80,17 +93,21 @@ class HighScoreDialog extends StatelessWidget {
                   ),
                   onChanged: (value) {
                     name = value;
+                    setState(() {
+                      name.isNotEmpty ? sendEnabled = true : sendEnabled = false;
+                    });
                   },
+                  onEditingComplete: name.isNotEmpty ? send : null,
                 ),
               ),
             ),
-            Text(score > 0 ? "LVL ${getScoreString(score)}" : "-", style: rankStyle),
+            Text(widget.score > 0 ? "LVL ${getScoreString(widget.score)}" : "-", style: rankStyle),
           ],
         ),
       ),
     );
 
-    for (int i = position; i < end; i++) {
+    for (int i = widget.position; i < end; i++) {
       final widget = LeaderboardEntryWidget(
         name: leaderboard[i].name,
         score: leaderboard[i].score,
@@ -103,7 +120,7 @@ class HighScoreDialog extends StatelessWidget {
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        padding: EdgeInsets.symmetric(horizontal: context.isMobile() ? 16 : 32, vertical: 24),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minWidth: 320),
           child: Column(
@@ -126,10 +143,7 @@ class HighScoreDialog extends StatelessWidget {
 
   ElevatedButton buildSendButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: () async {
-        await saveHighScore(name, score);
-        Navigator.pop(context, true);
-      },
+      onPressed: sendEnabled ? send : null,
       child: const Text("Send", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300)),
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.all(20),
