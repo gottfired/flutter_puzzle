@@ -11,19 +11,26 @@ List<int> topScores = [];
 
 Future<void> refreshLeaderboard([int newScore = 0]) async {
   leaderboard.clear();
-  final event = await FirebaseDatabase.instance.ref('highScores').orderByChild("score").limitToLast(leaderboardSize).once();
-  if (event.snapshot.value != null) {
-    final data = event.snapshot.children;
-    for (final entry in data) {
-      Map<String, dynamic> value = entry.value as Map<String, dynamic>;
-      LeaderboardEntry leaderboardEntry = LeaderboardEntry();
-      leaderboardEntry.name = value['name'];
-      leaderboardEntry.score = value['score'];
-      leaderboard.add(leaderboardEntry);
-    }
+  try {
+    print("Refresh leaderboard");
+    Query query = FirebaseDatabase.instance.ref('highScores').orderByChild("score").limitToLast(leaderboardSize);
+    final event = await query.once();
+    print("Event: ${event}");
+    if (event.snapshot.value != null) {
+      final data = event.snapshot.children;
+      for (final entry in data) {
+        Map<String, dynamic> value = entry.value as Map<String, dynamic>;
+        LeaderboardEntry leaderboardEntry = LeaderboardEntry();
+        leaderboardEntry.name = value['name'];
+        leaderboardEntry.score = value['score'];
+        leaderboard.add(leaderboardEntry);
+      }
 
-    // Sort descending
-    leaderboard.sort((a, b) => b.score.compareTo(a.score));
+      // Sort descending
+      leaderboard.sort((a, b) => b.score.compareTo(a.score));
+    }
+  } catch (error) {
+    print("Error refreshing leaderboard: $error");
   }
 
   if (leaderboard.length < leaderboardSize) {
