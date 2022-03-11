@@ -32,10 +32,7 @@ class DefaultFirebaseOptions {
           'you can reconfigure this by running the FlutterFire CLI again.',
         );
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
     }
 
     throw UnsupportedError(
@@ -51,5 +48,16 @@ class DefaultFirebaseOptions {
     authDomain: 'pushtrix.firebaseapp.com',
     databaseURL: 'https://pushtrix-default-rtdb.europe-west1.firebasedatabase.app',
     storageBucket: 'pushtrix.appspot.com',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyA3tg0rzGH-x65PFu8dBmnhOuSWTOkvZuY',
+    appId: '1:909944346412:ios:582e91dbcf8f2c75dfbe89',
+    messagingSenderId: '909944346412',
+    projectId: 'pushtrix',
+    databaseURL: 'https://pushtrix-default-rtdb.europe-west1.firebasedatabase.app',
+    storageBucket: 'pushtrix.appspot.com',
+    iosClientId: '909944346412-qhr7kujflv4ul8ht77ds6gf1ubr3kpmt.apps.googleusercontent.com',
+    iosBundleId: 'com.chengine.pushtrix',
   );
 }
