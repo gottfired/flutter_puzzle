@@ -15,11 +15,11 @@ Future<void> refreshLeaderboard([int newScore = 0]) async {
     print("Refresh leaderboard");
     Query query = FirebaseDatabase.instance.ref('highScores').orderByChild("score").limitToLast(leaderboardSize);
     final event = await query.once();
-    print("Event: ${event}");
+    print("Event: $event");
     if (event.snapshot.value != null) {
       final data = event.snapshot.children;
       for (final entry in data) {
-        Map<String, dynamic> value = entry.value as Map<String, dynamic>;
+        final dynamic value = entry.value;
         LeaderboardEntry leaderboardEntry = LeaderboardEntry();
         leaderboardEntry.name = value['name'];
         leaderboardEntry.score = value['score'];
