@@ -10,3 +10,4 @@
 -   fix Windows version
 -   add more scenes
 -   decouple ticker from background -> general refactor into better structure
+-   fix pausing app when in start menu
