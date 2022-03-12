@@ -93,6 +93,7 @@ class MainState extends State<MainPage> {
   void dispose() {
     _creditsTimer?.cancel();
     _creditsTimer = null;
+    Audio.instance.dispose();
     super.dispose();
   }
 

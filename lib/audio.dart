@@ -38,13 +38,21 @@ class Audio {
         "sounds/that_was_close.mp3",
         "sounds/beep.mp3",
         "sounds/beep_long.mp3",
-        "music/bensound-scifi.mp3",
-        "music/bensound-punky.mp3",
       ]);
+
+      FlameAudio.bgm.initialize();
+      FlameAudio.bgm.load("music/bensound-scifi.mp3");
+      FlameAudio.bgm.load("music/bensound-punky.mp3");
     }
 
     _praiseIndexes = List.generate(praises.length, (i) => i);
     _praiseIndexes.shuffle();
+  }
+
+  void dispose() {
+    if (!isIosWeb) {
+      FlameAudio.bgm.dispose();
+    }
   }
 
   bool get _enabled => settingEnabled && !isIosWeb;
@@ -103,55 +111,35 @@ class Audio {
   void menuMusic() async {
     if (!_enabled) return;
 
-    if (_player != null) {
-      await _player?.stop();
-      _player = null;
-    }
-
     if (_timer != null) {
       _timer!.cancel();
       _timer = null;
     }
 
-    _player = await FlameAudio.loop("music/bensound-scifi.mp3");
+    FlameAudio.bgm.play("music/bensound-scifi.mp3");
   }
 
   void gameMusic() async {
     if (!_enabled) return;
 
-    if (_player != null) {
-      await _player?.stop();
-      _player = null;
-    }
-    _player = await FlameAudio.play("music/bensound-punky.mp3", volume: 0.4);
+    FlameAudio.bgm.play("music/bensound-punky.mp3", volume: 0.4);
 
-    if (kIsWeb) {
-      // No streams on web -> use timer instead
-      _timer = Timer(const Duration(seconds: 125), () {
-        gameMusicFast();
-        _timer = null;
-      });
-    } else {
-      _player!.onPlayerCompletion.listen((onDone) {
-        gameMusicFast();
-      });
-    }
+    _timer = Timer(const Duration(seconds: 125), () {
+      gameMusicFast();
+      _timer = null;
+    });
   }
 
   void gameMusicFast() async {
     if (!_enabled) return;
 
-    if (_player != null) {
-      await _player?.stop();
-      _player = null;
-    }
-
-    _player = await FlameAudio.loop("music/bensound-extremeaction.mp3", volume: 0.4);
+    FlameAudio.bgm.play("music/bensound-extremeaction.mp3", volume: 0.4);
   }
 
   void enable(bool enabled) async {
     settingEnabled = enabled;
     if (!enabled) {
+      FlameAudio.bgm.stop();
       await _player?.stop();
       _player = null;
       _timer?.cancel();
