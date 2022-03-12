@@ -30,6 +30,7 @@ Future<void> refreshLeaderboard([int newScore = 0]) async {
       leaderboard.sort((a, b) => b.score.compareTo(a.score));
     }
   } catch (error) {
+    // TODO: Proper error handling
     print("Error refreshing leaderboard: $error");
   }
 
@@ -86,9 +87,14 @@ int getRank(int score) {
 }
 
 Future<void> saveHighScore(String name, int score) async {
-  final ref = FirebaseDatabase.instance.ref('highScores').push();
-  await ref.set({
-    'name': name,
-    'score': score,
-  });
+  try {
+    final ref = FirebaseDatabase.instance.ref('highScores').push();
+    await ref.set({
+      'name': name,
+      'score': score,
+    });
+  } catch (error) {
+    // TODO: Proper error handling
+    print("Error refreshing leaderboard: $error");
+  }
 }

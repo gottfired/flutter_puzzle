@@ -1,4 +1,4 @@
-package com.changine.pushtrix
+package com.chengine.pushtrix
 
 import io.flutter.embedding.android.FlutterActivity
 

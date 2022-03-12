@@ -46,7 +46,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyCDTxmGSFftg28OUjL_Z8JTsk6Zx-6Km6s',
-    appId: '1:909944346412:android:9a5a9ed26f5e08b5dfbe89',
+    appId: '1:909944346412:android:9cc52e1277dfc8eddfbe89',
     messagingSenderId: '909944346412',
     projectId: 'pushtrix',
     databaseURL: 'https://pushtrix-default-rtdb.europe-west1.firebasedatabase.app',
