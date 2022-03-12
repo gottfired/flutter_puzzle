@@ -254,4 +254,14 @@ class Game {
   void setMainState(MainState mainState) {
     _mainState = mainState;
   }
+
+  void pause() {
+    _countDownState?.stopTimer();
+    BackgroundState.instance.pause();
+  }
+
+  void resume() {
+    _countDownState?.startTimer();
+    BackgroundState.instance.resume();
+  }
 }

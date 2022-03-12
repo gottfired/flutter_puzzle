@@ -124,10 +124,11 @@ class Audio {
 
     FlameAudio.bgm.play("music/bensound-punky.mp3", volume: 0.4);
 
-    _timer = Timer(const Duration(seconds: 125), () {
-      gameMusicFast();
-      _timer = null;
-    });
+    // TODO: Fix timer starting fast music when app in background
+    // _timer = Timer(const Duration(seconds: 125), () {
+    //   gameMusicFast();
+    //   _timer = null;
+    // });
   }
 
   void gameMusicFast() async {

@@ -1,10 +1,8 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
+import 'package:pushtrix/cubes.dart';
 import 'package:pushtrix/game.dart';
 import 'package:pushtrix/particle.dart';
-import 'package:pushtrix/cubes.dart';
 import 'package:pushtrix/rays.dart';
 import 'package:pushtrix/scene.dart';
 import 'package:pushtrix/start_screen.dart';
@@ -159,6 +157,14 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
       }
     });
 
+    ticker.start();
+  }
+
+  void pause() {
+    ticker.stop();
+  }
+
+  void resume() {
     ticker.start();
   }
 

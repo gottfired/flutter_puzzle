@@ -5,6 +5,7 @@ import 'package:animated_button/animated_button.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pushtrix/app_lifecycle.dart';
 import 'package:pushtrix/background.dart';
 import 'package:pushtrix/countdown.dart';
 import 'package:pushtrix/leaderboard.dart';
@@ -79,6 +80,14 @@ class MainState extends State<MainPage> {
   double timerValue = 0;
   bool _creditsShown = false;
   Timer? _creditsTimer;
+  final AppLifecycle _appLifecycle = AppLifecycle(
+    onResume: () {
+      Game.instance.resume();
+    },
+    onPause: () {
+      Game.instance.pause();
+    },
+  );
 
   void setPuzzleTop(double? top) {
     // debugPrint("new top $top");
@@ -94,12 +103,16 @@ class MainState extends State<MainPage> {
     _creditsTimer?.cancel();
     _creditsTimer = null;
     Audio.instance.dispose();
+    WidgetsBinding.instance?.removeObserver(_appLifecycle);
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+
+    WidgetsBinding.instance?.addObserver(_appLifecycle);
+
     _game.setMainState(this);
 
     final soundEnabled = SaveGame.instance.soundEnabled;

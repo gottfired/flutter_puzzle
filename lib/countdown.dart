@@ -26,7 +26,11 @@ class CountdownState extends State<Countdown> {
   }
 
   void start(double levelTime) {
-    _timer?.cancel();
+    stopTimer();
+    startTimer(levelTime);
+  }
+
+  void startTimer([double? remainingTime]) {
     _timer = Timer.periodic(
       const Duration(milliseconds: 10),
       (Timer timer) {
@@ -49,13 +53,18 @@ class CountdownState extends State<Countdown> {
     );
 
     setState(() {
-      _timerValue = levelTime;
-      _levelTime = levelTime;
+      double remaining = remainingTime ?? _timerValue;
+      _timerValue = remaining;
+      _levelTime = remaining;
     });
   }
 
-  void solved() {
+  void stopTimer() {
     _timer?.cancel();
+  }
+
+  void solved() {
+    stopTimer();
   }
 
   @override
