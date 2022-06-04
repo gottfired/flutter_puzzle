@@ -103,7 +103,7 @@ class MainState extends State<MainPage> {
     _creditsTimer?.cancel();
     _creditsTimer = null;
     Audio.instance.dispose();
-    WidgetsBinding.instance?.removeObserver(_appLifecycle);
+    WidgetsBinding.instance.removeObserver(_appLifecycle);
     super.dispose();
   }
 
@@ -111,7 +111,7 @@ class MainState extends State<MainPage> {
   void initState() {
     super.initState();
 
-    WidgetsBinding.instance?.addObserver(_appLifecycle);
+    WidgetsBinding.instance.addObserver(_appLifecycle);
 
     _game.setMainState(this);
 
