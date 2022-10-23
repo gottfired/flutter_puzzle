@@ -9,8 +9,7 @@ import 'package:pushtrix/main.dart';
 import 'package:pushtrix/save_game.dart';
 
 import 'config.dart';
-import 'game_time.dart';
-import 'leaderboard.dart';
+import 'leaderboard_supabase.dart';
 import 'puzzle.dart';
 
 enum GameState {

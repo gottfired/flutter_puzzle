@@ -8,10 +8,11 @@ import 'package:flutter/material.dart';
 import 'package:pushtrix/app_lifecycle.dart';
 import 'package:pushtrix/background.dart';
 import 'package:pushtrix/countdown.dart';
-import 'package:pushtrix/leaderboard.dart';
+import 'package:pushtrix/leaderboard_supabase.dart';
 import 'package:pushtrix/leaderboard_dialog.dart';
 import 'package:pushtrix/save_game.dart';
 import 'package:pushtrix/state_transition.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'audio.dart';
 import 'audio_dialog.dart';
@@ -22,7 +23,7 @@ import 'game_time.dart';
 import 'grid.dart';
 import 'highscore_dialog.dart';
 
-bool hasFirebase = false;
+bool hasLeaderboard = false;
 
 Future<void> preAppInit() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,10 +31,18 @@ Future<void> preAppInit() async {
   // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
   try {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    hasFirebase = true;
+    if (leaderboardSupabase) {
+      await Supabase.initialize(
+          url: 'https://acfkgovpdtlwnuxcgvzl.supabase.co',
+          anonKey:
+              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZmtnb3ZwZHRsd251eGNndnpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjY1MjQyNTEsImV4cCI6MTk4MjEwMDI1MX0.TrvMEAbI0ZBZkFWoZDHCXoue1ak77-87bKNxse2hHmg');
+    } else {
+      await Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      );
+    }
+
+    hasLeaderboard = true;
   } catch (error) {
     debugPrint("Error initializing leaderboard: $error");
   }
@@ -247,7 +256,7 @@ class MainState extends State<MainPage> {
               ),
               bottom: 16,
             ),
-            if (hasFirebase)
+            if (hasLeaderboard)
               Positioned(
                 child: FloatingActionButton(
                   child: const Icon(Icons.leaderboard_rounded),

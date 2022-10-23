@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pushtrix/build_context_extension.dart';
-import 'package:pushtrix/leaderboard.dart';
+import 'package:pushtrix/leaderboard_supabase.dart';
 
 Color getRankColor(int rank) {
   if (rank == 0) {
@@ -59,7 +59,7 @@ class LeaderboardDialog extends StatelessWidget {
   Flexible buildContent(List<LeaderboardEntryWidget> entries) {
     return Flexible(
       child: Scrollbar(
-        isAlwaysShown: true,
+        thumbVisibility: true,
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
