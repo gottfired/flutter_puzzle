@@ -41,8 +41,7 @@ class Audio {
       ]);
 
       FlameAudio.bgm.initialize();
-      FlameAudio.bgm.load("music/bensound-scifi.mp3");
-      FlameAudio.bgm.load("music/bensound-punky.mp3");
+      FlameAudio.audioCache.loadAll(["music/bensound-scifi.mp3", "music/bensound-punky.mp3"]);
     }
 
     _praiseIndexes = List.generate(praises.length, (i) => i);
