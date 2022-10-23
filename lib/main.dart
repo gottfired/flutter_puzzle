@@ -22,14 +22,21 @@ import 'game_time.dart';
 import 'grid.dart';
 import 'highscore_dialog.dart';
 
+bool hasFirebase = false;
+
 Future<void> preAppInit() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    hasFirebase = true;
+  } catch (error) {
+    debugPrint("Error initializing leaderboard: $error");
+  }
 
   final saveGame = SaveGame();
   await saveGame.init();
@@ -107,6 +114,27 @@ class MainState extends State<MainPage> {
     super.dispose();
   }
 
+  void showWebAutioDialog() {
+    Future.delayed(const Duration(seconds: 0), () async {
+      final enable = await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) => const AudioDialog(),
+      );
+
+      setState(() {
+        if (enable) {
+          Audio.instance.enable(true);
+          SaveGame.instance.enableSound(true);
+          _showCredits();
+        } else {
+          Audio.instance.enable(false);
+          SaveGame.instance.enableSound(false);
+        }
+      });
+    });
+  }
+
   @override
   void initState() {
     super.initState();
@@ -119,24 +147,7 @@ class MainState extends State<MainPage> {
 
     // Web doesn't allow autoplay of audio. Display dialog to allow user to enable audio.
     if (kIsWeb && soundEnabled && defaultTargetPlatform != TargetPlatform.iOS) {
-      Future.delayed(const Duration(seconds: 0), () async {
-        final enable = await showDialog(
-          context: context,
-          barrierDismissible: false,
-          builder: (BuildContext context) => const AudioDialog(),
-        );
-
-        setState(() {
-          if (enable) {
-            Audio.instance.enable(true);
-            SaveGame.instance.enableSound(true);
-            _showCredits();
-          } else {
-            Audio.instance.enable(false);
-            SaveGame.instance.enableSound(false);
-          }
-        });
-      });
+      showWebAutioDialog();
     } else {
       Audio.instance.enable(soundEnabled);
       if (soundEnabled) {
@@ -236,14 +247,15 @@ class MainState extends State<MainPage> {
               ),
               bottom: 16,
             ),
-            Positioned(
-              child: FloatingActionButton(
-                child: const Icon(Icons.leaderboard_rounded),
-                onPressed: _showLeaderboard,
-              ),
-              bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWeb ? 0 : 80),
-              right: 16,
-            )
+            if (hasFirebase)
+              Positioned(
+                child: FloatingActionButton(
+                  child: const Icon(Icons.leaderboard_rounded),
+                  onPressed: _showLeaderboard,
+                ),
+                bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWeb ? 0 : 80),
+                right: 16,
+              )
           ],
           if (_game.state == GameState.playing) ...[
             Center(
