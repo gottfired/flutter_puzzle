@@ -2,13 +2,13 @@ import 'dart:async';
 import 'dart:math';
 
 import 'package:animated_button/animated_button.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pushtrix/app_lifecycle.dart';
 import 'package:pushtrix/background.dart';
 import 'package:pushtrix/countdown.dart';
-import 'package:pushtrix/leaderboard_supabase.dart';
+import 'package:pushtrix/leaderboard.dart';
 import 'package:pushtrix/leaderboard_dialog.dart';
 import 'package:pushtrix/save_game.dart';
 import 'package:pushtrix/state_transition.dart';
@@ -17,7 +17,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'audio.dart';
 import 'audio_dialog.dart';
 import 'config.dart';
-import 'firebase_options.dart';
 import 'game.dart';
 import 'game_time.dart';
 import 'grid.dart';
@@ -28,19 +27,15 @@ bool hasLeaderboard = false;
 Future<void> preAppInit() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  await dotenv.load(fileName: '.env');
+
   // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
   try {
-    if (leaderboardSupabase) {
-      await Supabase.initialize(
-          url: 'https://acfkgovpdtlwnuxcgvzl.supabase.co',
-          anonKey:
-              'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZmtnb3ZwZHRsd251eGNndnpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjY1MjQyNTEsImV4cCI6MTk4MjEwMDI1MX0.TrvMEAbI0ZBZkFWoZDHCXoue1ak77-87bKNxse2hHmg');
-    } else {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
+    await Supabase.initialize(
+        url: 'https://acfkgovpdtlwnuxcgvzl.supabase.co',
+        anonKey:
+            'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFjZmtnb3ZwZHRsd251eGNndnpsIiwicm9sZSI6ImFub24iLCJpYXQiOjE2NjY1MjQyNTEsImV4cCI6MTk4MjEwMDI1MX0.TrvMEAbI0ZBZkFWoZDHCXoue1ak77-87bKNxse2hHmg');
 
     hasLeaderboard = true;
   } catch (error) {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pushtrix/build_context_extension.dart';
-import 'package:pushtrix/leaderboard_supabase.dart';
+import 'package:pushtrix/leaderboard.dart';
 
 Color getRankColor(int rank) {
   if (rank == 0) {

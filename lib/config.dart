@@ -13,6 +13,5 @@ const resetMs = 50;
 const levelDurationSeconds = 10.0;
 
 const leaderboardSize = 20;
-const leaderboardSupabase = true;
 
 const infiniteTime = false;

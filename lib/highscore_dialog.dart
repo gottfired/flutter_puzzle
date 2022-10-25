@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:pushtrix/build_context_extension.dart';
 import 'package:pushtrix/config.dart';
-import 'package:pushtrix/leaderboard_supabase.dart';
+import 'package:pushtrix/leaderboard.dart';
 import 'package:pushtrix/leaderboard_dialog.dart';
 
 class UpperCaseTextFormatter extends TextInputFormatter {
