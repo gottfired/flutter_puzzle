@@ -3,9 +3,10 @@ import 'dart:convert';
 import 'package:crypto/crypto.dart';
 import 'package:eval_ex/expression.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:pushtrix/config.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+
+import 'env.dart';
 
 final supabase = Supabase.instance.client;
 
@@ -18,21 +19,19 @@ List<LeaderboardEntry> leaderboard = [];
 List<int> topScores = [];
 
 String scoreToHash(String name, int score, double salt) {
-  final postfix = dotenv.env["HASH"];
   final lower = name.toLowerCase();
-  var saltedScore = utf8.encode("$lower$score$postfix$salt");
+  var saltedScore = utf8.encode("$lower$score${Env.HASH}$salt");
   final hash = sha256.convert(saltedScore).toString();
 
   return hash;
 }
 
 int scoreFromHash(String name, String hash, double salt) {
-  final postfix = dotenv.env["HASH"];
   final lower = name.toLowerCase();
 
   // reverse hash
   for (int i = 0; i < 1000; ++i) {
-    var saltedScore = utf8.encode("$lower$i$postfix$salt");
+    var saltedScore = utf8.encode("$lower$i${Env.HASH}$salt");
     final value = sha256.convert(saltedScore).toString();
     if (value == hash) {
       return i;
@@ -132,8 +131,7 @@ int getRank(int score) {
 
 Future<void> saveHighScore(String name, int score) async {
   try {
-    final saltEx = Expression(dotenv.env["SALT"] ?? "");
-    final salt = saltEx.setStringVariable("x", score.toString()).eval()?.toDouble() ?? 0.0;
+    final salt = Expression(Env.SALT).setStringVariable("x", score.toString()).eval()?.toDouble() ?? 0.0;
     await supabase.from("leaderboard").insert({
       "name": name.toUpperCase(),
       "salt": salt,

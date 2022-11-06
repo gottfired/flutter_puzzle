@@ -4,12 +4,15 @@
 *.pyc
 *.swp
 .DS_Store
-.env
 .atom/
 .buildlog/
 .history
 .svn/
 temp/
+
+# Secrets
+env.g.dart
+.env
 
 # IntelliJ related
 *.iml
@@ -46,3 +49,6 @@ app.*.map.json
 /android/app/debug
 /android/app/profile
 /android/app/release
+
+# Generated Dart files  
+**/*.g.dart 
