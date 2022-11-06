@@ -136,7 +136,7 @@ class Game {
     }
   }
 
-  int _sizeFromLevel() {
+  int _calculatePuzzleSize() {
     if (alwaysSmallPuzzles) {
       return 2;
     }
@@ -200,11 +200,7 @@ class Game {
     }
   }
 
-  void startLevel() {
-    currentLevel++;
-    SaveGame.instance.saveLevel(currentLevel);
-    final newSize = _sizeFromLevel();
-
+  int _calculateShuffleCount(int newSize) {
     int shuffle = 0;
     if (newSize == 2) {
       shuffle = 1 + (currentLevel ~/ 2);
@@ -214,10 +210,27 @@ class Game {
       shuffle = 1 + (currentLevel ~/ 3);
     }
 
-    // debugPrint("New puzzle size: $newSize, shuffleCount $shuffle");
+    return shuffle;
+  }
+
+  void startLevel() {
+    currentLevel++;
+
+    // Record personal best for highest level reached
+    SaveGame.instance.saveLevel(currentLevel);
+
+    // Now determine how difficult this level will be
+    // - size
+    // - how many shuffle moves
+    // - how much time
+    final newSize = _calculatePuzzleSize();
+    int shuffle = _calculateShuffleCount(newSize);
+    levelTime = _calculateLevelTime(newSize, shuffle);
+
+    // Create the puzzle
     puzzle = Puzzle(newSize, shuffle);
 
-    levelTime = _calculateLevelTime(newSize, shuffle);
+    // Start the level
     timeLeft = levelTime;
     _countDownState?.start(levelTime);
   }
