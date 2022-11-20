@@ -58,6 +58,24 @@ dev_dependencies:
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
+flutter_icons:
+  ios: true
+  android: true
+  image_path_ios: "assets/launcher/icon.png"
+  image_path_android: "assets/launcher/icon.png"
+  web:
+    generate: true
+    image_path: "assets/launcher/icon.png"
+    #background_color: "#hexcode"
+    #theme_color: "#hexcode"
+  windows:
+    generate: true
+    image_path: "assets/launcher/icon.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/launcher/icon.png"
+
 # The following section is specific to Flutter.
 flutter:
   # The following line ensures that the Material Icons font is
@@ -100,6 +118,7 @@ flutter:
 # derry scripts
 scripts:
   build_runner: flutter pub run build_runner build --delete-conflicting-outputs
+  build_launcher_icons: flutter pub run flutter_launcher_icons
   build:
     web:
       - flutter build web --base-href /pushtrix/ --web-renderer canvaskit
