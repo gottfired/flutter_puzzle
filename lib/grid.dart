@@ -1,4 +1,3 @@
-// create a stateless widget
 import 'package:flutter/material.dart';
 import 'package:pushtrix/puzzle.dart';
 
@@ -15,13 +14,16 @@ class Grid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Fill list of tiles
     List<AnimatedPositioned> tiles = [];
     for (int i = 0; i < _puzzle.tiles.length; i++) {
       final number = _puzzle.tiles[i];
       final row = i ~/ _puzzle.size;
       final col = i % _puzzle.size;
+      // 0 is the empty space
       if (number != 0) {
         tiles.add(
+          // Animated so tile pushing is smooth
           AnimatedPositioned(
             key: ValueKey(number),
             left: col * tileSize,
@@ -38,6 +40,7 @@ class Grid extends StatelessWidget {
       }
     }
 
+    // Render the container for the tiles
     return Container(
       decoration: BoxDecoration(
         border: Border.all(
@@ -56,6 +59,7 @@ class Grid extends StatelessWidget {
         ],
       ),
       child: Stack(
+        // Render tiles
         children: [
           Container(color: Colors.blue, width: tileSize * _puzzle.size, height: tileSize * _puzzle.size),
           ...tiles,

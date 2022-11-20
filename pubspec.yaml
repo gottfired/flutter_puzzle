@@ -39,6 +39,7 @@ dependencies:
   supabase_flutter: ^1.0.1
   eval_ex: ^1.1.7
   envied: ^0.2.3
+  
 
 dev_dependencies:
   flutter_test:
@@ -52,6 +53,7 @@ dev_dependencies:
   flutter_lints: ^1.0.0
   build_runner: ^2.3.2
   envied_generator: ^0.2.3
+  flutter_launcher_icons: ^0.11.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -95,7 +97,9 @@ flutter:
         - asset: fonts/AzeretMono-Bold.ttf
           weight: 700
 
+# derry scripts
 scripts:
+  build_runner: flutter pub run build_runner build --delete-conflicting-outputs
   build:
     web:
       - flutter build web --base-href /pushtrix/ --web-renderer canvaskit

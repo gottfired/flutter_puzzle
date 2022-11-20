@@ -21,6 +21,7 @@ import 'game.dart';
 import 'game_time.dart';
 import 'grid.dart';
 import 'highscore_dialog.dart';
+import 'music_credits.dart';
 
 bool hasLeaderboard = false;
 
@@ -86,6 +87,7 @@ class MainState extends State<MainPage> {
   double timerValue = 0;
   bool _creditsShown = false;
   Timer? _creditsTimer;
+
   final AppLifecycle _appLifecycle = AppLifecycle(
     onResume: () {
       Game.instance.resume();
@@ -113,7 +115,7 @@ class MainState extends State<MainPage> {
     super.dispose();
   }
 
-  void showWebAutioDialog() {
+  void showWebAudioDialog() {
     Future.delayed(const Duration(seconds: 0), () async {
       final enable = await showDialog(
         context: context,
@@ -146,7 +148,7 @@ class MainState extends State<MainPage> {
 
     // Web doesn't allow autoplay of audio. Display dialog to allow user to enable audio.
     if (kIsWeb && soundEnabled && defaultTargetPlatform != TargetPlatform.iOS) {
-      showWebAutioDialog();
+      showWebAudioDialog();
     } else {
       Audio.instance.enable(soundEnabled);
       if (soundEnabled) {
@@ -193,68 +195,53 @@ class MainState extends State<MainPage> {
     setPuzzleTop(_game.puzzleTop(context));
     puzzleRotation = _game.puzzleRotation();
     final mq = MediaQuery.of(context);
+
+    final soundToggle = Positioned(
+      child: FloatingActionButton(
+        child: Icon(Audio.instance.settingEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
+        onPressed: () {
+          setState(() {
+            Audio.instance.enable(!Audio.instance.settingEnabled);
+            SaveGame.instance.enableSound(Audio.instance.settingEnabled);
+            if (Audio.instance.settingEnabled) {
+              _showCredits();
+            } else {
+              _creditsShown = false;
+            }
+          });
+        },
+      ),
+      bottom: max(mq.padding.bottom, 16),
+      right: 16,
+    );
+
+    final leaderboardButton = Positioned(
+      child: FloatingActionButton(
+        child: const Icon(Icons.leaderboard_rounded),
+        onPressed: _showLeaderboard,
+      ),
+      bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWeb ? 0 : 80),
+      right: 16,
+    );
+
     return Scaffold(
       body: Stack(
         alignment: Alignment.center,
         children: [
           const Background(),
-          Countdown(_game),
+          // Render timer
+          if (!screenshotIcon) Countdown(_game),
           if (_game.state == GameState.startScreen) ...[
             buildStartButton(context),
             if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
               buildLevel("Your best ", context, true),
             ],
-            Audio.instance.isIosWeb
-                ? const SizedBox()
-                : Positioned(
-                    child: FloatingActionButton(
-                      child: Icon(Audio.instance.settingEnabled ? Icons.volume_up_rounded : Icons.volume_off_rounded),
-                      onPressed: () {
-                        setState(() {
-                          Audio.instance.enable(!Audio.instance.settingEnabled);
-                          SaveGame.instance.enableSound(Audio.instance.settingEnabled);
-                          if (Audio.instance.settingEnabled) {
-                            _showCredits();
-                          } else {
-                            _creditsShown = false;
-                          }
-                        });
-                      },
-                    ),
-                    bottom: max(mq.padding.bottom, 16),
-                    right: 16,
-                  ),
+            Audio.instance.isIosWeb ? const SizedBox() : soundToggle,
             Positioned(
-              child: AnimatedOpacity(
-                duration: const Duration(milliseconds: 500),
-                opacity: _creditsShown ? 1 : 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(8),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.3),
-                        blurRadius: 8,
-                        offset: const Offset(2, 4),
-                      ),
-                    ],
-                  ),
-                  padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-                  child: const Text("Music by Bensound.com"),
-                ),
-              ),
+              child: MusicCredits(creditsShown: _creditsShown),
               bottom: 16,
             ),
-            if (hasLeaderboard)
-              Positioned(
-                child: FloatingActionButton(
-                  child: const Icon(Icons.leaderboard_rounded),
-                  onPressed: _showLeaderboard,
-                ),
-                bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWeb ? 0 : 80),
-                right: 16,
-              )
+            if (hasLeaderboard) leaderboardButton
           ],
           if (_game.state == GameState.playing) ...[
             Center(
@@ -267,7 +254,7 @@ class MainState extends State<MainPage> {
                     width: _game.getPuzzleScreenSize(),
                     height: _game.getPuzzleScreenSize(),
                   ),
-                  buildPuzzle(),
+                  buildPuzzle(_game),
                 ],
               ),
             ),
@@ -288,32 +275,39 @@ class MainState extends State<MainPage> {
     );
   }
 
-  Positioned buildLevel(String label, BuildContext context, [highscore = false]) {
+  Widget buildLevel(String label, BuildContext context, [highscore = false]) {
+    if (screenshotIcon) {
+      return Container();
+    }
+
     final mq = MediaQuery.of(context);
 
     final background = highscore ? Colors.red.shade700 : Colors.white;
     final color = highscore ? Colors.white : Colors.blue.shade600;
     const radius = Radius.circular(10);
+
+    final dropShadow = BoxDecoration(
+      color: background,
+      borderRadius: BorderRadius.only(
+        topLeft: mq.padding.top > 0 ? radius : Radius.zero,
+        topRight: mq.padding.top > 0 ? radius : Radius.zero,
+        bottomLeft: radius,
+        bottomRight: radius,
+      ),
+      boxShadow: [
+        BoxShadow(
+          color: Colors.blue.shade400.withOpacity(0.5),
+          spreadRadius: 3,
+          blurRadius: 6,
+        )
+      ],
+    );
+
     return Positioned(
       top: mq.padding.top,
       child: Container(
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color: background,
-          borderRadius: BorderRadius.only(
-            topLeft: mq.padding.top > 0 ? radius : Radius.zero,
-            topRight: mq.padding.top > 0 ? radius : Radius.zero,
-            bottomLeft: radius,
-            bottomRight: radius,
-          ),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.blue.shade400.withOpacity(0.5),
-              spreadRadius: 3,
-              blurRadius: 6,
-            )
-          ],
-        ),
+        decoration: dropShadow,
         child: Padding(
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           child: Row(
@@ -367,31 +361,32 @@ class MainState extends State<MainPage> {
     );
   }
 
-  AnimatedPositioned buildPuzzle() {
+  // Render puzzle drop in/out
+  AnimatedPositioned buildPuzzle(Game game) {
     return AnimatedPositioned(
-      duration: Duration(milliseconds: _game.isResetting() ? 0 : dropInAnimMs),
+      duration: Duration(milliseconds: game.isResetting() ? 0 : dropInAnimMs),
       top: puzzleTop,
       child: AnimatedRotation(
         duration: const Duration(milliseconds: dropInAnimMs),
         turns: puzzleRotation,
-        child: _game.puzzle != null
+        child: game.puzzle != null
             ? Grid(
-                _game.puzzle!,
+                game.puzzle!,
                 onTap: (int number) async {
-                  setState(() => _game.move(number));
+                  setState(() => game.move(number));
 
-                  if (_game.isSolved()) {
+                  if (game.isSolved()) {
                     await Future.delayed(Duration(milliseconds: (slideTimeMs * 0.7).toInt()));
-                    setState(() => _game.dropOut());
+                    setState(() => game.dropOut());
 
                     await Future.delayed(const Duration(milliseconds: dropInAnimMs));
-                    setState(() => _game.reset());
+                    setState(() => game.reset());
 
                     await Future.delayed(const Duration(milliseconds: resetMs));
-                    setState(() => _game.startLevel());
+                    setState(() => game.startLevel());
 
                     await Future.delayed(const Duration(milliseconds: dropInAnimMs));
-                    setState(() => _game.puzzleState = PuzzleState.playing);
+                    setState(() => game.puzzleState = PuzzleState.playing);
                   }
                 },
               )

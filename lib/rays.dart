@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:pushtrix/config.dart';
 import 'package:pushtrix/lerp_value.dart';
 import 'package:pushtrix/scene.dart';
 
@@ -24,7 +25,10 @@ class Rays extends Scene {
 
   @override
   void tick() {
-    time += GameTime.instance.dt;
+    if (!screenshotIcon) {
+      time += GameTime.instance.dt;
+    }
+
     angle = time * 0.4;
 
     color.lerpTo(1, 2);
@@ -71,7 +75,9 @@ class Rays extends Scene {
 
     final circleColor = Color.lerp(const Color(0x00ffffff), Colors.red.shade100, color.value)!;
     paint.color = Color.lerp(circleColor, const Color.fromARGB(0, 255, 255, 255), radius / maxSize)!;
-    canvas.drawCircle(Offset(cx, cy), radius, paint);
+    if (!screenshotIcon) {
+      canvas.drawCircle(Offset(cx, cy), radius, paint);
+    }
 
     const sectionDelta = 2 * pi / _numSections;
     paint.color = Color.lerp(const Color(0x00ffffff), Colors.red, color.value)!;

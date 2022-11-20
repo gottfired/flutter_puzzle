@@ -68,7 +68,9 @@ Future<void> refreshLeaderboard([int newScore = 0]) async {
         leaderboard.add(leaderboardEntry);
       } else {
         // Delete invalid entry
-        await supabase.from("leaderboard").delete().eq("id", value["id"]);
+        if (leaderboardDeleteInvalid) {
+          await supabase.from("leaderboard").delete().eq("id", value["id"]);
+        }
       }
     }
   } catch (error) {
