@@ -2,7 +2,7 @@ const debugEnabled = false;
 const debugBanner = true;
 
 const screenshotIcon = false;
-const sizeFactor = screenshotIcon ? 3.0 : 1.0;
+const sizeFactor = screenshotIcon ? 4.0 : 1.0;
 
 const useAnimationController = false;
 
