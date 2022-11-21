@@ -58,8 +58,8 @@ class LeaderboardDialog extends StatelessWidget {
 
   Flexible buildContent(List<LeaderboardEntryWidget> entries) {
     return Flexible(
-      child: Scrollbar(
-        thumbVisibility: true,
+      child: Theme(
+        data: ThemeData(scrollbarTheme: const ScrollbarThemeData(thumbVisibility: MaterialStatePropertyAll(true))),
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
