@@ -147,7 +147,7 @@ class MainState extends State<MainPage> {
     final soundEnabled = SaveGame.instance.soundEnabled;
 
     // Web doesn't allow autoplay of audio. Display dialog to allow user to enable audio.
-    if (kIsWeb && soundEnabled && defaultTargetPlatform != TargetPlatform.iOS) {
+    if (kIsWeb && soundEnabled && (defaultTargetPlatform != TargetPlatform.iOS || enableIosWebAudio)) {
       showWebAudioDialog();
     } else {
       Audio.instance.enable(soundEnabled);
@@ -220,7 +220,7 @@ class MainState extends State<MainPage> {
         child: const Icon(Icons.leaderboard_rounded),
         onPressed: _showLeaderboard,
       ),
-      bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWeb ? 0 : 80),
+      bottom: max(mq.padding.bottom, 16) + (Audio.instance.isIosWebDisabled ? 0 : 80),
       right: 16,
     );
 
@@ -236,7 +236,7 @@ class MainState extends State<MainPage> {
             if (SaveGame.instance.maxLevel > 0 && SaveGame.instance.finishedOnce) ...[
               buildLevel("Your best ", context, true),
             ],
-            Audio.instance.isIosWeb ? const SizedBox() : soundToggle,
+            Audio.instance.isIosWebDisabled ? const SizedBox() : soundToggle,
             Positioned(
               child: MusicCredits(creditsShown: _creditsShown),
               bottom: 16,

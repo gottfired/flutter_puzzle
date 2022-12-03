@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame_audio/flame_audio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:pushtrix/config.dart';
 
 const praises = [
   "sounds/well_done.mp3",
@@ -23,12 +24,12 @@ class Audio {
   AudioPlayer? _player;
   Timer? _timer;
 
-  bool isIosWeb = false;
+  bool isIosWebDisabled = false;
 
   void init() {
-    isIosWeb = kIsWeb && (defaultTargetPlatform == TargetPlatform.iOS);
+    isIosWebDisabled = kIsWeb && defaultTargetPlatform == TargetPlatform.iOS && !enableIosWebAudio;
 
-    if (!isIosWeb) {
+    if (!isIosWebDisabled) {
       FlameAudio.audioCache.loadAll([
         "sounds/swish.wav",
         "sounds/click.wav",
@@ -49,12 +50,12 @@ class Audio {
   }
 
   void dispose() {
-    if (!isIosWeb) {
+    if (!isIosWebDisabled) {
       FlameAudio.bgm.dispose();
     }
   }
 
-  bool get _enabled => settingEnabled && !isIosWeb;
+  bool get _enabled => settingEnabled && !isIosWebDisabled;
 
   void click() {
     if (!_enabled) return;
