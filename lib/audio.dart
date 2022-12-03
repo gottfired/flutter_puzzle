@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flame_audio/flame_audio.dart';
@@ -26,11 +27,11 @@ class Audio {
 
   bool isIosWebDisabled = false;
 
-  void init() {
+  void init() async {
     isIosWebDisabled = kIsWeb && defaultTargetPlatform == TargetPlatform.iOS && !enableIosWebAudio;
 
     if (!isIosWebDisabled) {
-      FlameAudio.audioCache.loadAll([
+      await FlameAudio.audioCache.loadAll([
         "sounds/swish.wav",
         "sounds/click.wav",
         ...praises,
@@ -42,7 +43,7 @@ class Audio {
       ]);
 
       FlameAudio.bgm.initialize();
-      FlameAudio.audioCache.loadAll(["music/bensound-scifi.mp3", "music/bensound-punky.mp3"]);
+      await FlameAudio.audioCache.loadAll(["music/bensound-scifi.mp3", "music/bensound-punky.mp3"]);
     }
 
     _praiseIndexes = List.generate(praises.length, (i) => i);
@@ -63,52 +64,59 @@ class Audio {
     FlameAudio.play("sounds/click.wav");
   }
 
-  void swish() {
+  void swish() async {
     if (!_enabled) return;
 
-    FlameAudio.play("sounds/swish.wav", volume: 0.5);
+    await FlameAudio.play("sounds/swish.wav", volume: 0.5);
   }
 
-  void praise() {
+  void praise() async {
     if (!_enabled) return;
 
-    FlameAudio.play(praises[_praiseIndexes[_currentPraise++]]);
+    await FlameAudio.play(praises[_praiseIndexes[_currentPraise++]]);
     if (_currentPraise >= praises.length) {
       _currentPraise = 0;
       _praiseIndexes.shuffle();
     }
   }
 
-  void thatWasClose() {
+  void thatWasClose() async {
     if (!_enabled) return;
 
-    FlameAudio.play("sounds/that_was_close.mp3");
+    await FlameAudio.play("sounds/that_was_close.mp3");
   }
 
-  void gameOver() {
+  void gameOver() async {
     if (!_enabled) return;
 
-    FlameAudio.play("sounds/game_over.mp3");
+    await FlameAudio.play("sounds/game_over.mp3");
   }
 
-  void tooEasy() {
+  void tooEasy() async {
     if (!_enabled) return;
 
-    FlameAudio.play("sounds/too_easy.mp3");
+    await FlameAudio.play("sounds/too_easy.mp3");
   }
 
-  void beep() {
+  void beep() async {
     if (!_enabled) return;
-    FlameAudio.play("sounds/beep.mp3");
+    await FlameAudio.play("sounds/beep.mp3");
   }
 
-  void beepLong() {
+  void beepLong() async {
     if (!_enabled) return;
 
-    FlameAudio.play("sounds/beep_long.mp3");
+    await FlameAudio.play("sounds/beep_long.mp3");
   }
 
-  void menuMusic() async {
+  void playMusic(String title, {double volume = 1}) async {
+    await FlameAudio.bgm.stop();
+    Timer(const Duration(milliseconds: 500), () async {
+      await FlameAudio.bgm.play(title, volume: volume);
+    });
+  }
+
+  void menuMusic() {
     if (!_enabled) return;
 
     if (_timer != null) {
@@ -116,13 +124,13 @@ class Audio {
       _timer = null;
     }
 
-    FlameAudio.bgm.play("music/bensound-scifi.mp3");
+    playMusic("music/bensound-scifi.mp3");
   }
 
-  void gameMusic() async {
+  void gameMusic() {
     if (!_enabled) return;
 
-    FlameAudio.bgm.play("music/bensound-punky.mp3", volume: 0.4);
+    playMusic("music/bensound-punky.mp3", volume: 0.4);
 
     // TODO: Fix timer starting fast music when app in background
     // _timer = Timer(const Duration(seconds: 125), () {
@@ -134,13 +142,13 @@ class Audio {
   void gameMusicFast() async {
     if (!_enabled) return;
 
-    FlameAudio.bgm.play("music/bensound-extremeaction.mp3", volume: 0.4);
+    playMusic("music/bensound-extremeaction.mp3");
   }
 
   void enable(bool enabled) async {
     settingEnabled = enabled;
     if (!enabled) {
-      FlameAudio.bgm.stop();
+      await FlameAudio.bgm.stop();
       await _player?.stop();
       _player = null;
       _timer?.cancel();
