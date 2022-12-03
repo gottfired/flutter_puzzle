@@ -20,4 +20,4 @@ const leaderboardSize = 20;
 const leaderboardDeleteInvalid = false;
 
 const infiniteTime = false;
-const enableIosWebAudio = true;
+const enableIosWebAudio = false;
