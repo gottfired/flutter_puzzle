@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:pushtrix/cubes.dart';
+import 'package:pushtrix/scenes/cubes.dart';
 import 'package:pushtrix/game.dart';
 import 'package:pushtrix/scenes/particle.dart';
 import 'package:pushtrix/scenes/rays.dart';
