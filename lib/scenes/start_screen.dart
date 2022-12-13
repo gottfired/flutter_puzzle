@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pushtrix/config.dart';
 import 'package:pushtrix/puzzle.dart';
-import 'package:pushtrix/scene.dart';
+import 'package:pushtrix/scenes/scene.dart';
 
-import 'game_time.dart';
+import '../game_time.dart';
 
 class StartScreen extends Scene {
   final Puzzle _puzzle2 = Puzzle(2, 0);

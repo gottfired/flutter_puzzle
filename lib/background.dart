@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:pushtrix/cubes.dart';
 import 'package:pushtrix/game.dart';
-import 'package:pushtrix/particle.dart';
-import 'package:pushtrix/rays.dart';
-import 'package:pushtrix/scene.dart';
-import 'package:pushtrix/start_screen.dart';
+import 'package:pushtrix/scenes/particle.dart';
+import 'package:pushtrix/scenes/rays.dart';
+import 'package:pushtrix/scenes/scene.dart';
+import 'package:pushtrix/scenes/start_screen.dart';
 
 import 'config.dart';
 import 'game_time.dart';

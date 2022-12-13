@@ -3,7 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pushtrix/game_time.dart';
 import 'package:pushtrix/lerp_value.dart';
-import 'package:pushtrix/scene.dart';
+import 'package:pushtrix/scenes/scene.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 final cube = [

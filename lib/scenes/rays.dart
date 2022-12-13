@@ -3,9 +3,9 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:pushtrix/config.dart';
 import 'package:pushtrix/lerp_value.dart';
-import 'package:pushtrix/scene.dart';
+import 'package:pushtrix/scenes/scene.dart';
 
-import 'game_time.dart';
+import '../game_time.dart';
 
 const _numSections = 8;
 const lerpTime = 2.0;
