@@ -49,7 +49,7 @@ Future<void> refreshLeaderboard([int newScore = 0]) async {
             .from("leaderboard")
             .select("id,name,salt,hash")
             .order("salt", ascending: true)
-            .order("created_at")
+            .order("created_at", ascending: true)
             .order("hash")
             .limit(leaderboardSize + 10) // +10 to add some buffer for illegal score entries
         ;
@@ -139,8 +139,14 @@ Future<void> saveHighScore(String name, int score) async {
       "salt": salt,
       "hash": scoreToHash(name, score, salt),
     });
+  } on PostgrestException catch (error) {
+    // 23505 is unique key violation, that's ok since we only allow once name/score combo in the leaderboard
+    if (error.code != "23505") {
+      // TODO: Proper error handling
+      print("Database error saving highscore: $error");
+    }
   } catch (error) {
     // TODO: Proper error handling
-    print("Error refreshing leaderboard: $error");
+    print("Error saving highscore: $error");
   }
 }

@@ -82,6 +82,7 @@ class _HighScoreDialogState extends State<HighScoreDialog> {
                   maxLength: 14,
                   style: rankStyle,
                   inputFormatters: [
+                    FilteringTextInputFormatter.deny(RegExp("[ ]")),
                     UpperCaseTextFormatter(),
                   ],
                   autofocus: true,

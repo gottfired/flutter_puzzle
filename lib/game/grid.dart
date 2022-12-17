@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:pushtrix/puzzle.dart';
+import 'package:pushtrix/game/puzzle.dart';
 
-import 'config.dart';
+import '../config.dart';
 import 'tile.dart';
 
 class Grid extends StatelessWidget {

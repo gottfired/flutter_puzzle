@@ -6,10 +6,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pushtrix/app_lifecycle.dart';
 import 'package:pushtrix/background.dart';
-import 'package:pushtrix/countdown.dart';
+import 'package:pushtrix/game/countdown.dart';
 import 'package:pushtrix/leaderboard.dart';
 import 'package:pushtrix/leaderboard_dialog.dart';
-import 'package:pushtrix/save_game.dart';
+import 'package:pushtrix/game/save_game.dart';
 import 'package:pushtrix/state_transition.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
@@ -17,9 +17,9 @@ import 'audio.dart';
 import 'audio_dialog.dart';
 import 'config.dart';
 import 'env.dart';
-import 'game.dart';
-import 'game_time.dart';
-import 'grid.dart';
+import 'game/game.dart';
+import 'game/game_time.dart';
+import 'game/grid.dart';
 import 'highscore_dialog.dart';
 import 'music_credits.dart';
 

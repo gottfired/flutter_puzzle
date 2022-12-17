@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import 'package:pushtrix/audio.dart';
 import 'package:pushtrix/background.dart';
 import 'package:pushtrix/config.dart';
-import 'package:pushtrix/countdown.dart';
+import 'package:pushtrix/game/countdown.dart';
 import 'package:pushtrix/main.dart';
-import 'package:pushtrix/save_game.dart';
+import 'package:pushtrix/game/save_game.dart';
 
-import 'config.dart';
-import 'leaderboard.dart';
+import '../config.dart';
+import '../leaderboard.dart';
 import 'puzzle.dart';
 
 enum GameState {

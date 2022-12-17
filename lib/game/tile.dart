@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'audio.dart';
-import 'config.dart';
+import '../audio.dart';
+import '../config.dart';
 
 class Tile extends StatelessWidget {
   final int number;
