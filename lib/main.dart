@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:math';
 
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:pushtrix/app_lifecycle.dart';
 import 'package:pushtrix/background.dart';
 import 'package:pushtrix/game/countdown.dart';
@@ -25,8 +27,23 @@ import 'music_credits.dart';
 
 bool hasLeaderboard = false;
 
+// https://stackoverflow.com/a/59303283/677910
+class FailedCertOverride extends HttpOverrides {
+  @override
+  HttpClient createHttpClient(SecurityContext? context) {
+    return super.createHttpClient(context)
+      ..badCertificateCallback = ((X509Certificate cert, String host, int port) {
+        // Allow supabase host for failed certificate
+        final isValidHost = host.endsWith("supabase.co");
+        return isValidHost;
+      });
+  }
+}
+
 Future<void> preAppInit() async {
   WidgetsFlutterBinding.ensureInitialized();
+
+  HttpOverrides.global = FailedCertOverride();
 
   // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
