@@ -28,10 +28,13 @@ class HighScoreDialog extends StatefulWidget {
 class _HighScoreDialogState extends State<HighScoreDialog> {
   String name = "";
   bool sendEnabled = false;
+  bool sending = false;
 
   void send() async {
+    sending = true;
     await saveHighScore(name, widget.score);
     Navigator.pop(context, true);
+    sending = false;
   }
 
   @override
@@ -148,7 +151,7 @@ class _HighScoreDialogState extends State<HighScoreDialog> {
 
   ElevatedButton buildSendButton(BuildContext context) {
     return ElevatedButton(
-      onPressed: sendEnabled ? send : null,
+      onPressed: (sendEnabled && !sending) ? send : null,
       child: const Text("Send", style: TextStyle(fontSize: 20, fontWeight: FontWeight.w300)),
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.all(20),
