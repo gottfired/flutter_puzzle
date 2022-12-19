@@ -23,6 +23,12 @@ enum PuzzleState {
   dropOut,
 }
 
+const levelNewbie = 3;
+const levelEasy = 6;
+const levelMedium = 9;
+const levelHard = 12;
+const levelInsane = 50;
+
 class Game {
   Puzzle? puzzle;
   GameState state = GameState.startScreen;
@@ -141,13 +147,17 @@ class Game {
       return 2;
     }
 
-    if (currentLevel < 3) {
+    if (currentLevel < levelNewbie) {
+      // Level < 3 -> puzzle size is 2
       return 2;
-    } else if (currentLevel < 6) {
+    } else if (currentLevel < levelEasy) {
+      // Level < 6 -> 50% are 2, 50% are 3
       return Random().nextBool() ? 2 : 3;
-    } else if (currentLevel < 9) {
+    } else if (currentLevel < levelMedium) {
+      // Level < 9 -> 33% are 2, 66% are 3
       return Random().nextInt(3) == 0 ? 2 : 3;
-    } else if (currentLevel < 12) {
+    } else if (currentLevel < levelHard) {
+      // Level < 9 -> 1/6 are 2, 3/6 are 3, 2/6 are 4
       final dice = Random().nextInt(6);
       if (dice == 0) {
         return 2;
@@ -156,8 +166,19 @@ class Game {
       } else {
         return 4;
       }
-    } else {
+    } else if (currentLevel < levelInsane) {
+      // 1/10 are 2, 3/10 are 3, 6/10 are 4
       final dice = Random().nextInt(10);
+      if (dice == 0) {
+        return 2;
+      } else if (dice < 4) {
+        return 3;
+      } else {
+        return 4;
+      }
+    } else {
+      // 1/20 are 2, 3/20 are 3, 16/20 are 4
+      final dice = Random().nextInt(20);
       if (dice == 0) {
         return 2;
       } else if (dice < 4) {
@@ -179,17 +200,28 @@ class Game {
           const base = 4.0;
           // The more shuffleCount, the more time
           final shuffleBonus = shuffleCount ~/ 2;
-          time = min(5.0, base + shuffleBonus);
+          time = min(currentLevel > levelInsane ? 3.0 : 5.0, base + shuffleBonus);
           break;
         case 3:
           const base = 6.0;
           final shuffleBonus = shuffleCount ~/ 2;
-          time = min(15.0, base + shuffleBonus);
+          time = min(currentLevel > levelInsane ? 10.0 : 15.0, base + shuffleBonus);
           break;
         case 4:
           const base = 8.0;
           final shuffleBonus = shuffleCount;
-          time = min(60.0, base + shuffleBonus);
+
+          // Once you've reached levelInsane -> decrease max time
+          var maxTimeSeconds = 60.0;
+          if (currentLevel > levelInsane) {
+            final delta = currentLevel - levelInsane;
+            maxTimeSeconds -= delta ~/ 2;
+            if (maxTimeSeconds < 20) {
+              maxTimeSeconds = 20;
+            }
+          }
+
+          time = min(maxTimeSeconds, base + shuffleBonus);
           break;
       }
 
@@ -207,7 +239,13 @@ class Game {
     } else if (newSize == 3) {
       shuffle = 1 + (currentLevel ~/ 2.5);
     } else {
-      shuffle = 1 + (currentLevel ~/ 3);
+      if (currentLevel > levelInsane) {
+        // Starting from level insane gradually go from currentLevel/3 to currentLevel
+        final delta = (currentLevel - levelInsane) ~/ 30;
+        shuffle = 1 + (currentLevel ~/ max(1, (3 - delta)));
+      } else {
+        shuffle = 1 + (currentLevel ~/ 3);
+      }
     }
 
     return shuffle;
