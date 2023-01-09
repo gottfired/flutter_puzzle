@@ -1,8 +1,6 @@
 # TODO
 
 -   fix missing PWA highscore keyboard on iOS
--   add favicon
--   add app icons
 -   fix iOS web sound
 -   fix shrinking load screen (only on iOS mobile web)
 -   deploy to stores
