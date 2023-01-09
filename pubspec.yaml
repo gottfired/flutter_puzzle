@@ -39,7 +39,6 @@ dependencies:
   supabase_flutter: ^1.0.1
   eval_ex: ^1.1.7
   envied: ^0.2.3
-  
 
 dev_dependencies:
   flutter_test:
@@ -124,3 +123,5 @@ scripts:
       - flutter build web --base-href /pushtrix/ --web-renderer canvaskit
       - echo "Now copy ..."
       - cp -a build/web/. ../pushtrix/docs/
+    ios:
+      - flutter build ipa --obfuscate --split-debug-info=ios/debug_info
