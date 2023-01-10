@@ -45,7 +45,8 @@ Future<void> preAppInit() async {
 
   HttpOverrides.global = FailedCertOverride();
 
-  // await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
+  // Full screen for Android. iOS is set in Xcode settings.
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.manual, overlays: []);
 
   try {
     await Supabase.initialize(url: Env.SUPABASE_URL, anonKey: Env.SUPABASE_ANON_KEY);
