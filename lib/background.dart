@@ -130,13 +130,15 @@ class BackgroundState extends State<Background> with TickerProviderStateMixin {
       )..repeat();
     }
 
+    double lastDuration = 0;
     ticker = Ticker((duration) {
       final current = duration.inMilliseconds / 1000.0;
       frame++;
 
       if (frame & 1 == 0) {
-        final dt = current - GameTime.instance.current;
+        final dt = current - lastDuration;
         GameTime.instance.tick(dt);
+        lastDuration = current;
 
         _currentScene.tick();
         if (_currentScene.state == SceneState.fadeOut || _currentScene.state == SceneState.done) {

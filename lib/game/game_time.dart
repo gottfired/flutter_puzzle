@@ -1,3 +1,5 @@
+import 'package:flutter/foundation.dart';
+
 class GameTime {
   static late GameTime instance;
 
@@ -9,6 +11,10 @@ class GameTime {
   double dt = 0;
 
   void tick(double delta) {
+    if (delta < 0) {
+      return;
+    }
+
     current += delta;
     dt = delta;
   }

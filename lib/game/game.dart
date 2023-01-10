@@ -306,12 +306,18 @@ class Game {
   }
 
   void pause() {
-    _countDownState?.stopTimer();
+    if (state == GameState.playing) {
+      _countDownState?.stopTimer();
+    }
+
     BackgroundState.instance.pause();
   }
 
   void resume() {
-    _countDownState?.startTimer();
+    if (state == GameState.playing) {
+      _countDownState?.startTimer();
+    }
+
     BackgroundState.instance.resume();
   }
 }
