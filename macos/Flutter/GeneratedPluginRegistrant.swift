@@ -5,7 +5,7 @@
 import FlutterMacOS
 import Foundation
 
-import app_links_macos
+import app_links
 import audioplayers_darwin
 import path_provider_macos
 import shared_preferences_macos
