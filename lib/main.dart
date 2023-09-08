@@ -79,10 +79,9 @@ class App extends StatelessWidget {
       title: 'Pushtrix',
       debugShowCheckedModeBanner: debugBanner,
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-        backgroundColor: Colors.white,
         scaffoldBackgroundColor: Colors.white,
         fontFamily: "Rowdies",
+        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.blue).copyWith(background: Colors.white),
       ),
       home: const MainPage(title: 'Pushtrix'),
     );

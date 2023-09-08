@@ -19,7 +19,7 @@ class HighScoreDialog extends StatefulWidget {
   final int position;
   final int score;
 
-  HighScoreDialog(this.position, this.score, {Key? key}) : super(key: key);
+  const HighScoreDialog(this.position, this.score, {Key? key}) : super(key: key);
 
   @override
   State<HighScoreDialog> createState() => _HighScoreDialogState();

@@ -19,3 +19,5 @@ Won Runner Up in category multiplatform in the Flutter Puzzle Hack: https://flut
 # Known Issues
 
 -   Uploading an iOS build triggers a warning email regarding push notifications that can be ignored: https://stackoverflow.com/a/55167613/677910
+# How to update flutter version
+- `flutter upgrade`

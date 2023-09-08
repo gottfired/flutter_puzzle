@@ -8,7 +8,6 @@ import 'package:pushtrix/game/countdown.dart';
 import 'package:pushtrix/main.dart';
 import 'package:pushtrix/game/save_game.dart';
 
-import '../config.dart';
 import '../leaderboard.dart';
 import 'puzzle.dart';
 

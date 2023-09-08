@@ -12,6 +12,7 @@ class AppLifecycle extends WidgetsBindingObserver {
       case AppLifecycleState.inactive:
       case AppLifecycleState.paused:
       case AppLifecycleState.detached:
+      case AppLifecycleState.hidden:
         onPause?.call();
         break;
       case AppLifecycleState.resumed:
